@@ -1,0 +1,43 @@
+.contNav {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+   gap: 50vw;
+}
+
+
+
+/* logo del gobierno */
+
+
+.container-fluid{
+    display: flex;
+    flex-direction: column;
+}
+
+
+/* contenido */
+.navbar {
+    background-color: #12322B;
+    --bs-navbar-brand-color: #fff;
+}
+
+.secciones {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    text-decoration: none;
+}
+
+.secciones li  {
+    text-decoration: none;
+    color: white;
+    list-style-type: none;
+   
+}
+
+.secciones li a {
+    color: white; 
+}
+

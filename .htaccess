@@ -1,0 +1,7 @@
+
+
+#Impedir que se puedan ver los directorios
+
+
+Options -Indexes
+
