@@ -40,7 +40,7 @@ class areas{
     
         try {
             if (isset($rutaTemporal) && !empty($rutaTemporal) && move_uploaded_file($rutaTemporal, $rutaDestino)) {
-                $query = "INSERT INTO public.areas (name, key, details, status, extension) VALUES ('$nameArea', '$identificadorArea', '$detailsArea', 1, '$extension')";
+                $query = "INSERT INTO public.areas (name, key, details, status) VALUES ('$nameArea', '$identificadorArea', '$detailsArea', 1)";
                 $con->query($query);
     
                 $con->closeDB();
@@ -83,7 +83,7 @@ class areas{
                     return array("status" => 500, "message" => "Error al insertar imagen ");
                 }
 
-                $query = "UPDATE public.areas SET name = '$nameArea', details = '$detailsArea', extension = '$extension' WHERE key = '$identificadorArea'";
+                $query = "UPDATE public.areas SET name = '$nameArea', details = '$detailsArea'WHERE key = '$identificadorArea'";
                 $con->query($query);
         
                 $con->closeDB();
