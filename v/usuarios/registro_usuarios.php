@@ -123,26 +123,18 @@ if (isset($_SESSION['user_name']))
 				<div class="form-group">
 					<div class="row">
 						<div class="col-sm-8">
-							<label for="email"><span class="text-danger">* </span>Correo electrónico personal</label>
+							<label for="email"><span class="text-danger">* </span>Correo electrónico</label>
 							<input type="text" class="form-control" id="email">
-						</div>		
+						</div>	
+						<div class="col-sm-4">
+							<label for="password"><span class="text-danger">* </span>Contraseña</label>
+							<input type="text" class="form-control" id="password">
+						</div>	
 						<div class="col-sm-4">
 							<label for="type-users"><span class="text-danger">* </span>Tipo de usuario</label>
 							<select name="type-users" id="type-users" class="form-control" >
 								<option value="null" selected disabled>Seleccione un tipo</option>
 							</select>
-						</div>															
-					</div>
-				</div>	
-				<div class="form-group">
-					<div class="row">						
-						<div class="col-sm-4">
-							<label for="username"><span class="text-danger">* </span>Usuario</label>
-							<input type="text" class="form-control" id="user-name">
-						</div>		
-						<div class="col-sm-4">
-							<label for="password"><span class="text-danger">* </span>Contraseña</label>
-							<input type="text" class="form-control" id="password">
 						</div>
 						<div class="col-sm-4">
 							<label for="areas"><span class="text-danger">* </span>Área</label>
@@ -151,7 +143,7 @@ if (isset($_SESSION['user_name']))
 							</select>
 						</div>															
 					</div>
-				</div>	
+				</div>		
 				<div class="col-sm-12">
 					<label for="text"><span class="text-danger">* </span>El usuario y contraseña lo prodra modificar la persona correspondiente una vez que inicie sesión. </label>
 				</div>

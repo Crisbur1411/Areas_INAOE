@@ -87,7 +87,6 @@ function saveUser() {
     var secondsurname = $("#second_surname").val().trim();
     var email = $("#email").val().trim();
 
-    var username = $("#user-name").val().trim();
     var password = $("#password").val().trim();
 
     var area = $("#areas").val()
@@ -104,32 +103,36 @@ function saveUser() {
         $("#surname").focus();
         return 0;
     }
+    if (secondsurname.length == 0) {
+        alert("Tiene que escribir el segundo apellido")
+        $("#second_surname").focus();
+        return 0;
+    }
   
     if (email.length == 0) {
         alert("Tiene que escribir el correo electrónico")
         $("#email").focus();
         return 0;
     }
-    if (username.length == 0) {
-        alert("Tiene que escribir el usuario")
-        $("#user-name").focus();
-        return 0;
-    }
+
     if (password.length == 0) {
         alert("Tiene que escribir la contraseña")
         $("#password").focus();
         return 0;
     }
-    if (area == null) {
-        alert("Tiene que elegir el área")
-        $("#areas").focus();
-        return 0;
-    }
+    
     if (type_user == null) {
         alert("Tiene que elegir el tipo de usuario")
         $("#type-users").focus();
         return 0;
     }
+
+    if (area == null) {
+        alert("Tiene que elegir el área")
+        $("#areas").focus();
+        return 0;
+    }
+
 
  
 
@@ -143,7 +146,7 @@ function saveUser() {
             cache: false,
             dataType: 'JSON',
             type: 'POST',
-            data: { action: 3, name: name, surname: surname, secondsurname: secondsurname, email: email, type_user: type_user, username: username, password: password },
+            data: { action: 3, name: name, surname: surname, secondsurname: secondsurname, email: email, type_user: type_user, password: password },
             success: function (result) {
                 console.log("el resultado es" + result);
                 var $id_user = result;

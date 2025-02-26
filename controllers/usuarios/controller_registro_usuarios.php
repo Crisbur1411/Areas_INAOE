@@ -24,7 +24,7 @@
 		public function saveUser(){
     		$this->registrousuarios= new registrousuarios();
 
-	      	$data = $this->registrousuarios->saveUser($_POST["name"], $_POST["surname"], $_POST["secondsurname"], $_POST["email"], $_POST["type_user"], $_POST["username"], $_POST["password"]);
+	      	$data = $this->registrousuarios->saveUser($_POST["name"], $_POST["surname"], $_POST["secondsurname"], $_POST["email"], $_POST["type_user"], $_POST["password"]);
 	      	echo ($data);
 		}
 		public function saveUserEdit(){

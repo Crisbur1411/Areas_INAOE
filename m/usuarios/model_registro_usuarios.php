@@ -49,13 +49,13 @@ class registrousuarios{
         return $data;
     }
    
-    public function saveUser ($name, $surname, $secondsurname, $email, $type_user, $username, $password)
+    public function saveUser ($name, $surname, $secondsurname, $email, $type_user, $password)
     {
         $con=new DBconnection();
         $con->openDB();
 
         $userData = $con->query("INSERT INTO users (username, password, name, surname, second_surname,fk_type, date_register) 
-        VALUES ('".$username."','".$password."', '".$name."','".$surname."', '".$secondsurname."',".$type_user.",NOW()) 
+        VALUES ('".$email."','".$password."', '".$name."','".$surname."', '".$secondsurname."',".$type_user.",NOW()) 
         RETURNING id_user");
 
         
