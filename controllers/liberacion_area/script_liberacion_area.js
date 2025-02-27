@@ -77,7 +77,7 @@ function listStudentInProgress() {
 function signStudent(id_student) {
     $u = document.getElementById("user");
     $user = $u.innerHTML;
-    //console.log ($user);
+
     swal({
         title: "LIBERAR DEL ÁREA AL ALUMNO",
         text: "Por favor, ingresa tu contraseña para confirmar la liberación del área al alumno:",
@@ -91,10 +91,10 @@ function signStudent(id_student) {
             attributes: {
                 placeholder: "Contraseña",
                 type: "password",
-                id: "passwordInput", // Agregamos un ID para identificar el campo de entrada
+                id: "passwordInput",
             },
         },
-        closeOnEsc: false, // Evitar que se cierre con la tecla "Esc"
+        closeOnEsc: false,
     }).then((value) => {
         if (value === "Liberar") {
             var password = $(".swal-content__input").val();
@@ -103,51 +103,55 @@ function signStudent(id_student) {
                 cache: false,
                 dataType: 'JSON',
                 type: 'POST',
-                data: { action: 6, password: password},
-                success: function(result) {
-                    //console.log(result);
-                    $.each(result, function(index, val) {  
-                        if (val.success === 't' )
-                        { 
+                data: { action: 6, password: password },
+                success: function (result) {
+                    $.each(result, function (index, val) {
+                        if (val.success === 't') {
                             $.ajax({
                                 url: "../../controllers/liberacion_area/controller_liberacion_area.php",
                                 cache: false,
                                 dataType: 'JSON',
                                 type: 'POST',
-                                data: { action: 2, id_student: id_student, user: $user},
-                                success: function(result) {
-                                    // Tu código de éxito aquí
-                                }, error: function (result){
+                                data: { action: 2, id_student: id_student, user: $user },
+                                success: function (result) {},
+                                error: function (result) {
                                     console.log(result);
-                                }, complete: function () {
+                                },
+                                complete: function () {
                                     $(".loader").fadeOut("slow");
                                     $("#info").removeClass("d-none");
                                     listStudentInProgress();
                                     listStudentFree();
                                 }
                             });
+
                             swal("Trámite finalizado!", {
                                 icon: "success",
+                            }).then(() => {
+                                location.reload(); // Recarga la página después de la alerta
                             });
+
                         } else if (typeof val.message !== 'undefined') {
                             swal("Error", val.message, "error");
                         }
-                });
-            }, error: function (result){
-                console.log(result);
-            }
+                    });
+                },
+                error: function (result) {
+                    console.log(result);
+                }
             });
         }
     });
 
     // Agregamos el controlador de eventos para la tecla "Enter" en el campo de contraseña
-    $('#passwordInput').keypress(function(event){
+    $('#passwordInput').keypress(function (event) {
         if (event.which === 13) {
-            event.preventDefault(); // Detenemos la acción predeterminada de la tecla "Enter"
+            event.preventDefault();
             return false;
         }
     });
 }
+
 
 
 

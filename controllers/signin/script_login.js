@@ -1,8 +1,9 @@
 $(document).ready(function() {
     $("#username").inputFilter(function(value) {
-        return /^[a-zA-Z0-9_.-]*$/.test(value);
+        return /^[a-zA-Z0-9@_.-]*$/.test(value); // Agrega '@' a la validación
     });
 });
+
 
 (function($) {
     $.fn.inputFilter = function(inputFilter) {

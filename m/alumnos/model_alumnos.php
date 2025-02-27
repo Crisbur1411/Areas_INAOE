@@ -162,7 +162,7 @@ class alumnos
                                 CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name, 
                                 COALESCE(areas.name, '-') AS namearea, 
                                 COALESCE(to_char(trace_student_areas.date, 'YYYY-MM-DD HH24:MI:SS'), '-') AS formatted_date, 
-                                COALESCE(trace_student_areas.description, 'Sin autorizar aún') AS description, 
+                                COALESCE(trace_student_areas.description, 'Sin autorizar') AS description, 
                                 COALESCE(students.status, 0) AS status
                             FROM 
                                 students

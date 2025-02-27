@@ -74,7 +74,6 @@ function editStudent(id_student) {
 }
 
 function deleteStudent(id_student) {
-    
     swal({
         title: "ELIMINAR REGISTRO",
         text: "¿Estás seguro de que deseas eliminar el registro del alumno?",
@@ -82,27 +81,27 @@ function deleteStudent(id_student) {
         buttons: {
             cancel: "Cancelar",
             Aceptar: true,
-          },
-      })
-      .then((deleteDoc) => {
+        },
+    }).then((deleteDoc) => {
         if (deleteDoc) {
             $.ajax({
                 url: "../../controllers/alumnos/controller_alumnos.php",
                 cache: false,
                 dataType: 'JSON',
                 type: 'POST',
-                data: { action: 2, id_student: id_student},
-                success: function(result) {
-                    listStudent();
+                data: { action: 2, id_student: id_student },
+                success: function (result) {
+                    swal("Registro Eliminado!", {
+                        icon: "success",
+                    }).then(() => {
+                        location.reload(); // Recarga la página después de eliminar
+                    });
                 }
             });
-          swal("Registro Eliminado!", {
-            icon: "success",
-          });
-        } else {
         }
-      });
+    });
 }
+
 
 function newStudent() {
     location.href = "../alumnos/registro_alumnos.php";
@@ -111,7 +110,7 @@ function newStudent() {
 function turnSingAreas(id_student) {
     $u = document.getElementById("user");
     $user = $u.innerHTML;
-    //console.log ($user);
+
     swal({
         title: "TURNAR A LIBERACIÓN DE ÁREAS",
         text: "¿Estás seguro de que deseas turnar a firma para liberación al alumno? ... Ya no podrás realizar ninguna modificación",
@@ -119,48 +118,51 @@ function turnSingAreas(id_student) {
         buttons: {
             cancel: "Cancelar",
             Enviar: true,
-          },
-      })
-      .then((sendDoc) => {
+        },
+    }).then((sendDoc) => {
         if (sendDoc) {
             $.ajax({
                 url: "../../controllers/alumnos/controller_alumnos.php",
                 cache: false,
                 dataType: 'JSON',
                 type: 'POST',
-                data: { action: 3, id_student: id_student, user: $user},
-                success: function(result) {
-                    console.log (result);
+                data: { action: 3, id_student: id_student, user: $user },
+                success: function (result) {
+                    console.log(result);
                     $.ajax({
                         url: "../../controllers/alumnos/controller_alumnos.php",
                         cache: false,
                         dataType: 'JSON',
                         type: 'POST',
-                        data: { action: 9, id_student: result},
-                        success: function(result) {   
-                        }, error: function (result){
-                            console.log(result); 
+                        data: { action: 9, id_student: result },
+                        success: function (result) { },
+                        error: function (result) {
+                            console.log(result);
                         }
-                    }); 
-                }, error: function (result){
+                    });
+                },
+                error: function (result) {
                     console.log(result);
-                },complete: function () {
-                //loader.fadeOut();
-                $(".loader").fadeOut("slow");
-                $("#info").removeClass("d-none");
-                listStudent();
-                listStudentInProgress();
-                listStudentFree();
-                listStudentCancel();
+                },
+                complete: function () {
+                    $(".loader").fadeOut("slow");
+                    $("#info").removeClass("d-none");
+                    listStudent();
+                    listStudentInProgress();
+                    listStudentFree();
+                    listStudentCancel();
                 }
-            });            
-          swal("Turnado a firma!", {
-            icon: "success",
-          });
-        } else {
+            });
+
+            swal("Turnado a firma!", {
+                icon: "success",
+            }).then(() => {
+                location.reload(); // Recarga la página después de la alerta
+            });
         }
-      });
+    });
 }
+
 
 function listStudentInProgress() {
     let i2 = 0; // Inicializamos i1 con 0
@@ -174,7 +176,7 @@ function listStudentInProgress() {
             var table = "";
             $.each(result, function(index, val) {
                 i2++; // Incrementamos i1 solo si el estudiante cumple con la condición
-                if (val.status == 2 && val.areas_count >0 )
+                if (val.status == 2 && val.areas_count >=0 )
                 {
                     table += "<tr>"       
                     + "<th style='text-align:center'>"+val.id_student+"</th>"
@@ -246,55 +248,58 @@ function showRegisterAreas(id_student) {
 function freeStudent(id_student) {
     $u = document.getElementById("user");
     $user = $u.innerHTML;
-    //console.log ($user);
+    
     swal({
         title: "FINALIZAR EL TRÁMITE DE FORMA SATISFACTORIA",
-        text: "¿Estás seguro de que deseas finalizar el tramite correspondiente a la liberación de áreas? ",
+        text: "¿Estás seguro de que deseas finalizar el trámite correspondiente a la liberación de áreas?",
         icon: "info",
         buttons: {
             cancel: "Cancelar",
             Enviar: true,
-          },
-      })
-      .then((sendDoc) => {
+        },
+    }).then((sendDoc) => {
         if (sendDoc) {
             $.ajax({
                 url: "../../controllers/alumnos/controller_alumnos.php",
                 cache: false,
                 dataType: 'JSON',
                 type: 'POST',
-                data: { action: 6, id_student: id_student, user: $user},
-                success: function(result) {
+                data: { action: 6, id_student: id_student, user: $user },
+                success: function (result) {
                     $.ajax({
                         url: "../../controllers/alumnos/controller_alumnos.php",
                         cache: false,
                         dataType: 'JSON',
                         type: 'POST',
-                        data: { action: 7, id_student: id_student},
-                        success: function(result) {   
-                        }, error: function (result){
-                            console.log(result); 
+                        data: { action: 7, id_student: id_student },
+                        success: function (result) { },
+                        error: function (result) {
+                            console.log(result);
                         }
-                    }); 
-                }, error: function (result){
+                    });
+                },
+                error: function (result) {
                     console.log(result);
-                },complete: function () {
-                //loader.fadeOut();
-                $(".loader").fadeOut("slow");
-                $("#info").removeClass("d-none");
-                listStudent();
-                listStudentInProgress();
-                listStudentFree();
-                listStudentCancel();
+                },
+                complete: function () {
+                    $(".loader").fadeOut("slow");
+                    $("#info").removeClass("d-none");
+                    listStudent();
+                    listStudentInProgress();
+                    listStudentFree();
+                    listStudentCancel();
                 }
-            });            
-          swal("Tramite finalizado!", {
-            icon: "success",
-          });
-        } else {
+            });
+
+            swal("Trámite finalizado!", {
+                icon: "success",
+            }).then(() => {
+                location.reload(); // Recarga la página después de la alerta
+            });
         }
-      });
+    });
 }
+
 
 function listStudentFree() {
     let i3 = 0; // Inicializamos i1 con 0
@@ -357,7 +362,7 @@ function printPDF(id_student) {
 function cancelStudent(id_student) {
     $u = document.getElementById("user");
     $user = $u.innerHTML;
-    
+
     swal({
         title: "CANCELAR EL TRÁMITE",
         text: "Escribe el motivo de cancelación:",
@@ -372,9 +377,8 @@ function cancelStudent(id_student) {
         buttons: {
             cancel: "Cancelar",
             confirm: "Enviar",
-          },
-      })
-      .then((motivo) => {
+        },
+    }).then((motivo) => {
         if (motivo) {
             $.ajax({
                 url: "../../controllers/alumnos/controller_alumnos.php",
@@ -382,21 +386,23 @@ function cancelStudent(id_student) {
                 dataType: 'JSON',
                 type: 'POST',
                 data: { action: 10, id_student: id_student, user: $user, motivo: motivo },
-                success: function(result) {
+                success: function (result) {
                     $.ajax({
                         url: "../../controllers/alumnos/controller_alumnos.php",
                         cache: false,
                         dataType: 'JSON',
                         type: 'POST',
-                        data: { action: 11, id_student: id_student},
-                        success: function(result) {   
-                        }, error: function (result){
-                            console.log(result); 
+                        data: { action: 11, id_student: id_student },
+                        success: function (result) { },
+                        error: function (result) {
+                            console.log(result);
                         }
-                    }); 
-                }, error: function (result){
+                    });
+                },
+                error: function (result) {
                     console.log(result);
-                },complete: function () {
+                },
+                complete: function () {
                     $(".loader").fadeOut("slow");
                     $("#info").removeClass("d-none");
                     listStudent();
@@ -404,14 +410,17 @@ function cancelStudent(id_student) {
                     listStudentFree();
                     listStudentCancel();
                 }
-            });            
+            });
+
             swal("Trámite cancelado!", {
                 icon: "warning",
+            }).then(() => {
+                location.reload(); // Recarga la página después de la alerta
             });
-        } else {
         }
-      });
+    });
 }
+
 
 
 function listStudentCancel() {
