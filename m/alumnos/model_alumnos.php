@@ -364,105 +364,102 @@ class alumnos
     //desarrollaod por bryam el 09/04/2024 trae todo los datos que lleva el pdf
 
     public function generatePDF($id_student)
-    {
-        $con = new DBconnection();
-        $con->openDB();
+{
+    $con = new DBconnection();
+    $con->openDB();
 
-        $pdfinfo = $con->query("SELECT CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
-                                                        a.name AS area_name,
-                                                        a.key AS key, 
-                                                        ta.description AS libera,
-                                                        DATE(ta.date) AS date
-                                                FROM students s
-                                                JOIN trace_student_areas ta ON s.id_student = ta.fk_student
-                                                JOIN areas a ON ta.fk_area = a.id_area
-                                                WHERE s.id_student = '$id_student'
-                                                ORDER BY ta.id_trace_student_area ASC;
-                                    ");
+    // Obtener el valor de fk_course del estudiante
+    $courseQuery = $con->query("SELECT fk_course FROM students WHERE id_student = '$id_student'");
+    $courseRow = pg_fetch_array($courseQuery);
+    $fk_course = $courseRow['fk_course'];
 
-        $pdfData = array();
+    $pdfinfo = $con->query("SELECT CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
+                                                    a.name AS area_name,
+                                                    a.key AS key, 
+                                                    ta.description AS libera,
+                                                    DATE(ta.date) AS date
+                                            FROM students s
+                                            JOIN trace_student_areas ta ON s.id_student = ta.fk_student
+                                            JOIN areas a ON ta.fk_area = a.id_area
+                                            WHERE s.id_student = '$id_student'
+                                            ORDER BY ta.id_trace_student_area ASC;");
 
-        while ($row = pg_fetch_array($pdfinfo)) {
-            $dat = array(
-                "full_name" => $row["full_name"],
-                "area_name" => $row["area_name"],
-                "key" => $row["key"],
-                "libera" => $row["libera"],
-                "date" => $row["date"]
-            );
-            $pdfData[] = $dat;
-        }
+    $pdfData = array();
 
-        $con->closeDB();
-
-        $pdf = new TCPDF('P', PDF_UNIT, 'A4', true, 'UTF-8', false);
-
-        // Configuración del PDF
-        $pdf->SetCreator('FDA');
-        $pdf->SetAuthor('YO');
-        $pdf->SetTitle('Student Certificate');
-        $pdf->SetSubject('Certificate for Student');
-        $pdf->SetKeywords('Certificate, Student, TCPDF');
-
-        // Configuración de márgenes
-        $pdf->SetMargins(10, 7, 10);
-        $pdf->SetFooterMargin(10);
-
-        $pdf->AddPage();
-
-        $studentData = $pdfData[0];
-
-        // Definir el contenido HTML para la tabla
-        $html = '
-                <center>
-                <img src="../../res/temp/encabezadoo.png" style="width: 900px; height: 130px;">
-                <div>
-                <p>Por este medio los abajo firmantes hacemos constar que el (la) alumno(a): ' . $studentData["full_name"] . ' del Programa de: Maestría (  ) Doctorado (  ), NO TIENE ningún ADEUDO en los departamentos o laboratorios a nuestro cargo</p>
-                </div>
-                <br></br>
-                <br></br>
-                
-                <table border="0.3" style="width: 100%;">
-                    <thead>
-                        <tr style="text-align: center;">
-                            <td>Area</td>
-                            <td>Libera</td>
-                            <td>Fecha</td>
-                            <td>Sello</td>
-                        </tr>
-                    </thead>
-                    <tbody>';
-
-                            foreach ($pdfData as $area) {
-                                $imageName = $area["key"] . ".png";
-                                $html .= '
-                                                <tr>
-                                                    <td height="60">' . $area["area_name"] . '</td>
-                                                    <td>' . $area["libera"] . '</td>
-                                                    <td>' . $area["date"] . '</td>
-                                                    <td><img src="../../res/imgs/' . $imageName . '" style="width: 50px; height: 50px;"></td>
-                                                </tr>';
-                            }
-
-                            $html .= '
-                             </tbody>
-                                 </table>
-                                </center>
-                                <div style="text-align: center;">
-                                    <p>Formato acreditado por la FDA, Santa María Tonantzintla a Fecha: ' . date("d-m-Y") . '</p>
-                                </div>
-                        ';
-
-        // Escribir el contenido HTML en el PDF
-        $pdf->SetFont('helvetica', '', 12);
-        $pdf->writeHTML($html, true, false, true, false, '');
-
-
-        $pdfContent = $pdf->Output('student_certificate.pdf', 'S');
-        $pdfPath = '../../res/temp/' . $_POST["id_student"] . '.pdf';
-        file_put_contents($pdfPath, $pdfContent);
-        $pdfUrl = '../../res/temp/' . $_POST["id_student"] . '.pdf';
-
-        return array('pdf_url' => $pdfUrl);
+    while ($row = pg_fetch_array($pdfinfo)) {
+        $dat = array(
+            "full_name" => $row["full_name"],
+            "area_name" => $row["area_name"],
+            "key" => $row["key"],
+            "libera" => $row["libera"],
+            "date" => $row["date"]
+        );
+        $pdfData[] = $dat;
     }
+
+    $con->closeDB();
+
+    $pdf = new TCPDF('P', PDF_UNIT, 'A4', true, 'UTF-8', false);
+    $pdf->SetCreator('FDA');
+    $pdf->SetAuthor('YO');
+    $pdf->SetTitle('Student Certificate');
+    $pdf->SetSubject('Certificate for Student');
+    $pdf->SetKeywords('Certificate, Student, TCPDF');
+    $pdf->SetMargins(10, 7, 10);
+    $pdf->SetFooterMargin(10);
+    $pdf->AddPage();
+
+    $studentData = $pdfData[0];
+
+    // Marcar casillas según el valor de fk_course
+    $maestriaChecked = in_array($fk_course, [1, 4, 5, 7, 9, 11]) ? 'X' : ' ';
+    $doctoradoChecked = in_array($fk_course, [2, 3, 6, 8, 10, 12]) ? 'X' : ' ';
+
+    $html = '
+        <center>
+        <img src="../../res/temp/encabezado2.png" style="width: 900px; height: 130px;">
+        <div>
+        <p>Por este medio los abajo firmantes hacemos constar que el (la) alumno(a): ' . $studentData["full_name"] . ' del Programa de: Maestría ( ' . $maestriaChecked . ' ) Doctorado ( ' . $doctoradoChecked . ' ), NO TIENE ningún ADEUDO en los departamentos o laboratorios a nuestro cargo</p>
+        </div>
+        <br></br>
+        <br></br>
+        <table border="0.3" style="width: 100%;">
+            <thead>
+                <tr style="text-align: center;">
+                    <td>Área</td>
+                    <td>Autorizó</td>
+                    <td>Fecha de Liberación</td>
+                    <td>Sello de Área</td>
+                </tr>
+            </thead>
+            <tbody>';
+
+    foreach ($pdfData as $area) {
+        $imageName = $area["key"] . ".png";
+        $html .= '<tr>
+                    <td height="60">' . $area["area_name"] . '</td>
+                    <td>' . $area["libera"] . '</td>
+                    <td>' . $area["date"] . '</td>
+                    <td><img src="../../res/imgs/' . $imageName . '" style="width: 50px; height: 50px;"></td>
+                  </tr>';
+    }
+
+    $html .= '</tbody>
+        </table>
+        </center>
+        <div style="text-align: center;">
+            <p>Formato acreditado por la FDA, Santa María Tonantzintla a Fecha: ' . date("d-m-Y") . '</p>
+        </div>';
+
+    $pdf->SetFont('helvetica', '', 12);
+    $pdf->writeHTML($html, true, false, true, false, '');
+
+    $pdfContent = $pdf->Output('student_certificate.pdf', 'S');
+    $pdfPath = '../../res/temp/' . $_POST["id_student"] . '.pdf';
+    file_put_contents($pdfPath, $pdfContent);
+    $pdfUrl = '../../res/temp/' . $_POST["id_student"] . '.pdf';
+
+    return array('pdf_url' => $pdfUrl);
+}
+
 }
