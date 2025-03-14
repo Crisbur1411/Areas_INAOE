@@ -91,7 +91,7 @@
 
 	<div class="container mt-5">
 		<div id="info"  class="d-none" style="text-align: center;" >  
-		<span style="color: black; font-weight: bold; font-size: 16px; align:left; ">USUARIOS REGISTRADOS</span><br>
+		<span style="color: black; font-weight: bold; font-size: 16px; align:left; ">RESPONSABLES DE ÁREAS</span><br>
 		<br><br>
   			<div style="text-align: center; border-bottom: 3px solid #cecece; margin-bottom: 30px; margin-top: 30px">
 				<nav class="navbar navbar-light ">
@@ -109,7 +109,7 @@
   				<div class="tab-pane fade show active" id="nav-users" role="tabpanel" aria-labelledby="nav-users-tab">
 				  <div class="tab-pane fade show active" id="nav-users" role="tabpanel" aria-labelledby="nav-users-tab">
 					<table class="table table-striped">
-						<thead style="background: #0C231E; color: white;">
+						<thead style="background: #611232; color: white;">
 							<tr>
 								<th scope="col" style="text-align:center"># REGISTRO</th>
 								<th scope="col" style="text-align:center">NOMBRE DEL USUARIO</th>

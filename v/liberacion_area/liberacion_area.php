@@ -112,7 +112,7 @@
         <div class="tab-content" id="nav-tabContent">
             <div class="tab-pane fade show active" id="nav-inProgress" role="tabpanel" aria-labelledby="nav-inProgress-tab">
                 <table class="table table-striped">
-                    <thead style="background: #0C231E; color: white;">
+                    <thead style="background: #611232; color: white;">
                         <tr>
                             <th scope="col" style="text-align:center"># REGISTRO</th>
 							<th scope="col" style="text-align:center">MATRÍCULA</th>
@@ -133,7 +133,7 @@
 
             <div class="tab-pane fade" id="nav-free" role="tabpanel" aria-labelledby="nav-free-tab">
                 <table class="table table-striped">
-                    <thead style="background: #0C231E; color: white;">
+                    <thead style="background: #611232; color: white;">
                         <tr>
                             <th scope="col" style="text-align:center"># REGISTRO</th>
 							<th scope="col" style="text-align:center">MATRÍCULA</th>
@@ -191,7 +191,7 @@
     <div class="row" aria-labelledby="nav-titlesCast-tab">
 		
 		<table class="table table-striped">
-			<thead style="background: #0C231E; color: white;">
+			<thead style="background: #611232; color: white;">
 				<tr>
 					<th scope="col" style="text-align:center">DESCRIPCIÓN</th>
 					<th scope="col" style="text-align:center">FECHA DE ANOTACIÓN</th>

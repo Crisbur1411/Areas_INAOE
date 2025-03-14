@@ -60,6 +60,8 @@ body{
 	border: 2px solid #9D2449 !important;
 }
 
+
+
 .btn-success:focus {
 	box-shadow: none !important;
 }
@@ -107,7 +109,7 @@ ul, ol {
 }
 
 .nav li a {
-  background-color:#0C231E;
+  background-color:#611232;
   color:rgb(249, 243, 243);
   text-decoration:none;
   padding:10px 12px;
@@ -118,6 +120,11 @@ ul, ol {
   background-color:#D4E6F1;
   color:rgb(255, 255, 255);
 }
+.nav.sidebar-nav li a:hover {
+  background-color: #a47c2c     !important;
+  color: white !important; /* Opcional: para asegurar que el texto sea visible */
+}
+
 
 .nav li ul {
   display:none;
@@ -194,22 +201,22 @@ ul, ol {
 }
 
 .bg-nav {
-	background: #0C231E !important;
+	background: #611232 !important;
 }
 
 #btnLogout:hover {
 	font-weight: bold;
-	color: #2874A6 !important;
+	color: #0C231E !important;
 }
 
 #btn-admin {
   text-decoration: none;
-  color: black;
+  color: rgb(255, 255, 255);
 }
 
 #btn-admin:hover {
   font-weight: bold;
-  color: #2874A6;
+  color: #0C231E;
 }
 
 /*  Estolos para los tipo de evaluacion */
@@ -294,7 +301,7 @@ ul, ol {
 }
 
 .nav a:hover {
-  color: #2874A6 !important;
+  color: #0C231E !important;
 }
 
 .nav a.active:hover {
@@ -308,7 +315,7 @@ a.active {
 }
 
 ::-moz-selection {
-  background: #2874A6cc;
+  background: #0C231Ecc;
 }
 
 ::selection {

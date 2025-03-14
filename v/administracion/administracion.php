@@ -140,7 +140,7 @@
   				<div class="tab-pane fade show active" id="nav-toSign" role="tabpanel" aria-labelledby="nav-toSign-tab">
 				  <div class="tab-pane fade show active" id="nav-titles" role="tabpanel" aria-labelledby="nav-titles-tab">
 					<table class="table table-striped">
-						<thead style="background: #2874A6; color: white;">
+						<thead style="background: #0C231E; color: white;">
 							<tr>
 								<th scope="col" style="text-align:center"># REGISTRO</th>
 								<th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>
@@ -164,7 +164,7 @@
 				<div class="tab-pane fade" id="nav-toSign2" role="tabpanel" aria-labelledby="nav-toSign2-tab">
 				  <div class="tab-pane fade show active" id="nav-titles2" role="tabpanel" aria-labelledby="nav-titles2-tab">
 					<table class="table table-striped">
-						<thead style="background: #2874A6; color: white;">
+						<thead style="background: #0C231E; color: white;">
 						<tr>
 								<th scope="col" style="text-align:center"># REGISTRO</th>
 								<th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>
@@ -185,7 +185,7 @@
   				<div class="tab-pane fade" id="nav-Readytoship" role="tabpanel" aria-labelledby="nav-Readytoship-tab">
 				  <div class="tab-pane fade show active" id="nav-titlesReadytoship" role="tabpanel" aria-labelledby="nav-titlesReadytoship-tab">
 					<table class="table table-striped">
-						<thead style="background: #2874A6; color: white;">
+						<thead style="background: #0C231E; color: white;">
 							<tr>
 							    <th scope="col" style="text-align:center"># REGISTRO</th>
 								<th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>
@@ -209,7 +209,7 @@
   				<div class="tab-pane fade" id="nav-Review" role="tabpanel" aria-labelledby="nav-Review-tab">
 				  <div class="tab-pane fade show active" id="nav-titlesReview" role="tabpanel" aria-labelledby="nav-titlesReview-tab">
 					<table class="table table-striped">
-						<thead style="background: #2874A6; color: white;">
+						<thead style="background: #0C231E; color: white;">
 							<tr>
 								<th scope="col" style="text-align:center"># REGISTRO</th>
 								<th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>
@@ -234,7 +234,7 @@
 				<div class="tab-pane fade" id="nav-Rejected" role="tabpanel" aria-labelledby="nav-Rejected-tab">
 				<div class="tab-pane fade show active" id="nav-titlesRejected" role="tabpanel" aria-labelledby="nav-titlesRejected-tab">
 					<table class="table table-striped">
-						<thead style="background: #2874A6; color: white;">
+						<thead style="background: #0C231E; color: white;">
 							<tr>
 								<th scope="col" style="text-align:center"># REGISTRO</th>
 								<th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>
@@ -261,7 +261,7 @@
 				<div class="tab-pane fade" id="nav-Cast" role="tabpanel" aria-labelledby="nav-Cast-tab">
 				<div class="tab-pane fade show active" id="nav-titlesCast" role="tabpanel" aria-labelledby="nav-titlesCast-tab">
 					<table class="table table-striped">
-						<thead style="background: #2874A6; color: white;">
+						<thead style="background: #0C231E; color: white;">
 							<tr>
 								<th scope="col" style="text-align:center"># REGISTRO</th>
 								<th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>
@@ -860,7 +860,7 @@
       <div class="modal-body">
 	  
 	  <table class="table table-striped">
-					<thead style="background: #2874A6; color: white;">
+					<thead style="background: #0C231E; color: white;">
 						<tr>
 							<th scope="col" style="text-align:center">STATUS</th>
 							<th scope="col" style="text-align:center">DESCRIPCIÓN</th>
