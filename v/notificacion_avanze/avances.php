@@ -48,7 +48,7 @@
   				<div class="tab-pane fade show active" id="nav-areas" role="tabpanel" aria-labelledby="nav-areas-tab">
 				  <div class="tab-pane fade show active" id="nav-areas" role="tabpanel" aria-labelledby="nav-areas-tab">
 					<table class="table table-striped">
-						<thead style="background: #611232; color: white;">
+						<thead style="background: #691C32; color: white;">
 							<tr>
 								<!-- <th scope="col" style="text-align:center"># REGISTRO</th>
 								<th scope="col" style="text-align:center">IDENTIFICADOR</th> -->

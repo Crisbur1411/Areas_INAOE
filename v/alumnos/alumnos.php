@@ -120,7 +120,7 @@
 
             <div class="tab-pane fade show active" id="nav-users" role="tabpanel" aria-labelledby="nav-users-tab">
                 <table class="table table-striped">
-                    <thead style="background: #611232; color: white;">
+                    <thead style="background: #691C32; color: white;">
                         <tr>
                             <th scope="col" style="text-align:center"># REGISTRO</th>
 							<th scope="col" style="text-align:center">MATRÍCULA</th>
@@ -144,7 +144,7 @@
 
             <div class="tab-pane fade" id="nav-inProgress" role="tabpanel" aria-labelledby="nav-inProgress-tab">
                 <table class="table table-striped">
-                    <thead style="background: #611232; color: white;">
+                    <thead style="background: #691C32; color: white;">
                         <tr>
                             <th scope="col" style="text-align:center"># REGISTRO</th>
 							<th scope="col" style="text-align:center">MATRÍCULA</th>
@@ -166,7 +166,7 @@
 
             <div class="tab-pane fade" id="nav-free" role="tabpanel" aria-labelledby="nav-free-tab">
                 <table class="table table-striped">
-                    <thead style="background: #611232; color: white;">
+                    <thead style="background: #691C32; color: white;">
                         <tr>
                             <th scope="col" style="text-align:center"># REGISTRO</th>
 							<th scope="col" style="text-align:center">MATRÍCULA</th>
@@ -187,7 +187,7 @@
 
             <div class="tab-pane fade" id="nav-cancel" role="tabpanel" aria-labelledby="nav-cancel-tab">
                 <table class="table table-striped">
-                    <thead style="background: #611232; color: white;">
+                    <thead style="background: #691C32; color: white;">
                         <tr>
                             <th scope="col" style="text-align:center"># REGISTRO</th>
 							<th scope="col" style="text-align:center">MATRÍCULA</th>
@@ -246,7 +246,7 @@
         <br>
     <div class="row" aria-labelledby="nav-titlesCast-tab">
 		<table class="table table-striped">
-			<thead style="background: #0C231E; color: white;">
+			<thead style="background: #691C32; color: white;">
 				<tr>
 					<th scope="col" style="text-align:center">ÁREA</th>
 					<th scope="col" style="text-align:center">FECHA DE LIBERACIÓN</th>

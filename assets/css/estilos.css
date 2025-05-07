@@ -34,30 +34,30 @@ body{
 }
 
 .btn-success {
-  background-color:#9D2449 ;
-  border: 2px solid #9D2449;
-  box-shadow: 0 0 0 0 #9D2449;
-  --bs-btn-color: #9D2449;
+  background-color:#691C32 ;
+  border: 2px solid #691C32;
+  box-shadow: 0 0 0 0 #691C32;
+  --bs-btn-color: #691C32;
   --bs-btn-bg: #fff;
-  --bs-btn-border-color: #9D2449;
+  --bs-btn-border-color: #691C32;
   --bs-btn-hover-color: #fff;
-  --bs-btn-hover-bg: #9D2449;
-  --bs-btn-hover-border-color: #9D2449;
+  --bs-btn-hover-bg: #691C32;
+  --bs-btn-hover-border-color: #691C32;
   --bs-btn-focus-shadow-rgb: 135, 212, 245;
   --bs-btn-active-color: #fff;
-  --bs-btn-active-bg: #9D2449;
-  --bs-btn-active-border-color: #9D2449;
+  --bs-btn-active-bg: #691C32;
+  --bs-btn-active-border-color: #691C32;
   --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
   --bs-btn-disabled-color: #fff;
-  --bs-btn-disabled-bg: #9D2449;
-  --bs-btn-disabled-border-color: #9D2449;
+  --bs-btn-disabled-bg: #691C32;
+  --bs-btn-disabled-border-color: #691C32;
 }
 
 .btn-success:hover {
 	font-weight: bold;
-	color: #9D2449 !important;
+	color: #691C32 !important;
 	background: #FFFFFF !important;
-	border: 2px solid #9D2449 !important;
+	border: 2px solid #691C32 !important;
 }
 
 
@@ -67,21 +67,21 @@ body{
 }
 
 .btn-primary {
-  background: #9D2449!important;
-  border: 2px solid #9D2449 !important;
+  background: #691C32!important;
+  border: 2px solid #691C32 !important;
 }
 
 .btn-primary:hover {
   /*font-weight: bold;*/
-  color: #9D2449!important;
+  color: #691C32!important;
   background: #FFFFFF !important;
-  border: 2px solid #9D2449 !important;
+  border: 2px solid #691C32 !important;
 }
 
 
 /* Estilos de crear area */
 .card-header{
-  background-color: #12322B;
+  background-color: #BC955C;
   color: white;
 }
 
@@ -109,7 +109,7 @@ ul, ol {
 }
 
 .nav li a {
-  background-color:#611232;
+  background-color:#691C32;
   color:rgb(249, 243, 243);
   text-decoration:none;
   padding:10px 12px;
@@ -201,12 +201,12 @@ ul, ol {
 }
 
 .bg-nav {
-	background: #611232 !important;
+	background: #691C32 !important;
 }
 
 #btnLogout:hover {
 	font-weight: bold;
-	color: #0C231E !important;
+	color: #691C32 !important;
 }
 
 #btn-admin {
@@ -216,7 +216,7 @@ ul, ol {
 
 #btn-admin:hover {
   font-weight: bold;
-  color: #0C231E;
+  color: #691C32;
 }
 
 /*  Estolos para los tipo de evaluacion */
@@ -301,26 +301,26 @@ ul, ol {
 }
 
 .nav a:hover {
-  color: #0C231E !important;
+  color: #691C32 !important;
 }
 
 .nav a.active:hover {
-  color: #ffffff !important;
+  color: #000000 !important;
   background: #162DBF;
 }
 
 a.active {
-  background: #12322B !important;
-  color: #ffffff !important;
+  background: #BC955C !important;
+  color: #000000 !important;
 }
 
 ::-moz-selection {
-  background: #0C231Ecc;
+  background: #691C32cc;
 }
 
 ::selection {
-  background: #12322B;
-  color: #fff;
+  background: #BC955C;
+  color: #000000;
 }
 
 

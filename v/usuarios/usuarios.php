@@ -109,7 +109,7 @@
   				<div class="tab-pane fade show active" id="nav-users" role="tabpanel" aria-labelledby="nav-users-tab">
 				  <div class="tab-pane fade show active" id="nav-users" role="tabpanel" aria-labelledby="nav-users-tab">
 					<table class="table table-striped">
-						<thead style="background: #611232; color: white;">
+						<thead style="background: #691C32; color: white;">
 							<tr>
 								<th scope="col" style="text-align:center"># REGISTRO</th>
 								<th scope="col" style="text-align:center">NOMBRE DEL USUARIO</th>

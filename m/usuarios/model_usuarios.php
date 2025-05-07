@@ -63,7 +63,7 @@ class usuarios
                                         ELSE 'Sin área asignada'
                                     END AS area_name,
                                     type_users.name AS type_name, DATE(users.date_register)  AS date,
-                                    email
+                                    users.username AS email 
                                     FROM users
                                     INNER JOIN type_users ON users.fk_type = type_users.id_type_users
                                     INNER JOIN user_area ON users.id_user = user_area.fk_user

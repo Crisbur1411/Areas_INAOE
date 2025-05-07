@@ -66,6 +66,7 @@ function listUser() {
 
 $(function() {
     var id_user = $("#user_id").data("id");
+    console.log("ID de usuario obtenido:", id_user);  // Se muestra el ID en la consola
     getUserInfo(id_user);
 
     $('#modalEdit').on('hidden.bs.modal', function (e) {
@@ -89,7 +90,9 @@ function getUserInfo(id_user) {
         },
         error: function(xhr, status, error) {
             console.error("Error al obtener datos del usuario:", status, error);
+            console.log("Respuesta del servidor:", xhr.responseText);
         }
+        
     });
 }
 
