@@ -52,37 +52,52 @@ class usuarios
     // desarrollado por BRYAM el 29/03/2024 esta función extrae los datos de la cuenta del usuario activo
 
     public function getUserInfo($id_user)
-    {
-        $con = new DBconnection();
-        $con->openDB();
+{
+    $con = new DBconnection();
+    $con->openDB();
 
-        $dataUser = $con->query("SELECT users.id_user,
-                                    CONCAT(users.name, ' ', users.surname, ' ', users.second_surname) AS full_name,
-                                    CASE
-                                        WHEN users.fk_type = type_users.id_type_users THEN areas.name
-                                        ELSE 'Sin área asignada'
-                                    END AS area_name,
-                                    type_users.name AS type_name, DATE(users.date_register)  AS date,
-                                    users.username AS email 
-                                    FROM users
-                                    INNER JOIN type_users ON users.fk_type = type_users.id_type_users
-                                    INNER JOIN user_area ON users.id_user = user_area.fk_user
-                                    INNER JOIN areas ON user_area.fk_area = areas.id_area
-                                    WHERE users.id_user = $id_user");
-        $row = pg_fetch_array($dataUser);
+    $id_user = intval($id_user); // sanitiza para seguridad
 
+    $query = "SELECT 
+                users.id_user,
+                CONCAT(users.name, ' ', users.surname, ' ', users.second_surname) AS full_name,
+                COALESCE(areas.name, 'Sin área asignada') AS area_name,
+                type_users.name AS type_name,
+                DATE(users.date_register) AS date,
+                users.username
+              FROM users
+              INNER JOIN type_users ON users.fk_type = type_users.id_type_users
+              LEFT JOIN user_area ON users.id_user = user_area.fk_user
+              LEFT JOIN areas ON user_area.fk_area = areas.id_area
+              WHERE users.id_user = $id_user";
+
+    $dataUser = $con->query($query);
+    $row = pg_fetch_array($dataUser);
+
+    if ($row) {
         $dataUser = array(
-            "id_user" => $row["id_user"],
-            "full_name" => $row["full_name"],
-            "area_name" => $row["area_name"],
-            "type_name" => $row["type_name"],
-            "date" => $row["date"],
-            "email" => $row["email"]
+            "id_user"    => $row["id_user"],
+            "full_name"  => $row["full_name"],
+            "area_name"  => $row["area_name"],
+            "type_name"  => $row["type_name"],
+            "date"       => $row["date"],
+            "username"   => $row["username"]
         );
-
-        $con->closeDB();
-        return $dataUser;
+    } else {
+        $dataUser = array(
+            "id_user"    => null,
+            "full_name"  => null,
+            "area_name"  => null,
+            "type_name"  => null,
+            "date"       => null,
+            "username"   => null
+        );
     }
+
+    $con->closeDB();
+    return $dataUser;
+}
+
 
 
 

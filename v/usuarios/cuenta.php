@@ -125,8 +125,6 @@
 	              </div>  -->
 
 				<!--desarrollado por bryam el 29/03/2024 en esta sección se muestra los datos del usuario-->
-				<?php echo "Session ID: " . $_SESSION['id_user']; ?>
-
 			<div id="user_id" data-id="<?php echo $_SESSION['id_user']; ?>" style="display: none;"></div>
 			<table class="table table-striped">
 				<thead style="background: #691C32; color: white;">

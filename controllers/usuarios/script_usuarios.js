@@ -86,7 +86,7 @@ function getUserInfo(id_user) {
             $("#area").text(result.area_name);
             $("#userNme").text(result.type_name);
             $("#fechaRegistro").text(result.date);
-            $("#correo").text(result.email);
+            $("#correo").text(result.username);
         },
         error: function(xhr, status, error) {
             console.error("Error al obtener datos del usuario:", status, error);
