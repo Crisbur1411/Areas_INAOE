@@ -337,7 +337,6 @@ function listStudentFree() {
 
 
 //desarrollado por BRYAM el 03/04/2024 funcion para general el pdf de cada alumno
-
 function printPDF(id_student) {
     $.ajax({
         url: "../../controllers/alumnos/controller_alumnos.php",
@@ -345,19 +344,31 @@ function printPDF(id_student) {
         type: 'POST',
         data: { action: 13, id_student: id_student },
         success: function(result) {
+            console.log("Respuesta recibida:", result); // Ver en consola qué regresó
+
             try {
                 var data = JSON.parse(result);
+
                 if (data.pdf_url) {
-                    window.location.href = data.pdf_url; 
+                    window.location.href = data.pdf_url;
                 } else {
-                    console.error('Error: URL de PDF no proporcionada en la respuesta JSON.');
+                    console.error('❌ Error: La respuesta JSON no contiene "pdf_url". Datos recibidos:', data);
                 }
+
             } catch (error) {
-                console.error('Error al analizar la respuesta JSON:', error);
+                console.error('❌ Error al analizar la respuesta JSON:', error);
+                console.log('Respuesta sin procesar:', result);
             }
-        }        
-    }); 
+        },
+        error: function(xhr, status, error) {
+            console.error("❌ Error en la petición AJAX.");
+            console.error("Estado:", status);
+            console.error("Error:", error);
+            console.error("Respuesta completa:", xhr.responseText);
+        }
+    });
 }
+
 
 function cancelStudent(id_student) {
     $u = document.getElementById("user");

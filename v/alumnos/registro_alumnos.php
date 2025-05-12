@@ -140,6 +140,8 @@ if (isset($_SESSION['user_name']))
 								<option value='null' selected disabled>Seleccione una opción</option>
 								<option value="1">MAESTRÍA</option>
 								<option value="2">DOCTORADO</option>
+								<option value="3">EXTERNO LICENCIATURA</option>
+								<option value="4">EXTERNO BACHILLERATO</option>
 							</select>
 						</div>	
 						<div class="col-sm-8">

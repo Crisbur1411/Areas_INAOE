@@ -56,29 +56,37 @@ class liberacionArea{
     }
 
     public function signStudent($id_student, $user){
-        $con=new DBconnection();
-        $con->openDB();
-        $descrip = 'Autorizado por: '.$user;
+    $con = new DBconnection();
+    $con->openDB();
+    $descrip = 'Autorizado por: '.$user;
 
-        session_start();
-        $fk_area  = $_SESSION["id_area"];
+    session_start();
+    $fk_area  = $_SESSION["id_area"];
 
-        $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, fk_area, status) 
-                                    VALUES (".$id_student.", '".$descrip."', NOW(), ".$fk_area.", 2) RETURNING id_trace_student_area ");
+    // Fecha actual desde PHP
+    $date = date('Y-m-d H:i:s');
 
-        $validateUpdateTurn = pg_fetch_row($updateTurn);
+    // Hash md5(id_student|user|fecha)
+    $hash_release = md5($id_student . '|' . $user . '|' . $date);
 
-        if ( $validateUpdateTurn > 0)
-        {            
-            $con->closeDB();
-            return $validateUpdateTurn[0];
-        }
-        else
-        {
-            $con->closeDB();
-            return "error"; 
-        }
+    $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, fk_area, status, hash_release) 
+                                VALUES (".$id_student.", '".$descrip."', '".$date."', ".$fk_area.", 2, '".$hash_release."') 
+                                RETURNING id_trace_student_area ");
+
+    $validateUpdateTurn = pg_fetch_row($updateTurn);
+
+    if ($validateUpdateTurn > 0)
+    {            
+        $con->closeDB();
+        return $validateUpdateTurn[0];
     }
+    else
+    {
+        $con->closeDB();
+        return "error"; 
+    }
+}
+
 
     public function listStudentFree(){
         $con=new DBconnection(); 

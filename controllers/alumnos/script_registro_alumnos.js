@@ -31,7 +31,7 @@ function courses(){
         success: function(result) {
             var addCourse = "<option value='null' selected disabled>Seleccione su área</option>";
             $.each(result, function(index, val){
-                addCourse += "<option value='"+ val.id_course +"'>"+ val.name +"</option>";
+                addCourse += "<option value='"+ val.id_academic_programs +"'>"+ val.name +"</option>";
             });            
             $("#course").html(addCourse);             
         }, error: function(result) {

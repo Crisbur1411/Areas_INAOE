@@ -15,13 +15,13 @@ class registroalumnos{
         $con=new DBconnection();
         $con->openDB();
 
-        $ar = $con->query("SELECT id_course, name FROM courses WHERE status = 1 AND type = ".$program.";");
+        $ar = $con->query("SELECT id_academic_programs, name FROM academic_programs WHERE status = 1 AND type = ".$program.";");
 
         $data = array();
 
         while($row = pg_fetch_array($ar)){
             $dat = array(
-                "id_course"=>$row["id_course"],
+                "id_academic_programs"=>$row["id_academic_programs"],
                 "name"=>$row["name"]
             );
             $data[] = $dat;
@@ -35,7 +35,7 @@ class registroalumnos{
         $con=new DBconnection();
         $con->openDB();
 
-        $studentData = $con->query("INSERT INTO students (name, surname, second_surname, control_number, email, fk_course, date_register) 
+        $studentData = $con->query("INSERT INTO students (name, surname, second_surname, control_number, email, fk_academic_programs, date_register) 
         VALUES ('".$name."','".$surname."', '".$secondsurname."','".$controlnumber."','".$email."',".$course.",NOW()) 
         RETURNING id_student");
 

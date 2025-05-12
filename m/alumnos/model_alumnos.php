@@ -18,21 +18,25 @@ class alumnos
         $con = new DBconnection();
         $con->openDB();
 
-        $dataTitle = $con->query("SELECT students.id_student, CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
-                                    students.control_number, DATE(students.date_register) AS date, courses.name AS namecourse, students.status
-                                FROM
-                                    students
-                                    INNER JOIN courses ON students.fk_course = courses.id_course   
-                                WHERE
-                                    students.status = 1
-                                    AND NOT EXISTS (
-                                        SELECT
-                                            1
-                                        FROM
-                                        trace_student_areas
-                                        WHERE
-                                        trace_student_areas.fk_student = students.id_student
-                                    ) ORDER BY students.id_student;");
+            $dataTitle = $con->query("SELECT students.id_student, 
+                                 CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
+                                 students.control_number, 
+                                 DATE(students.date_register) AS date, 
+                                 academic_programs.name AS namecourse, 
+                                 students.status
+                          FROM
+                              students
+                          INNER JOIN academic_programs 
+                              ON students.fk_academic_programs = academic_programs.id_academic_programs   
+                          WHERE
+                              students.status = 1
+                              AND NOT EXISTS (
+                                  SELECT 1
+                                  FROM trace_student_areas
+                                  WHERE trace_student_areas.fk_student = students.id_student
+                              )
+                          ORDER BY students.id_student;");
+
 
         $data = array();
 
@@ -71,24 +75,32 @@ class alumnos
     }
 
     public function turnSingAreas($id_student, $user)
-    {
-        $con = new DBconnection();
-        $con->openDB();
-        $descrip = 'Tramite iniciado por: ' . $user;
+{
+    $con = new DBconnection();
+    $con->openDB();
+    $descrip = 'Tramite iniciado por: ' . $user;
 
-        $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, status) 
-                                    VALUES (" . $id_student . ", '" . $descrip . "', NOW(), 2) RETURNING fk_student ");
+    // Fecha actual desde PHP para el hash
+    $date = date('Y-m-d H:i:s');
 
-        $validateUpdateTurn = pg_fetch_row($updateTurn);
+    // Hash md5(id_estudiante|user|fecha)
+    $hash_release = md5($id_student . '|' . $user . '|' . $date);
 
-        if ($validateUpdateTurn > 0) {
-            $con->closeDB();
-            return $validateUpdateTurn[0];
-        } else {
-            $con->closeDB();
-            return "error";
-        }
+    $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, status, hash_release) 
+                                VALUES (" . $id_student . ", '" . $descrip . "', '" . $date . "', 2, '" . $hash_release . "') 
+                                RETURNING fk_student ");
+
+    $validateUpdateTurn = pg_fetch_row($updateTurn);
+
+    if ($validateUpdateTurn > 0) {
+        $con->closeDB();
+        return $validateUpdateTurn[0];
+    } else {
+        $con->closeDB();
+        return "error";
     }
+}
+
 
     public function turnSingAreas2($id_student)
     {
@@ -196,25 +208,33 @@ class alumnos
         return $data;
     }
 
-    public function freeStudent($id_student, $user)
-    {
-        $con = new DBconnection();
-        $con->openDB();
-        $descrip = 'Trámite finalizado por ' . $user;
+public function freeStudent($id_student, $user)
+{
+    $con = new DBconnection();
+    $con->openDB();
+    $descrip = 'Trámite finalizado por ' . $user;
 
-        $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, status) 
-                                    VALUES (" . $id_student . ", '" . $descrip . "', NOW(), 3) RETURNING id_trace_student_area ");
+    // Fecha actual desde PHP para el hash
+    $date = date('Y-m-d H:i:s');
 
-        $validateUpdateTurn = pg_fetch_row($updateTurn);
+    // Hash md5(id_student|user|fecha)
+    $hash_release = md5($id_student . '|' . $user . '|' . $date);
 
-        if ($validateUpdateTurn > 0) {
-            $con->closeDB();
-            return $validateUpdateTurn[0];
-        } else {
-            $con->closeDB();
-            return "error";
-        }
+    $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, status, hash_release) 
+                                VALUES (" . $id_student . ", '" . $descrip . "', '" . $date . "', 3, '" . $hash_release . "') 
+                                RETURNING id_trace_student_area ");
+
+    $validateUpdateTurn = pg_fetch_row($updateTurn);
+
+    if ($validateUpdateTurn > 0) {
+        $con->closeDB();
+        return $validateUpdateTurn[0];
+    } else {
+        $con->closeDB();
+        return "error";
     }
+}
+
 
     public function freeStudent2($id_student)
     {
@@ -279,24 +299,32 @@ class alumnos
     }
 
     public function cancelStudent($id_student, $user, $motivo)
-    {
-        $con = new DBconnection();
-        $con->openDB();
-        $descrip = 'Trámite cancelado por ' . $user . ' por el motivo: ' . $motivo;
+{
+    $con = new DBconnection();
+    $con->openDB();
+    $descrip = 'Trámite cancelado por ' . $user . ' por el motivo: ' . $motivo;
 
-        $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, status) 
-                                    VALUES (" . $id_student . ", '" . $descrip . "', NOW(), 4) RETURNING id_trace_student_area ");
+    // Fecha actual desde PHP para el hash
+    $date = date('Y-m-d H:i:s');
 
-        $validateUpdateTurn = pg_fetch_row($updateTurn);
+    // Hash md5(id_student|user|fecha)
+    $hash_release = md5($id_student . '|' . $user . '|' . $date);
 
-        if ($validateUpdateTurn > 0) {
-            $con->closeDB();
-            return $validateUpdateTurn[0];
-        } else {
-            $con->closeDB();
-            return "error";
-        }
+    $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, status, hash_release) 
+                                VALUES (" . $id_student . ", '" . $descrip . "', '" . $date . "', 4, '" . $hash_release . "') 
+                                RETURNING id_trace_student_area ");
+
+    $validateUpdateTurn = pg_fetch_row($updateTurn);
+
+    if ($validateUpdateTurn > 0) {
+        $con->closeDB();
+        return $validateUpdateTurn[0];
+    } else {
+        $con->closeDB();
+        return "error";
     }
+}
+
 
     public function cancelStudent2($id_student)
     {
@@ -368,10 +396,12 @@ class alumnos
     $con = new DBconnection();
     $con->openDB();
 
-    // Obtener el valor de fk_course del estudiante
-    $courseQuery = $con->query("SELECT fk_course FROM students WHERE id_student = '$id_student'");
-    $courseRow = pg_fetch_array($courseQuery);
-    $fk_course = $courseRow['fk_course'];
+    // Obtener el valor del curso del estudiante
+ 
+
+    $academicProgramQuery = $con->query("SELECT c.type FROM students s JOIN academic_programs c ON s.fk_academic_programs = c.id_academic_programs WHERE s.id_student = '$id_student'");
+    $academicProgramRow = pg_fetch_array($academicProgramQuery);
+    $type = $academicProgramRow['type'];
 
     $pdfinfo = $con->query("SELECT CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
                                                     a.name AS area_name,
@@ -412,14 +442,16 @@ class alumnos
     $studentData = $pdfData[0];
 
     // Marcar casillas según el valor de fk_course
-    $maestriaChecked = in_array($fk_course, [1, 4, 5, 7, 9, 11]) ? 'X' : ' ';
-    $doctoradoChecked = in_array($fk_course, [2, 3, 6, 8, 10, 12]) ? 'X' : ' ';
+    $maestriaChecked = in_array($type, [1]) ? 'X' : ' ';
+    $doctoradoChecked = in_array($type, [2]) ? 'X' : ' ';
+    $externolicenciaturaChecked = in_array($type, [3]) ? 'X' : ' ';
+    $externobachilleratoChecked = in_array($type, [4]) ? 'X' : ' ';
 
     $html = '
         <center>
         <img src="../../res/temp/encabezado2.png" style="width: 900px; height: 130px;">
         <div>
-        <p>Por este medio los abajo firmantes hacemos constar que el (la) alumno(a): ' . $studentData["full_name"] . ' del Programa de: Maestría ( ' . $maestriaChecked . ' ) Doctorado ( ' . $doctoradoChecked . ' ), NO TIENE ningún ADEUDO en los departamentos o laboratorios a nuestro cargo</p>
+        <p>Por este medio los abajo firmantes hacemos constar que el (la) alumno(a): ' . $studentData["full_name"] . ' del Programa de: Maestría ( ' . $maestriaChecked . ' ) Doctorado ( ' . $doctoradoChecked . ' ) Externo de Licenciatura ( ' . $externolicenciaturaChecked . ') Externo de Bachillerato ( ' . $externobachilleratoChecked . ') , NO TIENE ningún ADEUDO en los departamentos o laboratorios a nuestro cargo.</p>
         </div>
         <br></br>
         <br></br>
