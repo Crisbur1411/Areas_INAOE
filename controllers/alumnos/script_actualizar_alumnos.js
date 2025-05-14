@@ -33,7 +33,7 @@ function getCourses(){
             //console.log(result);
             var addArea = "<option value='null' selected disabled>Seleccione su área</option>";
             $.each(result, function(index, val){
-                addArea += "<option value='"+ val.id_course +"'>"+ val.name +"</option>";
+                addArea += "<option value='"+ val.id_academic_programs +"'>"+ val.name +"</option>";
             });            
             $("#course").html(addArea);   
                    
@@ -54,7 +54,7 @@ function coursesAds(){
         success: function(result) {
             var addArea = "";
             $.each(result, function(index, val){
-                addArea += "<option value='"+ val.id_course +"'>"+ val.name +"</option>";
+                addArea += "<option value='"+ val.id_academic_programs +"'>"+ val.name +"</option>";
             });
             //console.log(result[0].name);
             var stringP = result[0].name.toString();
@@ -148,40 +148,56 @@ function updateStudent(){
     var expEmail = /^[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
     var validEmail = expEmail.test(email);
    
-    if(validEmail == true){
-        $.ajax({
-            url: "../../controllers/alumnos/controller_actualizar_alumnos.php",
-            cache: false,
-            dataType: 'JSON',
-            type: 'POST',
-            data: { action: 4, id_student: id_student, name: name, surname: surname, secondsurname: secondsurname, email: email, controlnumber: controlnumber, course: course },
-            success: function(result) {
-                history.go(-1);         
-            }, error: function(result) {
-                console.log(result);
-                bootbox.confirm({
-                    title: "<h4>Error al actualizar el alumno</h4>",
-                    message: "<h5>Ocurrio un error al hacer la actualización del registro del alumno.</h5>",
-                    buttons: {
-                        cancel: {
-                            label: 'Cancelar',
-                            className: 'btn-secondary'
-                        },
-                        confirm: {
-                            label: 'Aceptar',
-                            className: 'btn-success'
-                        }
+    if (validEmail == true) {
+    $.ajax({
+        url: "../../controllers/alumnos/controller_actualizar_alumnos.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        data: { 
+            action: 4, 
+            id_student: id_student, 
+            name: name, 
+            surname: surname, 
+            secondsurname: secondsurname, 
+            email: email, 
+            controlnumber: controlnumber, 
+            course: course 
+        },
+        success: function(result) {
+            history.go(-1);         
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error("Estado de la petición:", textStatus);
+            console.error("Error lanzado:", errorThrown);
+            console.error("Código de estado HTTP:", jqXHR.status);
+            console.error("Texto de estado HTTP:", jqXHR.statusText);
+            console.error("Respuesta completa del servidor:", jqXHR.responseText);
+
+            bootbox.confirm({
+                title: "<h4>Error al actualizar el alumno</h4>",
+                message: "<h5>Ocurrió un error al hacer la actualización del registro del alumno.<br><br><b>Error:</b> " 
+                         + textStatus + " - " + errorThrown + "</h5>",
+                buttons: {
+                    cancel: {
+                        label: 'Cancelar',
+                        className: 'btn-secondary'
                     },
-                    closeButton: false,
-                    callback: function(result) {
-                        if (result == false) {
-                            $(".loader").fadeOut("slow")
-                            history.go(-1);
-                        }
+                    confirm: {
+                        label: 'Aceptar',
+                        className: 'btn-success'
                     }
-                });
-            }
-        });
+                },
+                closeButton: false,
+                callback: function(result) {
+                    if (result == false) {
+                        $(".loader").fadeOut("slow")
+                        history.go(-1);
+                    }
+                }
+            });
+        }
+    });
     }else
         bootbox.confirm({
             title: "<h4>Error al actualizar alumno</h4>",

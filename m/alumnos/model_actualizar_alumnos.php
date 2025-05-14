@@ -15,13 +15,13 @@ class actualizar_alumnos{
         $con=new DBconnection();
         $con->openDB();
 
-        $ar = $con->query("SELECT id_course, name FROM courses WHERE status = 1 AND type = ".$program.";");
+        $ar = $con->query("SELECT id_academic_programs, name FROM academic_programs WHERE status = 1 AND type = ".$program.";");
 
         $data = array();
 
         while($row = pg_fetch_array($ar)){
             $dat = array(
-                "id_course"=>$row["id_course"],
+                "id_academic_programs"=>$row["id_academic_programs"],
                 "name"=>$row["name"]
             );
             $data[] = $dat;
@@ -34,15 +34,15 @@ class actualizar_alumnos{
         $con=new DBconnection();
         $con->openDB();
 
-        $dataCourseAd = $con->query("SELECT courses.id_course, courses.name FROM students
-                                        INNER JOIN courses ON students.fk_course = courses.id_course
+        $dataCourseAd = $con->query("SELECT academic_programs.id_academic_programs AS id_academic_programs, academic_programs.name FROM students
+                                        INNER JOIN academic_programs ON students.fk_academic_programs = academic_programs.id_academic_programs
                                         WHERE id_student = ". $id_student);
 
         $data = array();
 
         while($row = pg_fetch_array($dataCourseAd)){
             $dat = array(
-                "id_course" =>$row["id_course"],
+                "id_academic_programs" =>$row["id_academic_programs"],
                 "name" =>$row["name"]
             );
             $data[] = $dat;
@@ -100,7 +100,7 @@ class actualizar_alumnos{
         $con=new DBconnection();
         $con->openDB();
 
-        $updateData = $con->query("UPDATE students SET name = '".$name."', surname = '" .$surname."', second_surname = '" .$secondsurname."', email = '" .$email."', control_number = '" .$controlnumber."', fk_course = " .$course."
+        $updateData = $con->query("UPDATE students SET name = '".$name."', surname = '" .$surname."', second_surname = '" .$secondsurname."', email = '" .$email."', control_number = '" .$controlnumber."', fk_academic_programs = " .$course."
          WHERE id_student= ". $id_student ." RETURNING id_student ");
 
         $validateupdateData = pg_fetch_row($updateData);
