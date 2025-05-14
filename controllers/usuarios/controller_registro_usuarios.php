@@ -30,7 +30,7 @@
 		public function saveUserEdit(){
     		$this->registrousuarios= new registrousuarios();
 			
-	      	$data = $this->registrousuarios->updateUserEdit($_POST["user_id"],$_POST["area"],$_POST["name"], $_POST["surname"], $_POST["secondsurname"], $_POST["email"], $_POST["type_user"], $_POST["username"]);
+	      	$data = $this->registrousuarios->updateUserEdit($_POST["user_id"],$_POST["area"],$_POST["name"], $_POST["surname"], $_POST["secondsurname"], $_POST["email"], $_POST["type_user"]);
 	      	echo json_encode($data);
 		}
 

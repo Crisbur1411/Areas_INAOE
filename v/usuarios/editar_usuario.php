@@ -135,11 +135,7 @@
 						</div>
 					</div>	
 					<div class="form-group">
-						<div class="row">						
-							<div class="col-sm-4">
-								<label for="username"><span class="text-danger">* </span>Usuario</label>
-								<input type="text" class="form-control" id="user-name">
-							</div>		
+						<div class="row">							
 						
 							<div class="col-sm-4">
 								<label for="areas"><span class="text-danger">* </span>Área</label>

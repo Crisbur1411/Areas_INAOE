@@ -72,7 +72,7 @@ class registrousuarios{
             return "error";
         }
     }
-    public function updateUserEdit($id_user, $area, $name, $surname, $second_surname, $email, $type_user, $username)
+    public function updateUserEdit($id_user, $area, $name, $surname, $second_surname, $email, $type_user)
 {
     $con = new DBconnection();
     $con->openDB();
@@ -80,8 +80,7 @@ class registrousuarios{
     try{
 
     $updateUser = $con->query("UPDATE users SET name = '".$name."', surname = '".$surname."', 
-        second_surname = '".$second_surname."', email = '".$email."', fk_type = ".$type_user.", 
-        username = '".$username."' WHERE id_user = ".$id_user);
+        second_surname = '".$second_surname."', username = '".$email."', fk_type = ".$type_user." WHERE id_user = ".$id_user);
 
     if ($updateUser) {
         $updateAreaUser = $con->query("UPDATE public.user_area

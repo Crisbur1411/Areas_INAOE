@@ -5,6 +5,8 @@ function preCargarDatos() {
     var formData = new FormData();
     formData.append('action', 6);
     formData.append('id_usuario', userID);
+        console.log("ID de usuario obtenido:", userID);  // Se muestra el ID en la consola
+
 
     $.ajax({
         url: "../../controllers/usuarios/controller_usuarios.php",
@@ -22,7 +24,6 @@ function preCargarDatos() {
                 $('#surname').val(userData.surname);
                 $('#second_surname').val(userData.second_surname);
                 $('#email').val(userData.email);
-                $('#user-name').val(userData.username);
                 $('#type-users').val(userData.fk_type);
                 $('#areas').val(userData.fk_area);
             } else {
@@ -67,7 +68,6 @@ function saveUserEdit() {
     var secondsurname = $("#second_surname").val().trim();
     var email = $("#email").val().trim();
 
-    var username = $("#user-name").val().trim();
 
     var area = $("#areas").val()
     var type_user = $("#type-users").val();
@@ -88,11 +88,7 @@ function saveUserEdit() {
         $("#email").focus();
         return 0;
     }
-    if (username.length == 0) {
-        alert("Tiene que escribir el usuario")
-        $("#user-name").focus();
-        return 0;
-    }
+
 
     if (area == null) {
         alert("Tiene que elegir el área")
@@ -118,7 +114,7 @@ function saveUserEdit() {
             cache: false,
             dataType: 'JSON',
             type: 'POST',
-            data: { action: 5, user_id: userID, area: area, name: name, surname: surname, secondsurname: secondsurname, email: email, type_user: type_user, username: username },
+            data: { action: 5, user_id: userID, area: area, name: name, surname: surname, secondsurname: secondsurname, email: email, type_user: type_user },
             success: function (result) {
 
                 Swal.fire({
@@ -134,20 +130,20 @@ function saveUserEdit() {
                     }
                 });
 
-            }, error: function (result) {
-                console.log(result);
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'No se pudo Actualizar Usuario',
-                    text: 'Usuario Actualziado correctamente',
-                    timer: 10000,
-                    timerProgressBar: true,
-                }).then((result) => {
-                    if (result.dismiss === Swal.DismissReason.timer) {
-                        history.go(-1);
+            }, error: function (jqXHR, textStatus, errorThrown) {
+    console.log("Error en Ajax:");
+    console.log("Estado: " + textStatus);
+    console.log("Error: " + errorThrown);
+    console.log("Respuesta completa: ", jqXHR);
 
-                    }
-                });
+    Swal.fire({
+        icon: 'error',
+        title: 'Error al actualizar usuario',
+        html: `<b>Estado:</b> ${textStatus}<br><b>Error:</b> ${errorThrown}`,
+        footer: 'Revisa consola para más detalles',
+        timer: 10000,
+        timerProgressBar: true,
+    });
             }
         });
     } else
