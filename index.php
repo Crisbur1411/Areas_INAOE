@@ -29,15 +29,27 @@ else
             <div class="contNav">
                 <div class="contGob">
                     <a class="navbar-brand" href="https://www.gob.mx/"><img
-                        src="https://framework-gb.cdn.gob.mx/landing/img/logoheader.svg" width="120" height="40"
+                        src="https://framework-gb.cdn.gob.mx/landing/img/logoheader.svg" width="110" height="35"
                         alt="PÃƒÂ¡gina de inicio, Gobierno de MÃƒÂ©xico"></a>
                 </div>
                
             <div class="secciones">
                 <li><a href="https://www.gob.mx/tramites">Trámites</a></li>
                 <li><a href="https://www.gob.mx/gobierno">Gobierno</a></li>
-                <a href="https://www.gob.mx/busqueda"><span class="sr-only">Búsqueda</span><i
-                            class="icon-search"></i></a>
+                <a href="https://www.gob.mx/busqueda"><span class="sr-only">Búsqueda</span><i class="icon-search"></i></a>
+            </div>
+            </div>
+        </div>
+    </nav>
+	<nav class="navbarINAOE">
+        <div class="container-fluid">
+            <div class="contNav">
+                <div class="seccionesINAOE">
+                    <li><a href="https://www.inaoep.mx/">INAOEP</a></li>
+                </div>
+               
+            <div class="seccionesEstatus">
+                <li><a href="#">Estatus de Solicitud</a></li>
             </div>
             </div>
         </div>
@@ -79,8 +91,10 @@ else
 				</form>
 			</div>
 		</div>
+<br><br><br>
 
-	
+	<?php include __DIR__ . '/v/components/footer/footer.php'; ?>
+
 <?php  
 }
 ?>

@@ -109,7 +109,7 @@ class usuarios
         $con = new DBconnection();
         $con->openDB();
 
-        $dataUser = $con->query("SELECT users.id_user,users.name, users.surname, users.second_surname,users.username, users.fk_type,user_area.fk_area
+        $dataUser = $con->query("SELECT users.id_user,users.name, users.surname, users.second_surname,users.email,users.username, users.fk_type,user_area.fk_area
     FROM users
     INNER JOIN type_users ON users.fk_type = type_users.id_type_users
     INNER JOIN user_area ON users.id_user = user_area.fk_user
@@ -123,7 +123,8 @@ class usuarios
             "name" => $row["name"],
             "surname" => $row["surname"],
             "second_surname" => $row["second_surname"],
-            "email" => $row["username"],
+            "email" => $row["email"],
+            "username" => $row["username"],
             "fk_type" => $row["fk_type"],
             "fk_area" => $row["fk_area"]
         );

@@ -34,10 +34,91 @@
     text-decoration: none;
     color: white;
     list-style-type: none;
-   
 }
 
 .secciones li a {
     color: white; 
 }
 
+
+
+/* contenido */
+.navbarINAOE {
+    background-color: #A57F2C;
+    --bs-navbar-brand-color: #fff;
+    height: 60px;
+}
+
+.seccionesINAOE {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    text-decoration: none;
+}
+
+.seccionesINAOE li  {
+    text-decoration: none;
+    color: white;
+    list-style-type: none;
+    font-size: 20px;
+   
+}
+
+.seccionesINAOE li a {
+    color: white; 
+}
+
+/* contenido */
+.seccionesEstatus {
+    background-color: #A57F2C;
+    --bs-navbar-brand-color: #fff;
+    height: 60px;
+}
+
+.seccionesEstatus {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 25px;
+    text-decoration: none;
+}
+
+.seccionesEstatus li  {
+    text-decoration: none;
+    color: white;
+    list-style-type: none;
+   
+}
+
+.seccionesEstatus li a {
+    color: white; 
+}
+
+
+.footer {
+    background-color: #eaeaea;
+    padding: 30px 0;
+    margin-top: 40px;
+    border-top: 3px solid #c00;
+}
+.footer h4 {
+    font-weight: bold;
+}
+.footer a {
+    color: #333;
+    text-decoration: none;
+}
+.footer a:hover {
+    text-decoration: underline;
+}
+.footer p, .footer small {
+    color: #555;
+}
+
+
+footer {
+    background-image: url('https://framework-gb.cdn.gob.mx/assets/patterns/fondogobmx.svg');
+    background-repeat: repeat-x;
+    background-position: bottom;
+}
