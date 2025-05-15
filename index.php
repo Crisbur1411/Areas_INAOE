@@ -93,8 +93,7 @@ else
 		</div>
 <br><br><br>
 
-	<?php include __DIR__ . '/v/components/footer/footer.php'; ?>
-
+<?php include './v/components/footer/footer.php'; ?>
 <?php  
 }
 ?>

@@ -34,6 +34,8 @@ if (isset($_SESSION['user_name']))
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
 	<link rel="stylesheet" href="../../assets/css/estilos.css">
 	<link rel="stylesheet" href="../../assets/css/sidebar.css">
+		<link rel="stylesheet" href="./assets/css/navLogin.css">
+
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
@@ -177,6 +179,10 @@ if (isset($_SESSION['user_name']))
 			</div>	
 		</div>		
 	</div>
+	
+<br><br><br><br><br><br><br><br>
+	<?php include '../components/footer/footer.php'; ?>
+
 
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
