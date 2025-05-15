@@ -110,19 +110,19 @@ ul, ol {
 
 .nav li a {
   background-color:#691C32;
-  color:rgb(249, 243, 243);
+  color:#691C32;
   text-decoration:none;
   padding:10px 12px;
   display:block;
 }
 
 .nav li a:hover {
-  background-color:#D4E6F1;
-  color:rgb(255, 255, 255);
+  background-color:#ffffff;
+  color:#691C32
 }
 .nav.sidebar-nav li a:hover {
-  background-color: #a47c2c     !important;
-  color: white !important; /* Opcional: para asegurar que el texto sea visible */
+  background-color: #ffffff     !important;
+  color: #691C32 !important; /* Opcional: para asegurar que el texto sea visible */
 }
 
 
@@ -300,18 +300,16 @@ ul, ol {
   color: #000;
 }
 
-.nav a:hover {
-  color: #691C32 !important;
-}
+
 
 .nav a.active:hover {
-  color: #000000 !important;
+  color: #ffffff !important;
   background: #162DBF;
 }
 
 a.active {
-  background: #BC955C !important;
-  color: #000000 !important;
+  background: #A57F2C !important;
+  color: #ffffff !important;
 }
 
 ::-moz-selection {
@@ -319,8 +317,8 @@ a.active {
 }
 
 ::selection {
-  background: #BC955C;
-  color: #000000;
+  background: #A57F2C;
+  color: #ffffff;
 }
 
 
@@ -330,7 +328,7 @@ a.active {
   min-width: 250px; /* Set a default minimum width */
   margin-left: -125px; /* Divide value of min-width by 2 */
   background-color: #333; /* Black background color */
-  color: #fff; /* White text color */
+  color: #ff0000; /* White text color */
   text-align: center; /* Centered text */
   border-radius: 2px; /* Rounded borders */
   padding: 16px; /* Padding */
