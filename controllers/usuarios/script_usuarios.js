@@ -66,7 +66,7 @@ function listUser() {
 
 $(function() {
     var id_user = $("#user_id").data("id");
-    console.log("ID de usuario obtenido:", id_user);  // Se muestra el ID en la consola
+    console.log("ID de obtenido:", id_user);  // Se muestra el ID en la consola
     getUserInfo(id_user);
 
     $('#modalEdit').on('hidden.bs.modal', function (e) {
@@ -95,6 +95,7 @@ function getUserInfo(id_user) {
         
     });
 }
+
 
 // desarrollado por BRYAM el 01/04/2024 esta función hace que el modal se muestre al precionar el botón de editar, también una función para que se agregue un correo valido
 

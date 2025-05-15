@@ -34,15 +34,36 @@ function preCargarDatos() {
                 });
             }
         },
-        error: function (result) {
-            console.log("Hubo un error al realizar la solicitud");
+        error: function (xhr, status, error) {
+    console.error("❌ Error al realizar la solicitud:");
+    console.error("📄 Estado de la petición: " + status);
+    console.error("⚠️ Error devuelto por el servidor: " + error);
 
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Ocurrió un error al realizar la solicitud'
-            });
-        }
+    let mensajeError = "";
+
+    if (xhr.status === 0) {
+        mensajeError = "No se pudo conectar con el servidor. Verifica tu conexión de red.";
+    } else if (xhr.status >= 400 && xhr.status < 500) {
+        mensajeError = "Error en la solicitud (Código " + xhr.status + "). Verifica los datos enviados.";
+    } else if (xhr.status >= 500) {
+        mensajeError = "Error en el servidor (Código " + xhr.status + "). Intenta más tarde o contacta al administrador.";
+    } else {
+        mensajeError = "Error desconocido (Código " + xhr.status + ").";
+    }
+
+    // Mostrar respuesta devuelta por el servidor si existe
+    if (xhr.responseText) {
+        console.log("📨 Respuesta recibida del servidor:", xhr.responseText);
+    }
+
+    // Mostrar alerta bonita con SweetAlert
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        html: mensajeError,
+        footer: (xhr.responseText) ? "<pre style='text-align:left; max-height:150px; overflow:auto;'>" + xhr.responseText + "</pre>" : null
+    });
+}
     });
 }
 
