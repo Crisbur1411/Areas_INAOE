@@ -141,7 +141,7 @@ function saveUserEdit() {
                 Swal.fire({
                     icon: 'success',
                     title: 'Éxito',
-                    text: 'Usuario Actualziado correctamente',
+                    text: 'Usuario Actualizado correctamente',
                     timer: 1000,
                     timerProgressBar: true,
                 }).then((result) => {

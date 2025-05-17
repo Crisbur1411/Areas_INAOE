@@ -86,14 +86,7 @@ function deleteTypeUser(id_user) {
 }
 
 function newTypeUser() {
-    bootbox.alert({
-        title: "<h4>Actualización</h4>",
-        message: "<h5>Para realizar esta acción es necesario actualizar el sistema.</h5>",
-        
-        closeButton: true,
-        callback: function(result) {            
-        }
-    });    
+    location.href = "../tipo_usuarios/registro_tipo_usuario.php";  
 }
 
 function checkFileExist(urlToFile) {
