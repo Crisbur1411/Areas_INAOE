@@ -106,14 +106,15 @@ if (isset($_SESSION['user_name']))
 			<br>
 			<div class="form-group">
 				<div class="row">
+					<div class="col-sm-4">
+							<label for="key"><span class="text-danger">* </span>Clave de usuario</label>
+							<input type="text" class="form-control" id="key" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">
+						</div>
 						<div class="col-sm-4">
 							<label for="name"><span class="text-danger">* </span>Nombre</label>
 							<input type="text" class="form-control"  id="name" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">
 						</div>
-						<div class="col-sm-4">
-							<label for="key"><span class="text-danger">* </span>Clave de usuario</label>
-							<input type="text" class="form-control" id="key" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">
-						</div>
+						
 						<div class="col-sm-4">
 							<label for="details"><span class="text-danger">* </span>Descripción</label>
 							<input type="text" class="form-control" id="details" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">

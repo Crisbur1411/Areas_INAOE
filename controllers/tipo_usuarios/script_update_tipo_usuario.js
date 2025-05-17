@@ -98,7 +98,7 @@ function saveTypeUserEdit() {
                     timerProgressBar: true,
                 }).then((result) => {
                     if (result.dismiss === Swal.DismissReason.timer) {
-                        history.go(-1);
+                    location.href = "../tipo_usuarios/tipo_usuarios.php";         
 
                     }
                 });

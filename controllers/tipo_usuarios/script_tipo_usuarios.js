@@ -99,7 +99,7 @@ function saveTypeUser() {
             type: 'POST',
             data: { action: 2, name: name, key: key, details: details},
             success: function (result) {
-            history.go(-1);         
+            location.href = "../tipo_usuarios/tipo_usuarios.php";         
             }, error: function (result) {
                 console.log(result);
                 bootbox.confirm({
@@ -238,6 +238,13 @@ function checkFileExist(urlToFile) {
         return true; 
     }
 }
+
+
+// cargar los datos de la tabla
+$(document).ready(function(){
+    listTypeUsers(); // o como se llame tu función
+});
+
 
 $("#exit").click(function() {
     //loader.fadeIn();
