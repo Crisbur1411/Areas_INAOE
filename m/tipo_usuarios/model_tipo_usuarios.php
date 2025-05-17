@@ -108,6 +108,36 @@ class tipoUsuarios{
         return "error";
         }
     }
+
+
+
+    public function deleteTypeUser($id_type_users){
+
+        try{
+
+        
+        $con=new DBconnection();
+        $con->openDB();
+
+        $typeUserDataDelete = ("UPDATE type_users SET status = 0 WHERE id_type_users = '$id_type_users'");
+        $updateResult = $con->query($typeUserDataDelete);
+
+        $con->closeDB();
+
+
+
+        if ($updateResult )
+        {
+           $response = ['status' => 'success', 'message' => 'Usuario eliminado correctamente'];
+        } else {
+            $response = ['status' => 'error', 'message' => 'Error al eliminar el usuario'];
+        }
+        }
+        catch (Exception $e) {
+            $response = ['status' => 'error', 'message' => 'Error al eliminar el usuario: ' . $e->getMessage()];
+        }
+        return $response;
+    }
     
 }
 ?>

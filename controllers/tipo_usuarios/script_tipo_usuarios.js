@@ -49,7 +49,7 @@ function listTypeUsers() {
                 + "<th style='text-align:center'>"+val.name+"</a></th>"                 
                 + "<th style='text-align:center'>"+val.details+"</th>"
                 + "<th style='text-align:center'><button type='button' class='btn btn-secondary btn-sm' id='btn-edit' title='Click para editar' onclick='editTypeUser("+val.id_type_users+")'>"+'<i class="fas fa-edit"></i>'+"</button></th>"
-                + "<th style='text-align:center'><button type='button' class='btn btn-danger btn-sm' id='btn-details' id-type-user='"+val.id_type_users+"' title='Click para eliminar' onclick='deleteTypeUser("+val.id_type_user+")'>"+'<i class="fas fa-trash"></i>'+"</button></th>"
+                + "<th style='text-align:center'><button type='button' class='btn btn-danger btn-sm' id='btn-details' id-type-user='"+val.id_type_users+"' title='Click para eliminar' onclick='deleteTypeUser("+val.id_type_users+")'>"+'<i class="fas fa-trash"></i>'+"</button></th>"
                 + "</tr>";
                 }
             });
@@ -155,15 +155,65 @@ function saveTypeUser() {
 
 
 
-function deleteTypeUser(id_user) {
-    bootbox.alert({
-        title: "<h4>Actualización</h4>",
-        message: "<h5>Para realizar esta acción es necesario actualizar el sistema.</h5>",
-        
-        closeButton: true,
-        callback: function(result) {            
+function deleteTypeUser(id_type_users) {
+    console.log(id_type_users)
+    
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esta acción eliminará el tipo de usuario. ¿Estás seguro de continuar?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "../../controllers/tipo_usuarios/controller_tipo_usuarios.php",
+                cache: false,
+                dataType: 'JSON',
+                type: 'POST',
+                data: { action: 5, id_type_users: id_type_users },
+                success: function(result) {
+                    console.log(result)
+                    if (result.status == "success") {
+
+                        
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: 'Tipo de usuario eliminado correctamente',
+                            timer: 1000,
+                            timerProgressBar: true,
+                        }).then((result) => {
+                            if (result.dismiss === Swal.DismissReason.timer) {
+                                location.reload();
+
+                            }
+                          });
+                        
+
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Ocurrió un error al eliminar el tipo de usuario'
+                        });
+                    }
+
+                },
+                error: function (result) {
+                    console.log(result); 
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ocurrió un error al realizar la solicitud'
+                    });
+                }
+            });
         }
-    });    
+    }); 
 }
 
 // Redirigir a otra página

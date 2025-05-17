@@ -36,8 +36,18 @@
 			$data = $this->tipoUsuarios->saveTypeUserEdit($_POST['id_type_users'], $_POST['name'], $_POST['key'], $_POST['details']);
 			echo($data);
 		}
-		}
 
+
+		public function deleteTypeUser(){
+			$this->tipoUsuarios= new tipoUsuarios();
+			$data = $this->tipoUsuarios->deleteTypeUser($_POST['id_type_users']);
+			echo json_encode($data);
+
+
+
+
+		}
+	}
 
 
     
@@ -53,6 +63,8 @@
 	     	$obj->getTypeUserInfo();
 	    }if ($_POST["action"]==4){
 	     	$obj->saveTypeUserEdit();
+	    }if ($_POST["action"]==5){
+	     	$obj->deleteTypeUser();
 	    }
 	}
  ?>
