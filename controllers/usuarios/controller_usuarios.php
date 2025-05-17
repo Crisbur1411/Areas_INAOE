@@ -24,12 +24,21 @@ class usuariosController
 	}
 
 // desarrollado por BRYAM el 29/03/2024 esta funcion llama al la funcion getUserInfo y convierte el array en JSON
-	public function getUserInfo()
-	{
-		$this->usuarios = new usuarios();
-		$dataUser = $this->usuarios->getUserInfo($_POST["id_user"]);
-		echo json_encode($dataUser);
-	}
+public function getUserInfo()
+{
+    if (!isset($_POST["id_user"])) {
+        echo json_encode([
+            "status" => "error",
+            "message" => "Parámetro id_user no recibido."
+        ]);
+        return;
+    }
+
+    $this->usuarios = new usuarios();
+    $dataUser = $this->usuarios->getUserInfo($_POST["id_user"]);
+    echo json_encode($dataUser);
+}
+
 
 	public function getUserInfoById()
 	{

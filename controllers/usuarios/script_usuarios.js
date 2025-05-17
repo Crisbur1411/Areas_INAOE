@@ -66,7 +66,6 @@ function listUser() {
 
 $(function() {
     var id_user = $("#user_id").data("id");
-    console.log("ID de obtenido:", id_user);  // Se muestra el ID en la consola
     getUserInfo(id_user);
 
     $('#modalEdit').on('hidden.bs.modal', function (e) {
@@ -150,6 +149,14 @@ function checkFileExist(urlToFile) {
         return true; 
     }
 }
+
+
+
+// cargar los datos de la tabla
+$(document).ready(function(){
+    listUser();
+});
+
 
 $("#exit").click(function() {
     //loader.fadeIn();

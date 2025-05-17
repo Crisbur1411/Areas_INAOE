@@ -28,7 +28,7 @@ function deleteUser( key) {
                             icon: 'success',
                             title: 'Éxito',
                             text: 'Área eliminada correctamente',
-                            timer: 2000,
+                            timer: 1000,
                             timerProgressBar: true,
                         }).then((result) => {
                             if (result.dismiss === Swal.DismissReason.timer) {
