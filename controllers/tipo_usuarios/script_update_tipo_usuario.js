@@ -51,3 +51,73 @@ document.addEventListener('DOMContentLoaded', function () {
     preCargarDatosTypeuser();
 
 });
+
+
+
+
+function saveTypeUserEdit() {
+
+    var userID = sessionStorage.getItem('id_type_users');
+    var name = $("#name").val().trim();
+    var key = $("#key").val().trim();
+    var details = $("#details").val().trim();
+
+    if (name.length == 0) {
+        alert("Tiene que escribir el nombre")
+        $("#name").focus();
+        return 0;
+    }
+    if (key.length == 0) {
+        alert("Tiene que escribir la clave")
+        $("#key").focus();
+        return 0;
+    }
+
+    if (details.length == 0) {
+        alert("Tiene que escribir los detalles")
+        $("#details").focus();
+        return 0;
+    }
+
+
+
+    if (name.length > 0 && key.length > 0 && details.length > 0) {
+        $.ajax({
+            url: "../../controllers/tipo_usuarios/controller_tipo_usuarios.php",
+            cache: false,
+            dataType: 'JSON',
+            type: 'POST',
+            data: { action: 4, id_type_users: userID, name: name, key: key, details: details},
+            success: function (result) {
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: 'Tipo de Usuario Actualizado correctamente',
+                    timer: 1000,
+                    timerProgressBar: true,
+                }).then((result) => {
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        history.go(-1);
+
+                    }
+                });
+
+            }, error: function (jqXHR, textStatus, errorThrown) {
+    console.log("Error en Ajax:");
+    console.log("Estado: " + textStatus);
+    console.log("Error: " + errorThrown);
+    console.log("Respuesta completa: ", jqXHR);
+
+    Swal.fire({
+        icon: 'error',
+        title: 'Error al actualizar el tipo de usuario',
+        html: `<b>Estado:</b> ${textStatus}<br><b>Error:</b> ${errorThrown}`,
+        footer: 'Revisa consola para más detalles',
+        timer: 10000,
+        timerProgressBar: true,
+    });
+            }
+        });
+    } 
+}

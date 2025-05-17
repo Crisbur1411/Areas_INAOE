@@ -123,7 +123,7 @@
 					<br><br>	
 					<div class="form-group" align="center">
 						<button type="button" class="btn btn-secondary w-20" id="cancel" onClick="history.go(-1);" >Cancelar</button>
-						<button type="button" class="btn btn-success w-20" id="save-exam" onclick="saveUserEdit();">Guardar</button>
+						<button type="button" class="btn btn-success w-20" id="save-exam" onclick="saveTypeUserEdit();">Guardar</button>
 					</div>				
 				</div>	
 			</div>		

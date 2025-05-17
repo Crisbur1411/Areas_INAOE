@@ -84,6 +84,30 @@ class tipoUsuarios{
         return "error";
         }
     }
+
+
+    public function saveTypeUserEdit($id_type_users, $name, $key, $details){
+
+        $con=new DBconnection();
+        $con->openDB();
+
+        $typeUserDataEdit = $con->query("UPDATE type_users SET name = '".$name."', key = '".$key."', details = '".$details."' WHERE id_type_users = ".$id_type_users." RETURNING id_type_users;");
+
+        $validateTypeUserDataEdit = pg_fetch_row($typeUserDataEdit);
+
+        if ($validateTypeUserDataEdit > 0)
+        {
+            $con->closeDB();
+            return $validateTypeUserDataEdit[0];
+        }
+
+        else
+        {
+            
+        $con->closeDB();
+        return "error";
+        }
+    }
     
 }
 ?>

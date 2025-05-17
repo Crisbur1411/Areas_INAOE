@@ -28,7 +28,19 @@
 			echo json_encode($data);
 		
 		}
-    }
+
+
+
+		public function saveTypeUserEdit(){
+			$this->tipoUsuarios= new tipoUsuarios();
+			$data = $this->tipoUsuarios->saveTypeUserEdit($_POST['id_type_users'], $_POST['name'], $_POST['key'], $_POST['details']);
+			echo($data);
+		}
+		}
+
+
+
+    
 
     $obj = new tipoUsuariosController();
 
@@ -39,6 +51,8 @@
 	     	$obj->saveTypeUser();
 	    }if ($_POST["action"]==3){
 	     	$obj->getTypeUserInfo();
+	    }if ($_POST["action"]==4){
+	     	$obj->saveTypeUserEdit();
 	    }
 	}
  ?>
