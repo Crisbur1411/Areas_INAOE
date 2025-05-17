@@ -36,6 +36,26 @@ class tipoUsuarios{
 
 
 
+    public function getTypeUserInfo($id_type_users){
+
+        $con=new DBconnection(); 
+        $con->openDB();
+
+        $dataTypeUser = $con->query("SELECT id_type_users, name, key, details FROM type_users WHERE id_type_users = $id_type_users;");
+
+        $row =  pg_fetch_array($dataTypeUser);
+
+        $dataTypeUser = array(
+            "id_type_users"=>$row["id_type_users"],
+            "name"=>$row["name"],
+            "key"=>$row["key"],
+            "details"=>$row["details"]
+        );
+        $con->closeDB();
+        return array("status" => 200, "data" => $dataTypeUser);
+    }
+
+
 
     public function saveTypeUser($name, $key, $details){
 

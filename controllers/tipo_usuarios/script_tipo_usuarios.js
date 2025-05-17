@@ -48,8 +48,8 @@ function listTypeUsers() {
                 + "<th style='text-align:center'>"+val.key+"</th>"
                 + "<th style='text-align:center'>"+val.name+"</a></th>"                 
                 + "<th style='text-align:center'>"+val.details+"</th>"
-                + "<th style='text-align:center'><button type='button' class='btn btn-secondary btn-sm' id='btn-edit' title='Click para editar' onclick='editTypeUser("+val.id_type_user+")'>"+'<i class="fas fa-edit"></i>'+"</button></th>"
-                + "<th style='text-align:center'><button type='button' class='btn btn-danger btn-sm' id='btn-details' id-type-user='"+val.id_type_user+"' title='Click para eliminar' onclick='deleteTypeUser("+val.id_type_user+")'>"+'<i class="fas fa-trash"></i>'+"</button></th>"
+                + "<th style='text-align:center'><button type='button' class='btn btn-secondary btn-sm' id='btn-edit' title='Click para editar' onclick='editTypeUser("+val.id_type_users+")'>"+'<i class="fas fa-edit"></i>'+"</button></th>"
+                + "<th style='text-align:center'><button type='button' class='btn btn-danger btn-sm' id='btn-details' id-type-user='"+val.id_type_users+"' title='Click para eliminar' onclick='deleteTypeUser("+val.id_type_user+")'>"+'<i class="fas fa-trash"></i>'+"</button></th>"
                 + "</tr>";
                 }
             });
@@ -148,16 +148,12 @@ function saveTypeUser() {
 }
 
 
-function editTypeUser(id_user) {
-    bootbox.alert({
-        title: "<h4>Actualización</h4>",
-        message: "<h5>Para realizar esta acción es necesario actualizar el sistema.</h5>",
-        
-        closeButton: true,
-        callback: function(result) {            
-        }
-    });
-}
+
+
+
+
+
+
 
 function deleteTypeUser(id_user) {
     bootbox.alert({
@@ -168,6 +164,13 @@ function deleteTypeUser(id_user) {
         callback: function(result) {            
         }
     });    
+}
+
+// Redirigir a otra página
+
+function editTypeUser(id_type_users){
+    sessionStorage.setItem("id_type_users", id_type_users)
+    location.href = "../tipo_usuarios/actualizar_tipo_usuario.php?dc="+id_type_users;  
 }
 
 function newTypeUser() {
