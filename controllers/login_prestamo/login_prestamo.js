@@ -24,7 +24,7 @@ $(document).ready(function() {
 
 function logout() {
     $.ajax({
-        url: "../../controllers/signin/controller_login.php",
+        url: "../../controllers/login_prestamo/controller_login_prestamo.php",
         cache: false,
         type: 'POST',
         data: { action: 2 },
@@ -88,7 +88,7 @@ $("#login-form").submit(function(event) {
                                 }
                             });
                         }
-                        if(response == 1)
+                        if(response == 4)
                         {
                             /*bootbox.confirm({
                                 title: "<h4>Información no registrada</h4>",
@@ -114,7 +114,7 @@ $("#login-form").submit(function(event) {
                                     }
                                 }
                             });*/
-                            location.href = "../../v/alumnos/alumnos.php";
+                            location.href = "../../v/prestamo/prestamo.php";
                         } 
                         
                         
