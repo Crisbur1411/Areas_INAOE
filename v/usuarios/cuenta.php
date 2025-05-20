@@ -97,7 +97,7 @@
 
 	<div class="container mt-5">
 		<div id="info"  class="d-none" style="text-align: center;" >  
-		<span style="color: black; font-weight: bold; font-size: 16px; align:left; ">Mi cuenta</span><br>
+		<span style="color: black; font-weight: bold; font-size: 16px; align:left; ">MI CUENTA</span><br>
 		<br><br>
   			<!--<div style="text-align: center; border-bottom: 3px solid #cecece; margin-bottom: 30px; margin-top: 30px">
 				<nav class="navbar navbar-light ">

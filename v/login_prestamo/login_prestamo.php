@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <?php 
-include_once 'core/Config.php';
-include_once 'core/Router.php';
-include_once 'core/Controller.php'; 
+include_once '../../core/Config.php';
+include_once '../../core/Router.php';
+include_once '../../core/Controller.php'; 
 session_start();
 if(isset($_SESSION['user_name']))
 {
@@ -14,10 +14,10 @@ else
 	?>
 <head>
 	<meta charset="UTF-8">
-	<title>Sistema de Libración de áreas</title>
-	<link rel="stylesheet" href="assets/css/bootstrap.min.css">
-	<link rel="stylesheet" href="assets/css/estilos.css">
-	<link rel="stylesheet" href="./assets/css/navLogin.css">
+	<title>Liberación de Prestamos</title>
+	<link rel="stylesheet" href="../../assets/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../../assets/css/estilos.css">
+	<link rel="stylesheet" href="../../assets/css/navLogin.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 	<script src= "https://code.jquery.com/jquery-3.6.0.min.js"  integrity= "sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="  crossorigin="anonymous">
     </script>
@@ -50,8 +50,7 @@ else
                 </div>
                
             <div class="seccionesEstatus">
-                <li><a href="v/validacion_proceso/validateProcess.php">ESTATUS DE SOLICITUD</a></li>
-				<li><a href="v/login_prestamo/login_prestamo.php">REALIZAR PRESTAMO</a></li>
+                <li><a href="../../index.php">INICIO</a></li>
             </div>
             </div>
         </div>
@@ -59,11 +58,11 @@ else
 <div class="containerLogin">
 			<div style="width: 50%; margin: auto; margin-top: 10vh;">
 				<form id="login-form" style="background-color: with; border: 2px solid black;">
-					<h4 class="text-center" style="background:  with; color: black; padding: 10px;">Inicio de sesión</h4>
+				<!--<h4 class="text-center" style="background:  with; color: black; padding: 10px;">Inicio de sesión</h4> -->
 
 					<div align="center" style="padding-top: 10px;">
 						<!--/<img src="assets/images/siste_4.png" style="max-width:100%;width: 300px; height:100px; align:center">-->
-						<h4 style="color:black; padding-top: 10px">Sistema de Libración de áreas</h4>
+						<h4 style="color:black; padding-top: 10px">Asignación de Prestamos</h4>
 
 					</div>
 
@@ -72,7 +71,7 @@ else
 							<div style="padding: 50px; padding-top: 20px;">
 								<div class="input-group mb-3">
 									<span class="input-group-text" id="basic-addon1"><i class="fa-solid fa-user"></i></span>
-									<input type="text" class="form-control" maxlength="50" id="username" placeholder="Nombre de usuario">
+									<input type="text" class="form-control" maxlength="50" id="email" placeholder="Nombre de usuario">
 								</div>
 								<div class="input-group mb-3">
 									<span class="input-group-text" id="basic-addon1"><i class="fa-solid fa-lock"></i></span>
@@ -95,7 +94,7 @@ else
 		</div>
 <br><br><br>
 
-<?php include './v/components/footer/footer.php'; ?>
+<?php include '../../v/components/footer/footer.php'; ?>
 <?php  
 }
 ?>
@@ -104,7 +103,7 @@ else
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.3.2/bootbox.min.js"></script>
-	<script src="controllers/signin/script_login.js"></script>
+	<script src="../../controllers/login_prestamo/login_prestamo.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/all.min.js" integrity="sha512-6PM0qYu5KExuNcKt5bURAoT6KCThUmHRewN3zUFNaoI6Di7XJPTMoT6K0nsagZKk2OB4L7E3q1uQKHNHd4stIQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 	<!-- <script src="../../controllers/signatureDocument/script_signature.js"></script> -->
