@@ -60,16 +60,22 @@
 							<?php if ($_SESSION['type'] == 3): ?>
 							<li><a class="dropdown-item" href="../liberacion_area/liberacion_area.php">Liberación del área</a></li>
 							<?php endif; ?>
-                <li><a class="dropdown-item " id="navbarDropdown1" href="../usuarios/cuenta.php" role="menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="ctrl-control  h5 text-white text-align-right" id="username" style="font-size: 13px;"><i class="fas fa-user" aria-hidden="true"></i>
-                            <?php
-                            echo $_SESSION['name'];
-                            ?>
-                            <i class="fa-solid fa-caret-down"></i></a></span>
-                    <ul>
-                        
-                        <li><a id='btnLogout'><span class="ctrl-control  h6 text-white">Cerrar Sesión</span></a></li>
-                    </ul>
-                </li>
+                <li><a class="dropdown-item" id="navbarDropdown1" href="../usuarios/cuenta.php">
+                                <span class="ctrl-control h5 text-align-right" id="username" style="font-size: 13px;">
+                                    <i class="fas fa-user"></i>
+                                    <?php echo $_SESSION['name']; ?>
+                                    <i class="fa-solid fa-caret-down"></i>
+                                </span>
+                                </a>
+
+                            <ul>
+                            <li>
+                            <a id="btnLogout" href="#">
+                                <span class="ctrl-control h6">Cerrar Sesión</span>
+                            </a>
+                            </li>                            
+                        </ul>
+                        </li>
             </ul>
 
         </nav>
@@ -124,12 +130,14 @@
                     </div>
                 </div>
                 <br>
-                <button type="button" class="btn btn-success w-20" onclick="newArea()">Crear</button>
                 <button type="button" class="btn btn-secondary w-20" onclick="cancelNewArea()">cancelar</button>
+                <button type="button" class="btn btn-success w-20" onclick="newArea()">Crear</button>
 
             </div>
         </div>
 </div>
+<br><br>
+<?php include '../components/footer/footer.php'; ?>
 
 
 

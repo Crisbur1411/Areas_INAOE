@@ -58,15 +58,21 @@
 							<?php if ($_SESSION['type'] == 3): ?>
 							<li><a class="dropdown-item" href="../liberacion_area/liberacion_area.php">Liberación del área</a></li>
 							<?php endif; ?>
-                        <li><a class="dropdown-item " id="navbarDropdown1" href="../usuarios/cuenta.php" role="menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="ctrl-control  h5 text-white text-align-right" id="username" style="font-size: 13px;"><i class="fas fa-user" aria-hidden="true"></i>
-                                    <?php
-                                    echo $_SESSION['name'];
-                                    ?>
-                                    <i class="fa-solid fa-caret-down"></i></a></span>
+                        <li><a class="dropdown-item" id="navbarDropdown1" href="../usuarios/cuenta.php">
+                                <span class="ctrl-control h5 text-align-right" id="username" style="font-size: 13px;">
+                                    <i class="fas fa-user"></i>
+                                    <?php echo $_SESSION['name']; ?>
+                                    <i class="fa-solid fa-caret-down"></i>
+                                </span>
+                                </a>
+
                             <ul>
-                                
-                                <li><a id='btnLogout'><span class="ctrl-control  h6 text-white">Cerrar Sesión</span></a></li>
-                            </ul>
+                            <li>
+                            <a id="btnLogout" href="#">
+                                <span class="ctrl-control h6">Cerrar Sesión</span>
+                            </a>
+                            </li>                            
+                        </ul>
                         </li>
                     </ul>
 
@@ -108,7 +114,7 @@
 			<div class="tab-content" id="nav-tabContent">
   				<div class="tab-pane fade show active" id="nav-users" role="tabpanel" aria-labelledby="nav-users-tab">
 				  <div class="tab-pane fade show active" id="nav-users" role="tabpanel" aria-labelledby="nav-users-tab">
-					<table class="table table-striped">
+					<table class="table table-striped table-bordered">
 						<thead style="background: #2967B2; color: white;">
 							<tr>
 								<th scope="col" style="text-align:center"># REGISTRO</th>
@@ -126,7 +132,7 @@
 
 				<!--desarrollado por bryam el 29/03/2024 en esta sección se muestra los datos del usuario-->
 			<div id="user_id" data-id="<?php echo $_SESSION['id_user']; ?>" style="display: none;"></div>
-			<table class="table table-striped">
+			<table class="table table-striped table-bordered">
 				<thead style="background: #691C32; color: white;">
 					<tr>
 						<th scope="col" style="text-align:center">Nombre completo</th>
@@ -187,8 +193,7 @@
 	</div>
 
 	
-	<br><br><br><br><br><br><br><br>
-
+	<br><br>
 	<?php include '../components/footer/footer.php'; ?>
 
 

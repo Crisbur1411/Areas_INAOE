@@ -11,6 +11,8 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
 	<link rel="stylesheet" href="../../assets/css/estilos.css">
     <link rel="stylesheet" href="../../assets/css/sidebar.css">
+    	<link rel="stylesheet" href="../../assets/css/navINAOE.css">
+
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
@@ -95,7 +97,43 @@
                     </div>
 
                 </div>
+                
+                
             </div>
+            
+        </div>
+        
+
+    </div>
+    <div class="container-fluid">
+            <div class="contNav">
+                <div class="contGob">
+                    <a class="navbar-brand" href="https://www.gob.mx/"><img
+                        src="https://framework-gb.cdn.gob.mx/landing/img/logoheader.svg" width="110" height="35"
+                        alt="PÃƒÂ¡gina de inicio, Gobierno de MÃƒÂ©xico"></a>
+                </div>
+               
+            <div class="secciones">
+                <li><a href="https://www.gob.mx/tramites">Trámites</a></li>
+                <li><a href="https://www.gob.mx/gobierno">Gobierno</a></li>
+                <a href="https://www.gob.mx/busqueda"><span class="sr-only">Búsqueda</span><i class="fa fa-search" style="color: white;"></i></a>
+
+            </div>
+            </div>
+        </div>
+    </nav>
+    <nav class="navbarINAOE">
+        <div class="container-fluid">
+            <div class="contNav">
+                <div class="seccionesINAOE">
+                    <li><a href="https://www.inaoep.mx/">INAOEP</a></li>
+                </div>
+               
+            <div class="seccionesEstatus">
+                <li><a>Liberación de no adeudo</a></li>
+            </div>
+            </div>
+        </div>
     </nav>
 <div class="container mt-5">
     <div id="info" class="d-none" style="text-align: center;">
@@ -128,7 +166,7 @@
         <div class="tab-content" id="nav-tabContent">
 
             <div class="tab-pane fade show active" id="nav-users" role="tabpanel" aria-labelledby="nav-users-tab">
-                <table class="table table-striped">
+            <table class="table table-striped table-bordered">
                     <thead style="background: #691C32; color: white;">
                         <tr>
                             <th scope="col" style="text-align:center"># REGISTRO</th>
@@ -152,7 +190,7 @@
             </div>
 
             <div class="tab-pane fade" id="nav-inProgress" role="tabpanel" aria-labelledby="nav-inProgress-tab">
-                <table class="table table-striped">
+            <table class="table table-striped table-bordered">
                     <thead style="background: #691C32; color: white;">
                         <tr>
                             <th scope="col" style="text-align:center"># REGISTRO</th>
@@ -174,7 +212,7 @@
             </div>
 
             <div class="tab-pane fade" id="nav-free" role="tabpanel" aria-labelledby="nav-free-tab">
-                <table class="table table-striped">
+                <table class="table table-striped table-bordered">
                     <thead style="background: #691C32; color: white;">
                         <tr>
                             <th scope="col" style="text-align:center"># REGISTRO</th>
@@ -195,7 +233,7 @@
             </div>
 
             <div class="tab-pane fade" id="nav-cancel" role="tabpanel" aria-labelledby="nav-cancel-tab">
-                <table class="table table-striped">
+                <table class="table table-striped table-bordered">
                     <thead style="background: #691C32; color: white;">
                         <tr>
                             <th scope="col" style="text-align:center"># REGISTRO</th>
@@ -219,7 +257,7 @@
 </div>
 
 
-<br><br><br><br><br><br><br><br>
+<br><br>
 
 	<?php include '../components/footer/footer.php'; ?>
 
@@ -259,7 +297,7 @@
         </div>
         <br>
     <div class="row" aria-labelledby="nav-titlesCast-tab">
-		<table class="table table-striped">
+		<table class="table table-striped table-bordered">
 			<thead style="background: #691C32; color: white;">
 				<tr>
 					<th scope="col" style="text-align:center">ÁREA</th>

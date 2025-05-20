@@ -235,6 +235,9 @@ ul, ol {
   color: #691C32;
 }
 
+
+
+
 /*  Estolos para los tipo de evaluacion */
 
 .cc-selector input{
@@ -312,30 +315,54 @@ ul, ol {
     width: 90%;
 }
 
+
+
 .nav a {
-  color: #000;
+  background-color: #FFFFFF;
+  color: #691C32;
+  border: 2px solid #691C32;
+  padding: 8px 16px;
+  margin-right: 5px;
+  text-decoration: none;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  border: 1px solid #691C32 !important ;
+
 }
 
+/* Hover del nav link */
+.nav a:hover {
+  background-color: #691C32;
+  color: #FFFFFF;
+  border: 2px solid #691C32;
+  font-weight: bold;
+}
 
+/* Activo */
+.nav a.active {
+  background-color: #691C32 !important; 
+  color: #FFFFFF !important;
+  border: 2px solid #691C32 ;
+  font-weight: bold !important;
+}
 
+/* Hover sobre activo */
 .nav a.active:hover {
-  color: #ffffff !important;
-  background: #162DBF;
+  background-color: #691C32;
+  color: #FFFFFF;
+  border: 2px solid #691C32;
 }
 
-a.active {
-  background: #A57F2C !important;
-  color: #ffffff !important;
+/* Selección de texto (opcional, para que quede igual) */
+::selection {
+  background: #A57F2C;
+  color: #000000;
 }
 
 ::-moz-selection {
   background: #691C32cc;
 }
 
-::selection {
-  background: #A57F2C;
-  color: #ffffff;
-}
 
 
 

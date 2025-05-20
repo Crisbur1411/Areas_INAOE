@@ -139,7 +139,7 @@
 			<!--<div class="tab-content" id="nav-tabContent">
   				<div class="tab-pane fade show active" id="nav-toSign" role="tabpanel" aria-labelledby="nav-toSign-tab">
 				  <div class="tab-pane fade show active" id="nav-titles" role="tabpanel" aria-labelledby="nav-titles-tab">
-					<table class="table table-striped">
+					<table class="table table-striped table-bordered">
 						<thead style="background: #691C32; color: white;">
 							<tr>
 								<th scope="col" style="text-align:center"># REGISTRO</th>
@@ -163,7 +163,7 @@
 				</div>
 				<div class="tab-pane fade" id="nav-toSign2" role="tabpanel" aria-labelledby="nav-toSign2-tab">
 				  <div class="tab-pane fade show active" id="nav-titles2" role="tabpanel" aria-labelledby="nav-titles2-tab">
-					<table class="table table-striped">
+					<table class="table table-striped table-bordered">
 						<thead style="background: #691C32; color: white;">
 						<tr>
 								<th scope="col" style="text-align:center"># REGISTRO</th>
@@ -184,7 +184,7 @@
 				</div>
   				<div class="tab-pane fade" id="nav-Readytoship" role="tabpanel" aria-labelledby="nav-Readytoship-tab">
 				  <div class="tab-pane fade show active" id="nav-titlesReadytoship" role="tabpanel" aria-labelledby="nav-titlesReadytoship-tab">
-					<table class="table table-striped">
+					<table class="table table-striped table-bordered">
 						<thead style="background: #691C32; color: white;">
 							<tr>
 							    <th scope="col" style="text-align:center"># REGISTRO</th>
@@ -208,7 +208,7 @@
 				</div>
   				<div class="tab-pane fade" id="nav-Review" role="tabpanel" aria-labelledby="nav-Review-tab">
 				  <div class="tab-pane fade show active" id="nav-titlesReview" role="tabpanel" aria-labelledby="nav-titlesReview-tab">
-					<table class="table table-striped">
+					<table class="table table-striped table-bordered">
 						<thead style="background: #691C32; color: white;">
 							<tr>
 								<th scope="col" style="text-align:center"># REGISTRO</th>
@@ -233,7 +233,7 @@
 				</div>
 				<div class="tab-pane fade" id="nav-Rejected" role="tabpanel" aria-labelledby="nav-Rejected-tab">
 				<div class="tab-pane fade show active" id="nav-titlesRejected" role="tabpanel" aria-labelledby="nav-titlesRejected-tab">
-					<table class="table table-striped">
+					<table class="table table-striped table-bordered">
 						<thead style="background: #691C32; color: white;">
 							<tr>
 								<th scope="col" style="text-align:center"># REGISTRO</th>
@@ -260,7 +260,7 @@
 				</div>
 				<div class="tab-pane fade" id="nav-Cast" role="tabpanel" aria-labelledby="nav-Cast-tab">
 				<div class="tab-pane fade show active" id="nav-titlesCast" role="tabpanel" aria-labelledby="nav-titlesCast-tab">
-					<table class="table table-striped">
+					<table class="table table-striped table-bordered">
 						<thead style="background: #691C32; color: white;">
 							<tr>
 								<th scope="col" style="text-align:center"># REGISTRO</th>
@@ -859,7 +859,7 @@
 	  
       <div class="modal-body">
 	  
-	  <table class="table table-striped">
+	  <table class="table table-striped table-bordered">
 					<thead style="background: #691C32; color: white;">
 						<tr>
 							<th scope="col" style="text-align:center">STATUS</th>

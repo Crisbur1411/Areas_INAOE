@@ -66,15 +66,21 @@ if (isset($_SESSION['user_name']))
 							<?php if ($_SESSION['type'] == 3): ?>
 							<li><a class="dropdown-item" href="../liberacion_area/liberacion_area.php">Liberación del área</a></li>
 							<?php endif; ?>
-                        <li><a class="dropdown-item " id="navbarDropdown1" href="../usuarios/cuenta.php" role="menu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="ctrl-control  h5 text-white text-align-right" id="username" style="font-size: 13px;"><i class="fas fa-user" aria-hidden="true"></i>
-                                    <?php
-                                    echo $_SESSION['name'];
-                                    ?>
-                                    <i class="fa-solid fa-caret-down"></i></a></span>
-                            <ul>
+                        <li><a class="dropdown-item" id="navbarDropdown1" href="../usuarios/cuenta.php">
+                                <span class="ctrl-control h5 text-align-right" id="username" style="font-size: 13px;">
+                                    <i class="fas fa-user"></i>
+                                    <?php echo $_SESSION['name']; ?>
+                                    <i class="fa-solid fa-caret-down"></i>
+                                </span>
+                                </a>
 
-                                <li><a id='btnLogout'><span class="ctrl-control  h6 text-white">Cerrar Sesión</span></a></li>
-                            </ul>
+                            <ul>
+                            <li>
+                            <a id="btnLogout" href="#">
+                                <span class="ctrl-control h6">Cerrar Sesión</span>
+                            </a>
+                            </li>                            
+                        </ul>
                         </li>
                     </ul>
 
@@ -161,7 +167,7 @@ if (isset($_SESSION['user_name']))
 		</div>		
 	</div>
 
-<br><br><br><br><br><br><br><br>
+<br><br>
 	<?php include '../components/footer/footer.php'; ?>
 
 

@@ -68,7 +68,7 @@
         <div class="tab-content" id="nav-tabContent">
 
             <div class="tab-pane fade show active" id="nav-inProgress" role="tabpanel" aria-labelledby="nav-inProgress-tab">
-                <table class="table table-striped">
+                <table class="table table-striped table-bordered">
                     <thead style="background: #691C32; color: white;">
                         <tr>
                             <th scope="col" style="text-align:center"># REGISTRO</th>
@@ -95,8 +95,7 @@
 
 
 
-<br><br><br><br><br><br><br><br>
-
+<br><br>
 	<?php include '../components/footer/footer.php'; ?>
 
 	
@@ -135,7 +134,7 @@
         </div>
         <br>
     <div class="row" aria-labelledby="nav-titlesCast-tab">
-		<table class="table table-striped">
+		<table class="table table-striped table-bordered">
 			<thead style="background: #691C32; color: white;">
 				<tr>
 					<th scope="col" style="text-align:center">ÁREA</th>
