@@ -17,6 +17,22 @@ body{
  
 }
 
+.gov-style-label {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: #691C32; /* granate oscuro */
+  color: #FFFFFF; /* blanco */
+  font-weight: 600;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  border-radius: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  user-select: none; /* para que no se seleccione tan fácil */
+}
+
+
+
+
 
 .loader {
   position: fixed;

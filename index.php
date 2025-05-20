@@ -36,7 +36,8 @@ else
             <div class="secciones">
                 <li><a href="https://www.gob.mx/tramites">Trámites</a></li>
                 <li><a href="https://www.gob.mx/gobierno">Gobierno</a></li>
-                <a href="https://www.gob.mx/busqueda"><span class="sr-only">Búsqueda</span><i class="icon-search"></i></a>
+                <a href="https://www.gob.mx/busqueda"><span class="sr-only">Búsqueda</span><i class="fa fa-search" style="color: white;"></i></a>
+
             </div>
             </div>
         </div>
@@ -49,7 +50,7 @@ else
                 </div>
                
             <div class="seccionesEstatus">
-                <li><a href="#">Estatus de Solicitud</a></li>
+                <li><a href="v/validacion_proceso/validateProcess.php">Estatus de Solicitud</a></li>
             </div>
             </div>
         </div>
