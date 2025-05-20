@@ -72,8 +72,9 @@
                     <thead style="background: #691C32; color: white;">
                         <tr>
                             <th scope="col" style="text-align:center"># REGISTRO</th>
-                            <th scope="col" style="text-align:center">MATRÍCULA</th>
                             <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>
+                            <th scope="col" style="text-align:center">CORREO</th>
+                            <th scope="col" style="text-align:center">MATRÍCULA</th>
                             <th scope="col" style="text-align:center">TOTAL DE ÁREAS LIBERADAS</th>
                             <th scope="col" style="text-align:center">DETALLES</th>
                         </tr>

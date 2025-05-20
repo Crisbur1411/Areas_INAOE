@@ -21,7 +21,8 @@ public function listStudentInProgress($email)
 
     $dataR = $con->query("SELECT students.id_student, 
                                 CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
-                                students.control_number, 
+                                students.control_number,
+                                students.email, 
                                 COUNT(trace_student_areas.fk_area) AS areas_count,                                      
                                 students.status
                             FROM 
@@ -35,6 +36,7 @@ public function listStudentInProgress($email)
                                 students.id_student, 
                                 CONCAT(students.name, ' ', students.surname, ' ', students.second_surname),
                                 students.control_number,
+                                students.email,
                                 students.status
                             ORDER BY 
                                 students.id_student;
@@ -46,6 +48,7 @@ public function listStudentInProgress($email)
         $dat = array(
             "id_student" => $row["id_student"],
             "full_name" => $row["full_name"],
+            "email" => $row["email"],
             "control_number" => $row["control_number"],
             "areas_count" => $row["areas_count"],
             "status" => $row["status"]

@@ -85,8 +85,9 @@ function listStudentInProgress() {
 
                     table += "<tr>"
                         + "<th style='text-align:center'>" + val.id_student + "</th>"
-                        + "<th style='text-align:center'>" + val.control_number + "</th>"
                         + "<th style='text-align:center'>" + val.full_name + "</th>"
+                        + "<th style='text-align:center'>" + val.email + "</th>"
+                        + "<th style='text-align:center'>" + val.control_number + "</th>"
                         + "<th style='text-align:center'>" + val.areas_count + "</th>"
                         + "<th style='text-align:center'>"
                         + "<button class='btn btn-info btn-sm' onClick='showRegisterAreas(" + val.id_student + ")'>Detalles</button>"
