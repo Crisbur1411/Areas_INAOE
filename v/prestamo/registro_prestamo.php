@@ -117,24 +117,27 @@ if (isset($_SESSION['user_name']))
 				<div class="row">
 					<div class="col-sm-4">
 							<label for="student"><span class="text-danger">* </span>Estudiante</label>
-							<input type="text" class="form-control" id="student" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">
+							<select name="student" id="student" class="form-control">
+								<option value="null" selected disabled>Seleccione al Estudiante</option>
+							</select>
 						</div>
 						<div class="col-sm-4">
 							<label for="description"><span class="text-danger">* </span>Descripción de Préstamo</label>
 							<input type="text" class="form-control"  id="description" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">
 						</div>
-						
-						<div class="col-sm-4">
-							<label for="fk_employee"><span class="text-danger">* </span>Autorizo Préstamo</label>
-							<input type="text" class="form-control" id="fk_employee" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">
-						</div>					
-					</div>
+                        <div class="col-sm-4">
+                    <label for="employee"><span class="text-danger">* </span>Autorizo Préstamo</label>
+                    <select name="employee" id="employee" class="form-control" disabled>
+                        <option value="null" selected disabled>Seleccione al Empleado</option>
+                    </select>
+                </div>
+
 				</div>
 
 				<br><br>	
 				<div class="form-group" align="center">
 					<button type="button" class="btn btn-secondary w-20" id="cancel" onClick="history.go(-1);" >Cancelar</button>
-					<button type="button" class="btn btn-success w-20" id="save-exam" onclick="saveTypeUser();">Guardar</button>
+					<button type="button" class="btn btn-success w-20" id="save-exam" onclick="savePrestamo();">Guardar</button>
 				</div>				
 			</div>	
 		</div>		
@@ -153,6 +156,6 @@ if (isset($_SESSION['user_name']))
 	<script src="../../assets/js/sidebar.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/all.min.js" integrity="sha512-6PM0qYu5KExuNcKt5bURAoT6KCThUmHRewN3zUFNaoI6Di7XJPTMoT6K0nsagZKk2OB4L7E3q1uQKHNHd4stIQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	<script src="../../controllers/signin/script_login.js"></script>	
-	<script src="../../controllers/tipo_usuarios/script_tipo_usuarios.js"></script>
+	<script src="../../controllers/prestamo/script_prestamo.js"></script>
 </body>
 </html>

@@ -62,34 +62,36 @@ $("#login-form").submit(function(event) {
     event.preventDefault();
     var email = $("#email").val();
     var password = $("#password").val();  
-     
-    if(email != '' || password != '' ) {
-                $.ajax({
-                    url: "../../controllers/login_prestamo/controller_login_prestamo.php",
-                    cache: false,
-                    type: 'POST',
-                    data: { action:1 , email: email, password: password },
-                    success: function(response){
-                        console.log("login-form ->"+response);
-                        if(response == "no exit")
-                        {
-                             bootbox.alert({
-                                closeButton: false,
-                                title: 'Error en la información de acceso. ',
-                                message: 'Favor de verificar el usuario y contraseña.',
-                                closeButton: false,
-                                backdrop: true,
-                                onEscape:true,
-                                buttons: {
-                                    ok: {
-                                        label: 'ok',
-                                        className: 'btn-success'
-                                    }
-                                }
-                            });
+
+    if (email != '' || password != '') {
+        $.ajax({
+            url: "../../controllers/login_prestamo/controller_login_prestamo.php",
+            cache: false,
+            type: 'POST',
+            data: { action: 1, email: email, password: password },
+            success: function(response) {
+                console.log("login-form ->" + response);
+
+                if (response == "no exit") {
+                    bootbox.alert({
+                        closeButton: false,
+                        title: 'Error en la información de acceso.',
+                        message: 'Favor de verificar el usuario y contraseña.',
+                        backdrop: true,
+                        onEscape: true,
+                        buttons: {
+                            ok: {
+                                label: 'ok',
+                                className: 'btn-success'
+                            }
                         }
-                        if(response == 4)
-                        {
+                    });
+                }
+
+                if (response == 4) {
+                    // Guarda el correo en sessionStorage
+                    sessionStorage.setItem("email_employee", email);
+                    
                             /*bootbox.confirm({
                                 title: "<h4>Información no registrada</h4>",
                                 message: "<h5>No cuenta con sus archivos <b>.pem</b>, los cuales son necesarios para realizar el proceso de sellado en los títulos electronicos, favor de proporcionar la información necesaria para poder continuar. </h5>",
@@ -115,18 +117,15 @@ $("#login-form").submit(function(event) {
                                 }
                             });*/
                             location.href = "../../v/prestamo/prestamo.php";
-                        } 
-                        
-                        
-                    }
-                });
+                }
+            }
+        });
     } else {
         bootbox.alert({
             closeButton: false,
             message: 'Todos los campos son obligatorios.',
-            closeButton: false,
             backdrop: true,
-            onEscape:true,
+            onEscape: true,
             buttons: {
                 ok: {
                     label: 'ok',
