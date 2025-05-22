@@ -17,6 +17,21 @@ class alumnosController
 		echo json_encode($data);
 	}
 
+
+	public function getCourses(){
+    		$this->alumnos= new alumnos();
+
+	      	$data = $this->alumnos->getCourses($_POST["program"]);
+	      	echo json_encode($data);
+		}
+
+		public function saveStudent(){
+    		$this->alumnos= new alumnos();
+
+	      	$data = $this->alumnos->saveStudent($_POST["name"], $_POST["surname"], $_POST["secondsurname"], $_POST["email"], $_POST["controlnumber"], $_POST["course"]);
+	      	echo ($data);
+		}
+
 	public function deleteStudent()
 	{
 		$this->alumnos = new alumnos();
@@ -112,6 +127,31 @@ class alumnosController
 		$pdfData= $this->alumnos->generatePDF($_POST["id_student"]);
 		return json_encode($pdfData);
 	}
+
+
+
+	//De aqui en adelante son las funciones para actualizar alumnos
+
+		public function coursesAds(){
+    		$this->alumnos= new alumnos();
+
+			$data = $this->alumnos->coursesAds($_POST["id_student"]);
+	      	echo json_encode($data);
+		}
+
+		public function getStudent(){
+    		$this->alumnos= new alumnos();
+
+			$data = $this->alumnos->getStudent($_POST["id_student"]);
+	      	echo json_encode(value: $data);
+		}
+
+		public function updateStudent(){
+    		$this->alumnos= new alumnos();
+
+	      	$data = $this->alumnos->updateStudent($_POST["id_student"], $_POST["name"], $_POST["surname"], $_POST["secondsurname"], $_POST["email"], $_POST["controlnumber"], $_POST["course"]);
+	      	echo ($data);
+		}
 }
 
 $obj = new alumnosController();
@@ -152,8 +192,24 @@ if (isset($_POST["action"])) {
 	}
 	if ($_POST["action"] == 12) {
 		$obj->listStudentCancel();
-	} elseif ($_POST["action"] == 13) {
+	} if ($_POST["action"] == 13) {
 		$pdfUrl = $obj->generatePDF();
 		echo $pdfUrl;
 	}
+	if ($_POST["action"] == 14) {
+		$obj->getCourses();
+	}
+	if ($_POST["action"] == 15) {
+		$obj->saveStudent();
+	}
+	if ($_POST["action"] == 16) {
+		$obj->coursesAds();
+	}
+	if ($_POST["action"] == 17) {
+		$obj->getStudent();
+	}
+	if ($_POST["action"] == 18) {
+		$obj->updateStudent();
+	}
+	
 }

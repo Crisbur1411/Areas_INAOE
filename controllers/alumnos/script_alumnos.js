@@ -32,6 +32,8 @@ $(function(){
 });
 
 
+
+// Funcion para listar los alumnos en la tabla
 function listStudent() {
     let i1 = 0; // Inicializamos i1 con 0
     $.ajax({
@@ -336,40 +338,6 @@ function listStudentFree() {
 }
 
 
-//desarrollado por BRYAM el 03/04/2024 funcion para general el pdf de cada alumno
-function printPDF(id_student) {
-    $.ajax({
-        url: "../../controllers/alumnos/controller_alumnos.php",
-        cache: false,
-        type: 'POST',
-        data: { action: 13, id_student: id_student },
-        success: function(result) {
-            console.log("Respuesta recibida:", result); // Ver en consola qué regresó
-
-            try {
-                var data = JSON.parse(result);
-
-                if (data.pdf_url) {
-                    window.location.href = data.pdf_url;
-                } else {
-                    console.error('❌ Error: La respuesta JSON no contiene "pdf_url". Datos recibidos:', data);
-                }
-
-            } catch (error) {
-                console.error('❌ Error al analizar la respuesta JSON:', error);
-                console.log('Respuesta sin procesar:', result);
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error("❌ Error en la petición AJAX.");
-            console.error("Estado:", status);
-            console.error("Error:", error);
-            console.error("Respuesta completa:", xhr.responseText);
-        }
-    });
-}
-
-
 function cancelStudent(id_student) {
     $u = document.getElementById("user");
     $user = $u.innerHTML;
@@ -434,6 +402,8 @@ function cancelStudent(id_student) {
 
 
 
+
+
 function listStudentCancel() {
     
     let i4 = 0; // Inicializamos i1 con 0
@@ -466,6 +436,396 @@ function listStudentCancel() {
             console.log(result); 
         }
     }); 
+}
+
+
+//desarrollado por BRYAM el 03/04/2024 funcion para general el pdf de cada alumno
+function printPDF(id_student) {
+    $.ajax({
+        url: "../../controllers/alumnos/controller_alumnos.php",
+        cache: false,
+        type: 'POST',
+        data: { action: 13, id_student: id_student },
+        success: function(result) {
+            console.log("Respuesta recibida:", result); // Ver en consola qué regresó
+
+            try {
+                var data = JSON.parse(result);
+
+                if (data.pdf_url) {
+                    window.location.href = data.pdf_url;
+                } else {
+                    console.error('❌ Error: La respuesta JSON no contiene "pdf_url". Datos recibidos:', data);
+                }
+
+            } catch (error) {
+                console.error('❌ Error al analizar la respuesta JSON:', error);
+                console.log('Respuesta sin procesar:', result);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error("❌ Error en la petición AJAX.");
+            console.error("Estado:", status);
+            console.error("Error:", error);
+            console.error("Respuesta completa:", xhr.responseText);
+        }
+    });
+}
+
+
+
+
+
+
+//Obtener cursos para mostrar en el select de registro de alumnos
+function courses(){    
+    $(".loader").fadeOut("slow");
+    var program = $("#program").val();
+    $.ajax({
+        url: "../../controllers/alumnos/controller_alumnos.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        data: { action: 14, program: program },
+        success: function(result) {
+            var addCourse = "<option value='null' selected disabled>Seleccione su área</option>";
+            $.each(result, function(index, val){
+                addCourse += "<option value='"+ val.id_academic_programs +"'>"+ val.name +"</option>";
+            });            
+            $("#course").html(addCourse);             
+        }, error: function(result) {
+            //console.log(result);
+        }
+    });
+}
+
+
+
+
+// Fucncion para registrar un nuevo alumno
+function saveStudent(){
+        
+    var name = $("#name").val().trim(); 
+    var surname = $("#surname").val().trim(); 
+    var secondsurname = $("#second_surname").val().trim(); 
+
+    var controlnumber = $("#control-number").val();
+    var email = $("#email").val().trim(); 
+
+    var course = $("#course").val();
+    
+   
+    if (name.length==0){
+        alert("Tiene que escribir el nombre")
+        $("#name").focus();
+        return 0;
+    }
+    if (surname.length==0){
+        alert("Tiene que escribir el apellido")
+        $("#surname").focus();
+        return 0;
+    }
+    /*if (professional_secondsurname.length==0){
+        
+        alert("Tiene que escribir su segundo apellido")
+        $("#second_surname").focus();
+        professional_secondsurname = "";
+        return 0;
+        
+    }*/
+    if (email.length==0){
+        alert("Tiene que escribir el correo electrónico")
+        $("#email").focus();
+        return 0;
+    } 
+    if (controlnumber.length==0){
+        alert("Tiene que escribir la matrícula")
+        $("#control-number").focus();
+        return 0;
+    } 
+    if (course==null){
+        alert("Tiene que elegir el área")
+        $("#course").focus();
+        return 0;
+    }
+    
+    var expEmail = /^[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
+    var validEmail = expEmail.test(email);
+   
+    if(validEmail == true){
+        $.ajax({
+            url: "../../controllers/alumnos/controller_alumnos.php",
+            cache: false,
+            dataType: 'JSON',
+            type: 'POST',
+            data: { action: 15, name: name, surname: surname, secondsurname: secondsurname, email: email, controlnumber: controlnumber, course: course },
+            success: function(result) {
+                history.go(-1);         
+            }, error: function(result) {
+                console.log(result);
+                bootbox.confirm({
+                    title: "<h4>Error al registrar el alumno</h4>",
+                    message: "<h5>Ocurrio un error al hacer el registro del alumno.</h5>",
+                    buttons: {
+                        cancel: {
+                            label: 'Cancelar',
+                            className: 'btn-secondary'
+                        },
+                        confirm: {
+                            label: 'Aceptar',
+                            className: 'btn-success'
+                        }
+                    },
+                    closeButton: false,
+                    callback: function(result) {
+                        if (result == false) {
+                            history.go(-1);
+                        }
+                    }
+                });
+            }
+        });
+    }else
+        bootbox.confirm({
+            title: "<h4>Error al registrar alumno</h4>",
+            message: "<h5>Favor de verificar que el correo sea válido.</h5>",
+            buttons: {
+                cancel: {
+                    label: 'Cancelar',
+                    className: 'btn-secondary'
+                },
+                confirm: {
+                    label: 'Aceptar',
+                    className: 'btn-success'
+                }
+            },
+            closeButton: false,
+            callback: function(result) {
+                if (result == false) {
+                    history.go(-1);
+                }
+            }
+        });
+    }
+
+
+
+
+// Obtener cursos para mostrar en el select de editar alumnos
+function getCourses(){
+    var program = $("#program").val();
+    
+    $.ajax({
+        url: "../../controllers/alumnos/controller_alumnos.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        data: { action: 14, program: program },
+        success: function(result) {
+            //console.log(result);
+            var addArea = "<option value='null' selected disabled>Seleccione su área</option>";
+            $.each(result, function(index, val){
+                addArea += "<option value='"+ val.id_academic_programs +"'>"+ val.name +"</option>";
+            });            
+            $("#course").html(addArea);   
+                   
+        }
+    });
+    
+}
+
+
+//Agregar cursos al select de editar alumnos
+function coursesAds(){
+    let params = new URLSearchParams(location.search);
+    id_student = parseInt(params.get('dc'));
+    $.ajax({
+        url: "../../controllers/alumnos/controller_alumnos.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        data: { action: 16, id_student: id_student },
+        success: function(result) {
+            var addArea = "";
+            $.each(result, function(index, val){
+                addArea += "<option value='"+ val.id_academic_programs +"'>"+ val.name +"</option>";
+            });
+            //console.log(result[0].name);
+            var stringP = result[0].name.toString();
+            var primerCaracter = stringP.charAt(0);
+            if( primerCaracter == 'M'){
+                $("#program").val(1);
+                $("#course").html(addArea); 
+            }else{
+                $("#program").val(2); 
+                $("#course").html(addArea);
+            }
+        }, error: function ( result) {
+            console.log(result);
+        } 
+    });
+}
+
+// Obtener los datos del alumno a editar
+function getStudent() {
+    $(".loader").fadeOut("slow");
+    let params = new URLSearchParams(location.search);
+    id_student = parseInt(params.get('dc'));
+   
+    $.ajax({
+        url: "../../controllers/alumnos/controller_alumnos.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        data: { action: 17, id_student:id_student },
+        success: function(result) {            
+            $.each(result, function(index, val){                
+                $('#name').val(val.name);
+                $('#surname').val(val.surname); 
+                $('#second-surname').val(val.second_surname);
+                $('#email').val(val.email);
+                $('#control-number').val(val.control_number);
+            });   
+        }, error: function ( result) {
+            console.log(result);
+        } 
+    }); 
+}
+
+// Actualizar los datos del alumno
+function updateStudent(){
+    let params = new URLSearchParams(location.search);
+    id_student = parseInt(params.get('dc'));
+
+    var name = $("#name").val().trim(); 
+    var surname = $("#surname").val().trim(); 
+    var secondsurname = $("#second-surname").val().trim(); 
+
+    var controlnumber = $("#control-number").val();
+    var email = $("#email").val().trim(); 
+
+    var course = $("#course").val();
+    
+   
+    if (name.length==0){
+        alert("Tiene que escribir el nombre")
+        $("#name").focus();
+        return 0;
+    }
+    if (surname.length==0){
+        alert("Tiene que escribir el apellido")
+        $("#surname").focus();
+        return 0;
+    }
+    /*if (professional_secondsurname.length==0){
+        
+        alert("Tiene que escribir su segundo apellido")
+        $("#second_surname").focus();
+        professional_secondsurname = "";
+        return 0;
+        
+    }*/
+    if (email.length==0){
+        alert("Tiene que escribir el correo electrónico")
+        $("#email").focus();
+        return 0;
+    } 
+    if (controlnumber.length==0){
+        alert("Tiene que escribir la matrícula")
+        $("#control-number").focus();
+        return 0;
+    } 
+    if (course==null){
+        alert("Tiene que elegir el área")
+        $("#course").focus();
+        return 0;
+    }
+    
+    var expEmail = /^[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
+    var validEmail = expEmail.test(email);
+   
+    if (validEmail == true) {
+    $.ajax({
+        url: "../../controllers/alumnos/controller_alumnos.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        data: { 
+            action: 18, 
+            id_student: id_student, 
+            name: name, 
+            surname: surname, 
+            secondsurname: secondsurname, 
+            email: email, 
+            controlnumber: controlnumber, 
+            course: course 
+        },
+        success: function(result) {
+            history.go(-1);         
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error("Estado de la petición:", textStatus);
+            console.error("Error lanzado:", errorThrown);
+            console.error("Código de estado HTTP:", jqXHR.status);
+            console.error("Texto de estado HTTP:", jqXHR.statusText);
+            console.error("Respuesta completa del servidor:", jqXHR.responseText);
+
+            bootbox.confirm({
+                title: "<h4>Error al actualizar el alumno</h4>",
+                message: "<h5>Ocurrió un error al hacer la actualización del registro del alumno.<br><br><b>Error:</b> " 
+                         + textStatus + " - " + errorThrown + "</h5>",
+                buttons: {
+                    cancel: {
+                        label: 'Cancelar',
+                        className: 'btn-secondary'
+                    },
+                    confirm: {
+                        label: 'Aceptar',
+                        className: 'btn-success'
+                    }
+                },
+                closeButton: false,
+                callback: function(result) {
+                    if (result == false) {
+                        $(".loader").fadeOut("slow")
+                        history.go(-1);
+                    }
+                }
+            });
+        }
+    });
+    }else
+        bootbox.confirm({
+            title: "<h4>Error al actualizar alumno</h4>",
+            message: "<h5>Favor de verificar que el correo sea válido.</h5>",
+            buttons: {
+                cancel: {
+                    label: 'Cancelar',
+                    className: 'btn-secondary'
+                },
+                confirm: {
+                    label: 'Aceptar',
+                    className: 'btn-success'
+                }
+            },
+            closeButton: false,
+            callback: function(result) {
+                if (result == false) {
+                    history.go(-1);
+                }
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+function cancel() {
+    window.history.back();
 }
 
 $("#exit").click(function() {
