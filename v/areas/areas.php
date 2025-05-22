@@ -153,9 +153,6 @@
 
 	<!-- Script para Crud del Area -->
 	<script src="../../controllers/areas/script_areas.js"></script>
-	<script src="../../controllers/areas/crud_area/script_createArea.js"></script>
-	<script src="../../controllers/areas/crud_area/script_deleteArea.js"></script>
-	<script src="../../controllers/areas/crud_area/script_editArea.js"></script>
 
 </body>
 </html>

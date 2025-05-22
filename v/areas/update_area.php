@@ -117,7 +117,7 @@
                     </div>
 
                     <div class="col-sm-4">
-                        <label for="identificador">ID del Área:</label>
+                        <label for="identificador">Identificador del Área:</label>
                         <input type="text" class="form-control" id="identificador" name="identificador" placeholder="ID del área" disabled>
                     </div>
 
@@ -177,7 +177,6 @@
 
     <!-- Script para Crud del Area -->
     <script src="../../controllers/areas/script_areas.js"></script>
-    <script src="../../controllers/areas/crud_area/script_editArea.js"></script>
 
 
 

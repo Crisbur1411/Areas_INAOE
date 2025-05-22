@@ -106,8 +106,8 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-sm-4">
-                        <label for="nombreArea">Nombre del Área</label>
-                        <input type="text" class="form-control" id="nombreArea" name="nombreArea" required>
+                        <label for="nombreNuevaArea">Nombre del Área</label>
+                        <input type="text" class="form-control" id="nombreNuevaArea" name="nombreNuevaArea" required>
                     </div>
                     <div class="col-sm-4">
                         <label for="descripcionArea">Identificador Área</label>
@@ -154,7 +154,6 @@
 
     <!-- Script para Crud del Area -->
     <script src="../../controllers/areas/script_areas.js"></script>
-    <script src="../../controllers/areas/crud_area/script_createArea.js"></script>
 
 
 
