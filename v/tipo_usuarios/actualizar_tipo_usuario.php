@@ -153,7 +153,6 @@
 		
 		<script src="../../controllers/signin/script_login.js"></script>
 		<script src="../../controllers/tipo_usuarios/script_tipo_usuarios.js"></script>
-		<script src="../../controllers/tipo_usuarios/script_update_tipo_usuario.js"></script>
 
 	
 	</body>
