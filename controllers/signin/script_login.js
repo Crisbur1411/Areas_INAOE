@@ -118,7 +118,7 @@ $("#login-form").submit(function(event) {
                         } 
                         if(response == 2)
                         {
-                            location.href = "v/liberacion_area/liberacion_area.php";
+                            location.href = "v/alumnos/alumnos.php";
                         }
                         if(response == 3)
                         {
