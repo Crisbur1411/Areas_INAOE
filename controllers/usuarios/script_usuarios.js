@@ -134,6 +134,587 @@ function saveChanges(id_user) {
 }
 
 
+
+function deleteUser( key) {
+    console.log(key)
+    
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esta acción eliminará el usuario. ¿Estás seguro de continuar?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "../../controllers/usuarios/controller_usuarios.php",
+                cache: false,
+                dataType: 'JSON',
+                type: 'POST',
+                data: { action: 5, identificador_usuario: key },
+                success: function(result) {
+                    console.log(result)
+                    if (result.status == "success") {
+
+                        
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: 'Área eliminada correctamente',
+                            timer: 1000,
+                            timerProgressBar: true,
+                        }).then((result) => {
+                            if (result.dismiss === Swal.DismissReason.timer) {
+                                location.reload();
+
+                            }
+                          });
+                        
+
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Ocurrió un error al eliminar el área'
+                        });
+                    }
+
+                },
+                error: function (result) {
+                    console.log(result); 
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ocurrió un error al realizar la solicitud'
+                    });
+                }
+            });
+        }
+    });
+}
+
+
+
+
+function preCargarDatos() {
+    var userID = sessionStorage.getItem('id_usuario');
+
+    var formData = new FormData();
+    formData.append('action', 6);
+    formData.append('id_usuario', userID);
+        console.log("ID de usuario obtenido:", userID);  // Se muestra el ID en la consola
+
+
+    $.ajax({
+        url: "../../controllers/usuarios/controller_usuarios.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        processData: false,
+        contentType: false,
+        data: formData,
+        success: function (result) {
+            if (result.status == 200) {
+                var userData = result.data;
+                typeUsers(userData.fk_type);
+                $('#name').val(userData.name);
+                $('#surname').val(userData.surname);
+                $('#second_surname').val(userData.second_surname);
+                $('#email').val(userData.email);
+                $('#type-users').val(userData.fk_type);
+                $('#areas').val(userData.fk_area);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ocurrió un error al editar el área'
+                });
+            }
+        },
+        error: function (xhr, status, error) {
+    console.error("❌ Error al realizar la solicitud:");
+    console.error("📄 Estado de la petición: " + status);
+    console.error("⚠️ Error devuelto por el servidor: " + error);
+
+    let mensajeError = "";
+
+    if (xhr.status === 0) {
+        mensajeError = "No se pudo conectar con el servidor. Verifica tu conexión de red.";
+    } else if (xhr.status >= 400 && xhr.status < 500) {
+        mensajeError = "Error en la solicitud (Código " + xhr.status + "). Verifica los datos enviados.";
+    } else if (xhr.status >= 500) {
+        mensajeError = "Error en el servidor (Código " + xhr.status + "). Intenta más tarde o contacta al administrador.";
+    } else {
+        mensajeError = "Error desconocido (Código " + xhr.status + ").";
+    }
+
+    // Mostrar respuesta devuelta por el servidor si existe
+    if (xhr.responseText) {
+        console.log("📨 Respuesta recibida del servidor:", xhr.responseText);
+    }
+
+    // Mostrar alerta bonita con SweetAlert
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        html: mensajeError,
+        footer: (xhr.responseText) ? "<pre style='text-align:left; max-height:150px; overflow:auto;'>" + xhr.responseText + "</pre>" : null
+    });
+}
+    });
+}
+
+
+
+
+function changePassword() {
+    var userID = sessionStorage.getItem('id_usuario');
+
+    var formHtml = `
+        <form id="newAreaForm">
+            <div class="form-group">
+                <label for="nombreArea">Nueva Contraseña:</label>
+                <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+            </div>
+            <div class="form-group">
+                <label for="detalles">Confirmar Nueva Contraseña</label>
+                <input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword" required>
+            </div>
+            <div class="form-group">
+      
+        </form>
+    `;
+
+    bootbox.dialog({
+        title: "<h4>Nueva Área</h4>",
+        message: formHtml,
+        closeButton: true,
+        buttons: {
+            cancel: {
+                label: 'Cancelar',
+                className: 'btn-secondary'
+            },
+            confirm: {
+                label: 'Guardar',
+                className: 'btn-primary',
+                callback: function () {
+                    var newPassword = $('#newPassword').val().trim();
+                    var confirmNewPassword = $('#confirmNewPassword').val().trim();
+                    var formData = new FormData();
+                    formData.append('action', 7);
+                    formData.append('id_usuario', userID);
+                    formData.append('new_passsword', newPassword);
+
+                    if (!(newPassword == confirmNewPassword)) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Todos los campos son obligatorios. Por favor, complete todos los campos.'
+                        });
+                        return false;
+                    }
+
+                    $.ajax({
+                        url: "../../controllers/usuarios/controller_usuarios.php",
+                        cache: false,
+                        dataType: 'JSON',
+                        type: 'POST',
+                        processData: false,
+                        contentType: false,
+                        data: formData,
+                        success: function (result) {
+                            console.log(result);
+                            if (result.status === 200) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Éxito',
+                                    text: 'La solicitud se ha completado correctamente'
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Ocurrió un error al realizar la solicitud'
+                                });
+                            }
+                        },
+                        error: function (result) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Ocurrió un error al realizar la solicitud'
+                            });
+                        }
+                    });
+
+                }
+            }
+        }
+    });
+
+
+}
+
+
+
+
+function areas() {
+
+
+    $(".loader").fadeOut("slow");
+    $.ajax({
+        url: "../../controllers/usuarios/controller_usuarios.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        data: { action: 8 },
+        success: function (result) {
+
+            var addArea = "<option value='null' selected disabled>Seleccione una área</option>";
+            $.each(result, function (index, val) {
+                addArea += "<option value='" + val.id_area + "'>" + val.name + "</option>";
+            });
+            $("#areas").html(addArea);
+        }, error: function (result) {
+            console.log(result);
+        }
+    });
+}
+
+
+
+
+function typeUsers(fk_type) {
+
+    $(".loader").fadeOut("slow");
+    $.ajax({
+        url: "../../controllers/usuarios/controller_usuarios.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        data: { action: 9 },
+        success: function (result) {
+            var addType = "<option value='null' selected disabled>Seleccione un tipo</option>";
+            $.each(result, function (index, val) {
+               
+                addType += "<option value='" + val.id_type_users + "'>" + val.name + "</option>";
+            });
+            $("#type-users").html(addType);
+
+            if(fk_type){
+                $('#type-users').val(fk_type);
+            }
+
+          
+        },
+        error: function (result) {
+            console.log(result);
+        }
+    });
+}
+
+
+
+
+function saveUser() {
+
+    var program = $("#program").val();
+
+
+    var name = $("#name").val().trim();
+    var surname = $("#surname").val().trim();
+    var secondsurname = $("#second_surname").val().trim();
+    var email = $("#email").val().trim();
+
+    var password = $("#password").val().trim();
+
+    var area = $("#areas").val()
+    var type_user = $("#type-users").val();
+
+
+    if (name.length == 0) {
+        alert("Tiene que escribir el nombre")
+        $("#name").focus();
+        return 0;
+    }
+    if (surname.length == 0) {
+        alert("Tiene que escribir el apellido")
+        $("#surname").focus();
+        return 0;
+    }
+    if (secondsurname.length == 0) {
+        alert("Tiene que escribir el segundo apellido")
+        $("#second_surname").focus();
+        return 0;
+    }
+  
+    if (email.length == 0) {
+        alert("Tiene que escribir el correo electrónico")
+        $("#email").focus();
+        return 0;
+    }
+
+    if (password.length == 0) {
+        alert("Tiene que escribir la contraseña")
+        $("#password").focus();
+        return 0;
+    }
+    
+    if (type_user == null) {
+        alert("Tiene que elegir el tipo de usuario")
+        $("#type-users").focus();
+        return 0;
+    }
+
+    if (area == null) {
+        alert("Tiene que elegir el área")
+        $("#areas").focus();
+        return 0;
+    }
+
+
+ 
+
+    var expEmail = /^[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
+    var validEmail = expEmail.test(email);
+
+
+    if (validEmail == true) {
+        $.ajax({
+            url: "../../controllers/usuarios/controller_usuarios.php",
+            cache: false,
+            dataType: 'JSON',
+            type: 'POST',
+            data: { action: 10, name: name, surname: surname, secondsurname: secondsurname, email: email, type_user: type_user, password: password },
+            success: function (result) {
+                console.log("el resultado es" + result);
+                var $id_user = result;
+                userArea($id_user, area);
+            }, error: function (result) {
+                console.log(result);
+                bootbox.confirm({
+                    title: "<h4>Error al registrar usuario</h4>",
+                    message: "<h5>Ocurrio un error al hacer el registro del usuario.</h5>",
+                    buttons: {
+                        cancel: {
+                            label: 'Cancelar',
+                            className: 'btn-secondary'
+                        },
+                        confirm: {
+                            label: 'Aceptar',
+                            className: 'btn-success'
+                        }
+                    },
+                    closeButton: false,
+                    callback: function (result) {
+                        if (result == false) {
+                            history.go(-1);
+                        }
+                    }
+                });
+            }
+        });
+    } else
+        bootbox.confirm({
+            title: "<h4>Error al registrar usuario</h4>",
+            message: "<h5>Favor de verificar que el correo sea válido.</h5>",
+            buttons: {
+                cancel: {
+                    label: 'Cancelar',
+                    className: 'btn-secondary'
+                },
+                confirm: {
+                    label: 'Aceptar',
+                    className: 'btn-success'
+                }
+            },
+            closeButton: false,
+            callback: function (result) {
+                if (result == false) {
+                    history.go(-1);
+                }
+            }
+        });
+}
+
+
+
+
+function userArea(id_user, $area) {
+    $.ajax({
+        url: "../../controllers/usuarios/controller_usuarios.php",
+        cache: false,
+        dataType: 'JSON', 
+        type: 'POST',
+        data: { action: 11, id_user: id_user, area: $area },
+        success: function (result) {
+            history.go(-1);
+        }, error: function (result) {
+            console.log(result);
+            bootbox.confirm({
+                title: "<h4>Error al registrar el área</h4>",
+                message: "<h5>Ocurrio un error al hacer el registro del usuario con el área.</h5>",
+                buttons: {
+                    cancel: {
+                        label: 'Cancelar',
+                        className: 'btn-secondary'
+                    },
+                    confirm: {
+                        label: 'Aceptar',
+                        className: 'btn-success'
+                    }
+                },
+                closeButton: false,
+                callback: function (result) {
+                    if (result == false) {
+                        history.go(-1);
+                    }
+                }
+            });
+        }
+    });
+}
+
+
+
+
+
+
+function saveUserEdit() {
+
+    var program = $("#program").val();
+    var userID = sessionStorage.getItem('id_usuario');
+    var name = $("#name").val().trim();
+    var surname = $("#surname").val().trim();
+    var secondsurname = $("#second_surname").val().trim();
+    var email = $("#email").val().trim();
+
+
+    var area = $("#areas").val()
+    var type_user = $("#type-users").val();
+
+    if (name.length == 0) {
+        alert("Tiene que escribir el nombre")
+        $("#name").focus();
+        return 0;
+    }
+    if (surname.length == 0) {
+        alert("Tiene que escribir el apellido")
+        $("#surname").focus();
+        return 0;
+    }
+
+    if (email.length == 0) {
+        alert("Tiene que escribir el correo electrónico")
+        $("#email").focus();
+        return 0;
+    }
+
+
+    if (area == null) {
+        alert("Tiene que elegir el área")
+        $("#areas").focus();
+        return 0;
+    }
+    if (type_user == null) {
+        alert("Tiene que elegir el tipo de usuario")
+        $("#type-users").focus();
+        return 0;
+    }
+
+
+
+
+    var expEmail = /^[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
+    var validEmail = expEmail.test(email);
+
+
+    if (validEmail == true) {
+        $.ajax({
+            url: "../../controllers/usuarios/controller_usuarios.php",
+            cache: false,
+            dataType: 'JSON',
+            type: 'POST',
+            data: { action: 12, user_id: userID, area: area, name: name, surname: surname, secondsurname: secondsurname, email: email, type_user: type_user },
+            success: function (result) {
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: 'Usuario Actualizado correctamente',
+                    timer: 1000,
+                    timerProgressBar: true,
+                }).then((result) => {
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        history.go(-1);
+
+                    }
+                });
+
+            }, error: function (jqXHR, textStatus, errorThrown) {
+    console.log("Error en Ajax:");
+    console.log("Estado: " + textStatus);
+    console.log("Error: " + errorThrown);
+    console.log("Respuesta completa: ", jqXHR);
+
+    Swal.fire({
+        icon: 'error',
+        title: 'Error al actualizar usuario',
+        html: `<b>Estado:</b> ${textStatus}<br><b>Error:</b> ${errorThrown}`,
+        footer: 'Revisa consola para más detalles',
+        timer: 10000,
+        timerProgressBar: true,
+    });
+            }
+        });
+    } else
+        bootbox.confirm({
+            title: "<h4>Error al registrar usuario</h4>",
+            message: "<h5>Favor de verificar que el correo sea válido.</h5>",
+            buttons: {
+                cancel: {
+                    label: 'Cancelar',
+                    className: 'btn-secondary'
+                },
+                confirm: {
+                    label: 'Aceptar',
+                    className: 'btn-success'
+                }
+            },
+            closeButton: false,
+            callback: function (result) {
+                if (result == false) {
+                    history.go(-1);
+                }
+            }
+        });
+}
+
+
+
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    let id = new URLSearchParams(window.location.search).get('dc');
+    if(id){ // Solo si existe el id en la URL
+areas();
+    typeUsers();
+    preCargarDatos();    }
+});
+
+
+
+
+
+function cancel() {
+    window.history.back();
+}
+
+
 function newUser() {
     location.href = "../usuarios/registro_usuarios.php";
 }
@@ -148,6 +729,12 @@ function checkFileExist(urlToFile) {
     } else {
         return true; 
     }
+}
+
+
+function vistaUpdateUsuario(id_usuario) {
+    sessionStorage.setItem("id_usuario", id_usuario)
+    location.href = "../usuarios/editar_usuario.php?dc=" + id_usuario;
 }
 
 

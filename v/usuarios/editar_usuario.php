@@ -183,8 +183,7 @@
 		
 		<script src="../../controllers/signin/script_login.js"></script>
 		<script src="../../controllers/usuarios/script_usuarios.js"></script>
-		<script src="../../controllers/usuarios/script_registro_usuarios.js"></script>
-		<script src="../../controllers/usuarios/crud_usuarios/script_updateUsuario.js"></script>
+
 
 	
 	</body>

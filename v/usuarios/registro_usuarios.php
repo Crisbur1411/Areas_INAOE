@@ -178,8 +178,8 @@ if (isset($_SESSION['user_name']))
 
 
 	<script src="../../controllers/signin/script_login.js"></script>
-	<script src="../../controllers/usuarios/script_usuarios.js"></script>
-	<script src="../../controllers/usuarios/script_registro_usuarios.js"></script>
+		<script src="../../controllers/usuarios/script_usuarios.js"></script>
+
 	
 	<script>		
 		areas();
