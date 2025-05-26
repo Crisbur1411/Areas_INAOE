@@ -142,6 +142,10 @@
                         Liberados <span id="pf3" class="badge badge-success">0</span>
                         <span class="sr-only">unread messages</span>
                     </a>
+                    <a class="nav-item nav-link" id="nav-cancel-tab" data-toggle="tab" href="#nav-cancel" role="tab" aria-controls="nav-rejected" aria-selected="false">
+                        Cancelados <span id="pf4" class="badge badge-danger">0</span>
+                        <span class="sr-only">unread messages</span>
+                    </a>
                 </div>
 
             </nav>
@@ -181,6 +185,26 @@
                     <tbody class="bg-white" id="table-students-free"></tbody>
                 </table>
                 <div id="alert3" class="alert alert-danger text-center mt-3 animate__animated animate__fadeIn">
+                    <p>
+                        <i class="fa-solid fa-ban fa-2x"></i>
+                    </p>
+                    <h4 class="alert-heading">SIN REGISTROS</h4>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="nav-cancel" role="tabpanel" aria-labelledby="nav-cancel-tab">
+                <table class="table table-striped table-bordered">
+                    <thead style="background: #691C32; color: white;">
+                        <tr>
+                            <th scope="col" style="text-align:center"># REGISTRO</th>
+							<th scope="col" style="text-align:center">MATRÍCULA</th>
+                            <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>                            
+                            <th scope="col" style="text-align:center">FECHA DE CANCELACIÓN</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white" id="table-students-cancel"></tbody>
+                </table>
+                <div id="alert4" class="alert alert-danger text-center mt-3 animate__animated animate__fadeIn">
                     <p>
                         <i class="fa-solid fa-ban fa-2x"></i>
                     </p>

@@ -49,6 +49,14 @@
 	      	$data = $this->liberacionArea->passwordOk($_POST["password"]);
 	      	echo json_encode($data);
 		}
+
+		public function listStudentCancel(){
+		$this->liberacionArea = new liberacionArea();
+
+		$data = $this->liberacionArea->listStudentCancel();
+		echo json_encode($data);
+		}
+
     }
 
     $obj = new liberacionAreaController();
@@ -66,6 +74,8 @@
 			$obj->notesStudent();
 		}if ($_POST["action"]==6){
 			$obj->passwordOk();
+		}if ($_POST["action"]==7){
+			$obj->listStudentCancel();
 		}
 	}
  ?>

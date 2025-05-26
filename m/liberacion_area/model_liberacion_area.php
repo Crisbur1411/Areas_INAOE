@@ -220,5 +220,52 @@ class liberacionArea{
         return $data;
     }
 
+
+
+public function listStudentCancel()
+    {
+        $con = new DBconnection();
+        $con->openDB();
+
+        $dataR = $con->query("SELECT students.id_student, 
+                                    CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
+                                    students.control_number, 
+                                    COUNT(trace_student_areas.fk_area) AS areas_count,  
+                                    DATE(trace_student_areas.date) AS date,
+                                    students.status
+                                    FROM 
+                                        students
+                                    LEFT JOIN 
+                                        trace_student_areas ON trace_student_areas.fk_student = students.id_student
+                                    WHERE 
+                                        students.status = 4 AND trace_student_areas.status= 4
+                                    GROUP BY 
+                                        students.id_student, 
+                                        CONCAT(students.name, ' ', students.surname, ' ', students.second_surname),
+                                        students.control_number,
+                                        DATE(trace_student_areas.date),
+                                        students.status
+                                    ORDER BY 
+                                        students.id_student;
+                                    ");
+
+        $data = array();
+
+        while ($row = pg_fetch_array($dataR)) {
+            $dat = array(
+                "id_student" => $row["id_student"],
+                "full_name" => $row["full_name"],
+                "control_number" => $row["control_number"],
+                "date" => $row["date"],
+                "status" => $row["status"]
+            );
+            $data[] = $dat;
+        }
+        $con->closeDB();
+
+        return $data;
+    }
+
+
 }
 ?>

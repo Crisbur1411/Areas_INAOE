@@ -26,6 +26,7 @@ $(function(){
     $("#info").removeClass("d-none");
     listStudentInProgress();
     listStudentFree();
+    listStudentCancel();
 });
 
 function listStudentInProgress() {
@@ -269,6 +270,42 @@ function notesStudent(id_student) {
                 console.log(result);
            }                   
        });     
+}
+
+
+
+function listStudentCancel() {
+    
+    let i4 = 0; // Inicializamos i1 con 0
+    $.ajax({
+        url: "../../controllers/liberacion_area/controller_liberacion_area.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        data: { action: 7 },
+        success: function(result) {   
+            var table = "";
+            $.each(result, function(index, val) {
+                if (val.status == 4)
+                {
+                    i4++; // Incrementamos i1 solo si el estudiante cumple con la condición
+                    table += "<tr>"       
+                    + "<th style='text-align:center'>"+val.id_student+"</th>"
+                    + "<th style='text-align:center'>"+val.control_number+"</a></th>"
+                    + "<th style='text-align:center'>"+val.full_name+"</th>" 
+                    + "<th style='text-align:center'><p>"+val.date+"</p></th>"
+                    + "</tr>";
+                }
+            });
+            $('#pf4').text(i4); // Actualizamos el valor en el elemento con id 'pf'
+            if(i4 != 0){
+                $('#table-students-cancel').html(table);
+                $('#alert4').hide();
+            }
+        }, error: function (result){
+            console.log(result); 
+        }
+    }); 
 }
 
 
