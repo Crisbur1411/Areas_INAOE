@@ -153,6 +153,34 @@ function showRegisterAreas(id_student) {
 
 
 
+function helper() { 
+    $('#responsablesModal').modal();
+    var modal = $('#responsablesModal')
+    modal.find('.modal-title').text('Responsables de las áreas')
+    $.ajax({
+        url: "../../controllers/validacion_proceso/controller_validacionProceso.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        data: { action: 4 }, 
+        success: function(result) {
+            var table = "";
+            $.each(result, function(index, val) {
+                table += "<tr>"       
+                    + "<td style='text-align:center'>" + val.area_name + "</td>"
+                    + "<td style='text-align:center'>" + val.full_name + "</td>"
+                    + "</tr>";
+            });
+            $('#table-modal-responsables').html(table);
+        },
+        error: function(result){
+            console.log(result);
+        }                   
+    });     
+}
+
+
+
 $(function(){
     $(".loader").fadeOut("slow");
     $("#info").removeClass("d-none");

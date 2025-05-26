@@ -62,6 +62,7 @@
                     </span>
 
                 </div>
+                <button type='button' class='btn btn-outline-success' id='btn-new-student' onClick='helper()'>AYUDA</button>
             </nav>
         </div>
 
@@ -85,7 +86,7 @@
                     <p>
                         <i class="fa-solid fa-ban fa-2x"></i>
                     </p>
-                    <h4 class="alert-heading">SIN REGISTROS</h4>
+                    <h4 class="alert-heading">SIN SOLICITUDES EN PROCESO</h4>
                 </div>
             </div>
 
@@ -155,4 +156,39 @@
     </div>
   </div>
 </div>
+</div>
+
+
+<div class="modal fade" id="responsablesModal" tabindex="-1" role="dialog" aria-labelledby="responsablesModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="responsablesModalTitle"></h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row" aria-labelledby="nav-titlesCast-tab">
+          <table class="table table-striped table-bordered">
+            <thead style="background: #691C32; color: white;">
+              <tr>
+                <th scope="col" style="text-align:center">ÁREA</th>
+                <th scope="col" style="text-align:center">RESPONSABLE</th>
+              </tr>
+            </thead>
+            <tbody class="bg-gray" id="table-modal-responsables">
+              <!-- Aquí se llenarán las filas con JavaScript -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 

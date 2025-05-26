@@ -84,7 +84,7 @@ public function listStudentInProgress($email)
                             areas ON areas.id_area = trace_student_areas.fk_area
                         WHERE 
                             students.id_student = '$id_student'
-                            OR trace_student_areas.id_trace_student_area IS NULL
+                            OR trace_student_areas.id_trace_student_area IS NULL AND areas.status = 1
                         ORDER BY 
                             areas.id_area;
                         ");
@@ -126,6 +126,43 @@ public function listStudentInProgress($email)
             $con->closeDB();
             return "error";
         }
+    }
+
+
+    public function userAutoricedLiberation()
+    {
+        $con = new DBconnection();
+        $con->openDB();
+
+        $dataR = $con->query("SELECT
+                                CONCAT(users.name, ' ', users.surname, ' ', users.second_surname) AS full_name,
+                                CASE
+                                    WHEN users.fk_type = type_users.id_type_users THEN areas.name
+                                    ELSE 'Sin área asignada'
+                                END AS area_name
+                                FROM users
+                                INNER JOIN type_users ON users.fk_type = type_users.id_type_users
+                                INNER JOIN user_area ON users.id_user = user_area.fk_user
+                                INNER JOIN areas ON user_area.fk_area = areas.id_area
+                                WHERE users.status = 1
+                                ORDER BY users.id_user
+                                    ");
+
+        $data = array();
+
+        while ($row = pg_fetch_array($dataR)) {
+            $dat = array(
+                "area_name" => $row["area_name"],
+                "full_name" => $row["full_name"]
+            );
+            $data[] = $dat;
+        }
+
+        $con->closeDB();
+        return $data;
+
+
+
     }
 
 

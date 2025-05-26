@@ -36,6 +36,14 @@ class validacionController{
         echo json_encode($data);
     }
 
+	public function userAutoricedLiberation()
+	{
+		$this->proceso = new proceso();
+
+		$data = $this->proceso->userAutoricedLiberation();
+		echo json_encode($data);
+	}
+
 
 
 }
@@ -53,7 +61,9 @@ if (isset($_POST["action"])) {
     	$obj->showRegisterAreas();
     }if ($_POST["action"] == 3) {
     	$obj->validateEmail();
-    }
+    }if ($_POST["action"] == 4) {
+		$obj->userAutoricedLiberation();
+	}
 }
 
 ?>
