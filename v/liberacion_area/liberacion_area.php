@@ -155,8 +155,8 @@
                             <th scope="col" style="text-align:center"># REGISTRO</th>
 							<th scope="col" style="text-align:center">MATRÍCULA</th>
                             <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>
-                            <th scope="col" style="text-align:center"></th>
-                            <th scope="col" style="text-align:center"></th>
+                            <th scope="col" style="text-align:center">LIBERAR ALUMNO</th>
+                            <th scope="col" style="text-align:center">AGREGAR NOTA</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white" id="table-students-in-progress"></tbody>

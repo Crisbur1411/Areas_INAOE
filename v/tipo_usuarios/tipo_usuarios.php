@@ -153,8 +153,8 @@
 								<th scope="col" style="text-align:center">IDENTIFICADOR</th>
 								<th scope="col" style="text-align:center">NOMBRE DEL TIPO DE USUARIO</th>
 								<th scope="col" style="text-align:center">DETALLES</th>
-								<th scope="col" style="text-align:center"></th>
-								<th scope="col" style="text-align:center"></th>
+								<th scope="col" style="text-align:center">ACTUALIZAR TIPO DE USUARIO</th>
+								<th scope="col" style="text-align:center">ELIMINAR TIPO DE USUARIO</th>
 							</tr>
 						</thead>
 						<tbody class="bg-white" id="table-type-users"></tbody>

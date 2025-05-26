@@ -152,8 +152,8 @@
 								<th scope="col" style="text-align:center">IDENTIFICADOR</th>
 								<th scope="col" style="text-align:center">NOMBRE DEL ÁREA</th>
 								<th scope="col" style="text-align:center">DETALLES</th>
-								<th scope="col" style="text-align:center"></th>
-								<th scope="col" style="text-align:center"></th>
+								<th scope="col" style="text-align:center">ACTUALIZAR ÁREA</th>
+								<th scope="col" style="text-align:center">ELIMINAR ÁREA</th>
 							</tr>
 						</thead>
 						<tbody class="bg-white" id="table-areas"></tbody>

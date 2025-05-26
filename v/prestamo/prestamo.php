@@ -63,7 +63,7 @@
                             <?php if ($_SESSION['type'] == 4): ?>
 							<li><a class="dropdown-item" href="../prestamo/prestamo.php">Préstamos</a></li>
 							<?php endif; ?>
-                            <li><a class="dropdown-item" id="navbarDropdown1" href="../usuarios/cuenta.php">
+                            <li><a class="dropdown-item" id="navbarDropdown1" href="#">
                                 <span class="ctrl-control h5 text-align-right" id="username" style="font-size: 13px;">
                                     <i class="fas fa-user"></i>
                                     <?php echo $_SESSION['name']; ?>
@@ -154,8 +154,8 @@
                             <th scope="col" style="text-align:center">Nombre del Estudiante</th>
                             <th scope="col" style="text-align:center">Adeudo(s)</th>
                             <th scope="col" style="text-align:center">Fecha y Hora de Préstamo</th>
-                            <th scope="col" style="text-align:center"></th>
-                            <th scope="col" style="text-align:center"></th>
+                            <th scope="col" style="text-align:center">Editar Préstamo</th>
+                            <th scope="col" style="text-align:center">Cancelar Préstamo</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white" id="table-prestamo"></tbody>

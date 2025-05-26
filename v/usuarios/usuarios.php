@@ -153,8 +153,8 @@
 								<th scope="col" style="text-align:center">ÁREA</th>
 								<th scope="col" style="text-align:center">TIPO DE USUARIO</th>
 								<th scope="col" style="text-align:center">FECHA DE REGISTRO</th>
-								<th scope="col" style="text-align:center"></th>
-								<th scope="col" style="text-align:center"></th>
+								<th scope="col" style="text-align:center">ACTUALIZAR USUARIO</th>
+								<th scope="col" style="text-align:center">ELIMINAR USUARIO</th>
 							</tr>
 						</thead>
 						<tbody class="bg-white" id="table-users"></tbody>

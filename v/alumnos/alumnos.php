@@ -173,9 +173,9 @@
                             <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>
                             <th scope="col" style="text-align:center">CURSO</th>
                             <th scope="col" style="text-align:center">FECHA DE REGISTRO</th>
-                            <th scope="col" style="text-align:center"></th>
-                            <th scope="col" style="text-align:center"></th>
-                            <th scope="col" style="text-align:center"></th>
+                            <th scope="col" style="text-align:center">ACTUALIZAR ALUMNO</th>
+                            <th scope="col" style="text-align:center">ELIMINAR ALUMNO</th>
+                            <th scope="col" style="text-align:center">TURNAR A FIRMA</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white" id="table-students"></tbody>
@@ -196,8 +196,8 @@
 							<th scope="col" style="text-align:center">MATRÍCULA</th>
                             <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>
                             <th scope="col" style="text-align:center">TOTAL DE ÁREAS LIBERADAS</th>
-                            <th scope="col" style="text-align:center"></th>
-                            <th scope="col" style="text-align:center"></th>
+                            <th scope="col" style="text-align:center">FINALIZAR TRÁMITE</th>
+                            <th scope="col" style="text-align:center">CANCELAR TRÁMITE</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white" id="table-students-in-progress"></tbody>
@@ -218,7 +218,7 @@
 							<th scope="col" style="text-align:center">MATRÍCULA</th>
                             <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>                            
                             <th scope="col" style="text-align:center">FECHA DE LIBERACiÓN</th>
-                            <th scope="col" style="text-align:center"></th>
+                            <th scope="col" style="text-align:center">IMPRIMIR CONSTANCIA</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white" id="table-students-free"></tbody>
