@@ -41,7 +41,7 @@
         <div class="container-fluid">
             <div class="contNav">
                 <div class="seccionesINAOE">
-                    <li><a href="https://www.inaoep.mx/">INAOEP</a></li>
+                    <li><a href="#">INAOEP</a></li>
                 </div>
                
             <div class="seccionesEstatus">

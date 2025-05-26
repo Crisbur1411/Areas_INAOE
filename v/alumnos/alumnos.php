@@ -104,7 +104,6 @@
         </div>
         
 
-    </div>
     <div class="container-fluid">
             <div class="contNav">
                 <div class="contGob">
@@ -126,11 +125,11 @@
         <div class="container-fluid">
             <div class="contNav">
                 <div class="seccionesINAOE">
-                    <li><a href="https://www.inaoep.mx/">INAOEP</a></li>
+                    <li><p class="text_inaoe">INAOEP</p></li>
                 </div>
                
             <div class="seccionesEstatus">
-                <li><a>Liberación de no adeudo</a></li>
+                <li><a>Alumnos registrados</a></li>
             </div>
             </div>
         </div>

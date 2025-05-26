@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
     <link rel="stylesheet" href="../../assets/css/estilos.css">
     <link rel="stylesheet" href="../../assets/css/sidebar.css">
+    <link rel="stylesheet" href="../../assets/css/navINAOE.css">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
@@ -95,7 +97,37 @@
 
         </div>
     </div>
-</nav>
+</div>
+	<div class="container-fluid">
+            <div class="contNav">
+                <div class="contGob">
+                    <a class="navbar-brand" href="https://www.gob.mx/"><img
+                        src="https://framework-gb.cdn.gob.mx/landing/img/logoheader.svg" width="110" height="35"
+                        alt="PÃƒÂ¡gina de inicio, Gobierno de MÃƒÂ©xico"></a>
+                </div>
+               
+            <div class="secciones">
+                <li><a href="https://www.gob.mx/tramites">Trámites</a></li>
+                <li><a href="https://www.gob.mx/gobierno">Gobierno</a></li>
+                <a href="https://www.gob.mx/busqueda"><span class="sr-only">Búsqueda</span><i class="fa fa-search" style="color: white;"></i></a>
+
+            </div>
+            </div>
+        </div>
+    </nav>
+    <nav class="navbarINAOE">
+        <div class="container-fluid">
+            <div class="contNav">
+                <div class="seccionesINAOE">
+                    <li><p class="text_inaoe">INAOEP</p></li>
+                </div>
+               
+            <div class="seccionesEstatus">
+                <li><a>Actualizar área</a></li>
+            </div>
+            </div>
+        </div>
+    </nav>
 
 
 <div class="container mt-5">
