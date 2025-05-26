@@ -227,7 +227,7 @@ class alumnos
                                 areas ON areas.id_area = trace_student_areas.fk_area
                             WHERE 
                                 students.id_student = " . $id_student . " 
-                                OR trace_student_areas.id_trace_student_area IS NULL
+                                OR trace_student_areas.id_trace_student_area IS NULL and areas.status = 1
                             ORDER BY 
                                 areas.id_area;
                             ");
