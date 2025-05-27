@@ -163,11 +163,14 @@
   <div class="modal-dialog modal-lg" role="dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="responsablesModalTitle"></h5>
+        <div>
+            <h5 class="modal-title" id="responsablesModalTitle"></h5>
+            <small id="responsablesModalSubtitle" class="text-muted"></small>
+        </div>
         <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-          <span aria-hidden="true">&times;</span>
+            <span aria-hidden="true">&times;</span>
         </button>
-      </div>
+        </div>
       <div class="modal-body">
         <div class="row" aria-labelledby="nav-titlesCast-tab">
           <table class="table table-striped table-bordered">

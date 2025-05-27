@@ -157,6 +157,8 @@ function helper() {
     $('#responsablesModal').modal();
     var modal = $('#responsablesModal')
     modal.find('.modal-title').text('Responsables de las áreas')
+    $('#responsablesModalSubtitle').text('Responsables de la liberación de cada área en caso de requerir atención especial.')
+
     $.ajax({
         url: "../../controllers/validacion_proceso/controller_validacionProceso.php",
         cache: false,
