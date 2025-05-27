@@ -125,4 +125,49 @@ public function savePrestamo($student, $description, $employee){
     }
 
 
+
+    public function getPrestamoInfo($id_prestamo){
+
+        $con=new DBconnection(); 
+        $con->openDB();
+
+        $dataTypeUser = $con->query("SELECT prestamo.id_prestamo, prestamo.fk_student, prestamo.description FROM prestamo WHERE id_prestamo = $id_prestamo;");
+
+        $row =  pg_fetch_array($dataTypeUser);
+
+        $dataTypeUser = array(
+            "id_prestamo"=>$row["id_prestamo"],
+            "fk_student"=>$row["fk_student"],
+            "description"=>$row["description"]
+        );
+        $con->closeDB();
+        return array("status" => 200, "data" => $dataTypeUser);
+    }
+
+
+
+    public function savePrestamoEdit($id_prestamo, $fk_student, $description){
+
+        $con=new DBconnection();
+        $con->openDB();
+
+        $prestamoDataEdit = $con->query("UPDATE prestamo SET fk_student = '".$fk_student."', description = '".$description."' WHERE id_prestamo = ".$id_prestamo." RETURNING id_prestamo;");
+
+        $validatePrestamoDataEdit = pg_fetch_row($prestamoDataEdit);
+
+        if ($validatePrestamoDataEdit > 0)
+        {
+            $con->closeDB();
+            return $validatePrestamoDataEdit[0];
+        }
+
+        else
+        {
+            
+        $con->closeDB();
+        return "error";
+        }
+    }
+
+
 }

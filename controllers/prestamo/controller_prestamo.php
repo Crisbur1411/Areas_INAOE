@@ -46,6 +46,20 @@ public function getEmployee(){
 }
 
 
+public function getPrestamoInfo(){
+			$this->prestamo= new prestamo();
+			$data = $this->prestamo->getPrestamoInfo($_POST['id_prestamo']);
+			echo json_encode($data);
+		
+		}
+
+		public function savePrestamoEdit(){
+			$this->prestamo= new prestamo();
+			$data = $this->prestamo->savePrestamoEdit($_POST['id_prestamo'], $_POST['fk_student'], $_POST['description']);
+			echo($data);
+		}
+
+
 
 }
 
@@ -62,6 +76,10 @@ $obj = new prestamoController();
 	     	$obj->getEmployee();
 	    }if ($_POST["action"]==4){
 	     	$obj->savePrestamo();
+	    }if ($_POST["action"]==5){
+	     	$obj->getPrestamoInfo();
+	    }if ($_POST["action"]==6){
+	     	$obj->savePrestamoEdit();
 	    }
 	}
 

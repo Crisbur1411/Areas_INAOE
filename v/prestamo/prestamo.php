@@ -160,6 +160,12 @@
                     </thead>
                     <tbody class="bg-white" id="table-prestamo"></tbody>
                 </table>
+                <div id="alert1" class="alert alert-danger text-center mt-3 animate__animated animate__fadeIn">
+                    <p>
+                        <i class="fa-solid fa-ban fa-2x"></i>
+                    </p>
+                    <h4 class="alert-heading">SIN REGISTROS</h4>
+                </div>
             </div>
         </div>
     </div>

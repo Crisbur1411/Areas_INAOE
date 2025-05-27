@@ -116,7 +116,7 @@ if (isset($_SESSION['user_name']))
 			<div class="form-group">
 				<div class="row">
 					<div class="col-sm-4">
-							<label for="student"><span class="text-danger">* </span>Estudiantes</label>
+							<label for="student"><span class="text-danger">* </span>Estudiante</label>
 							<select name="student" id="student" class="form-control">
 								<option value="null" selected disabled>Seleccione al Estudiante</option>
 							</select>

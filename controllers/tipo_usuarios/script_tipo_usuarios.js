@@ -252,7 +252,7 @@ if(!userID){
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Ocurrió un error al editar el área'
+                    text: 'Ocurrió un error al editar el tipo de usuario'
                 });
             }
         },

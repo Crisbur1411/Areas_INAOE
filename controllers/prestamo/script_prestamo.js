@@ -59,8 +59,8 @@ function listPrestamos() {
                     + "<th style='text-align:center'>"+val.student_name+"</th>"
                     + "<th style='text-align:center'>"+val.description+"</a></th>"                 
                     + "<th style='text-align:center'>"+fechaHoraFormateada+"</th>"
-                    + "<th style='text-align:center'><button type='button' class='btn btn-secondary btn-sm' id='btn-edit' title='Click para editar' onclick='editTypeUser("+val.id_prestamo+")'>"+'<i class="fas fa-edit"></i>'+"</button></th>"
-                    + "<th style='text-align:center'><button type='button' class='btn btn-danger btn-sm' id='btn-details' id-type-user='"+val.id_prestamo+"' title='Click para eliminar' onclick='deleteTypeUser("+val.id_prestamo+")'>"+'<i class="fas fa-trash"></i>'+"</button></th>"
+                    + "<th style='text-align:center'><button type='button' class='btn btn-secondary btn-sm' id='btn-edit' title='Click para editar' onclick='editPrestamo("+val.id_prestamo+")'>"+'<i class="fas fa-edit"></i>'+"</button></th>"
+                    + "<th style='text-align:center'><button type='button' class='btn btn-danger btn-sm' id='btn-details' id-type-user='"+val.id_prestamo+"' title='Click para eliminar' onclick='deletePrestamo("+val.id_prestamo+")'>"+'<i class="fas fa-trash"></i>'+"</button></th>"
                     + "</tr>";
                 }
             });
@@ -77,7 +77,7 @@ function listPrestamos() {
 
 
 
-function getStudent(){    
+function getStudent(callback){    
     $(".loader").fadeOut("slow");
     $.ajax({
         url: "../../controllers/prestamo/controller_prestamo.php",
@@ -90,12 +90,16 @@ function getStudent(){
             $.each(result, function(index, val){
                 addStudent += "<option value='"+ val.id_student +"'>"+ val.full_name +"</option>";
             });            
-            $("#student").html(addStudent);             
-        }, error: function(result) {
-            //console.log(result);
+            $("#student").html(addStudent);  
+
+            if (typeof callback === "function") callback(); // Ejecutar callback si existe
+        },
+        error: function(result) {
+            console.log("Error al obtener estudiantes");
         }
     });
 }
+
 
 
 function getEmployee(){  
@@ -210,7 +214,142 @@ if (employee.length == 0) {
 
 
 
+//Función para cargar los datos del tipo de usuario a editar
 
+function preCargarDatosPrestamo() {
+    var prestamoID = sessionStorage.getItem('id_prestamo');
+if(!prestamoID){
+  Swal.fire({
+    icon: 'error',
+    title: 'Sin selección',
+    text: 'No se ha seleccionado un prestamo para editar'
+  });
+  return;
+}
+    var formData = new FormData();
+    formData.append('action', 5);
+    formData.append('id_prestamo', prestamoID);
+
+    $.ajax({
+        url: "../../controllers/prestamo/controller_prestamo.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        processData: false,
+        contentType: false,
+        data: formData,
+        success: function (result) {
+            if (result.status == 200) {
+                var prestamoData = result.data;
+                $('#student').val(prestamoData.fk_student);
+                $('#description').val(prestamoData.description);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ocurrió un error al editar el préstamo'
+                });
+            }
+        },
+        error: function (result) {
+            console.log("Hubo un error al realizar la solicitud");
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Ocurrió un error al realizar la solicitud'
+            });
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    let id = new URLSearchParams(window.location.search).get('dc');
+    if(id){
+        getStudent(function(){
+            preCargarDatosPrestamo(id);
+        });
+    } else {
+        getStudent();
+    }
+});
+
+
+
+
+
+
+//funcion para guardar los datos de tipo de usuario
+function savePrestamoEdit() {
+
+    var prestamoID = sessionStorage.getItem('id_prestamo');
+    var student = $("#student").val().trim();
+    var description = $("#description").val().trim();
+
+
+    if (student.length == 0) {
+        alert("Tiene que seleccionar un estudiante")
+        $("#student").focus();
+        return 0;
+    }
+    if (description.length == 0) {
+        alert("Tiene que escribir la descripción del préstamo")
+        $("#description").focus();
+        return 0;
+    }
+
+
+
+
+    if (student.length > 0 && description.length > 0 && employee.length > 0) {
+        $.ajax({
+            url: "../../controllers/prestamo/controller_prestamo.php",
+            cache: false,
+            dataType: 'JSON',
+            type: 'POST',
+            data: { action: 6, id_prestamo: prestamoID, fk_student: student, description: description},
+            success: function (result) {
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: 'Préstamo Actualizado correctamente',
+                    timer: 1000,
+                    timerProgressBar: true,
+                }).then((result) => {
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                    location.href = "../prestamo/prestamo.php";         
+
+                    }
+                });
+
+            }, error: function (jqXHR, textStatus, errorThrown) {
+    console.log("Error en Ajax:");
+    console.log("Estado: " + textStatus);
+    console.log("Error: " + errorThrown);
+    console.log("Respuesta completa: ", jqXHR);
+
+    Swal.fire({
+        icon: 'error',
+        title: 'Error al actualizar el préstamo',
+        html: `<b>Estado:</b> ${textStatus}<br><b>Error:</b> ${errorThrown}`,
+        footer: 'Revisa consola para más detalles',
+        timer: 10000,
+        timerProgressBar: true,
+    });
+            }
+        });
+    } 
+}
+
+
+
+
+
+function editPrestamo(id_prestamo){
+    sessionStorage.setItem("id_prestamo", id_prestamo)
+    location.href = "../prestamo/actualizar_prestamo.php?dc="+id_prestamo;  
+}
 
 
 function newPrestamo() {
