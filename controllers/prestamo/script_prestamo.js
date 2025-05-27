@@ -416,6 +416,133 @@ function savePrestamoEdit() {
 
 
 
+
+function deletePrestamo(id_prestamo) {
+    console.log(id_prestamo)
+    
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esta acción eliminará el préstamo. ¿Estás seguro de continuar?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "../../controllers/prestamo/controller_prestamo.php",
+                cache: false,
+                dataType: 'JSON',
+                type: 'POST',
+                data: { action: 9, id_prestamo: id_prestamo },
+                success: function(result) {
+                    console.log(result)
+                    if (result.status == "success") {
+
+                        
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: 'Préstamo eliminado correctamente',
+                            timer: 1000,
+                            timerProgressBar: true,
+                        }).then((result) => {
+                            if (result.dismiss === Swal.DismissReason.timer) {
+                                location.reload();
+
+                            }
+                          });
+                        
+
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Ocurrió un error al eliminar el préstamo'
+                        });
+                    }
+
+                },
+                error: function (result) {
+                    console.log(result); 
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ocurrió un error al realizar la solicitud'
+                    });
+                }
+            });
+        }
+    }); 
+}
+
+
+
+
+
+function freePrestamo(id_prestamo) {
+    console.log(id_prestamo);
+    
+    Swal.fire({
+        title: '¿Liberar préstamo?',
+        text: 'Al liberar este préstamo, se marcará como completado. ¿Deseas continuar?',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#28a745', // Verde Bootstrap
+        cancelButtonColor: '#d33',
+        confirmButtonText: '<i class="fas fa-check-circle"></i> Sí, liberar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "../../controllers/prestamo/controller_prestamo.php",
+                cache: false,
+                dataType: 'JSON',
+                type: 'POST',
+                data: { action: 10, id_prestamo: id_prestamo },
+                success: function(result) {
+                    console.log(result)
+                    if (result.status == "success") {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Préstamo liberado',
+                            text: 'El préstamo se ha liberado correctamente.',
+                            timer: 1500,
+                            showConfirmButton: false,
+                            timerProgressBar: true
+                        }).then(() => {
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Ocurrió un error al liberar el préstamo.'
+                        });
+                    }
+                },
+                error: function(result) {
+                    console.log(result);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'No se pudo conectar al servidor.'
+                    });
+                }
+            });
+        }
+    });
+}
+
+
+
+
+
+
+
+
 function editPrestamo(id_prestamo){
     sessionStorage.setItem("id_prestamo", id_prestamo)
     location.href = "../prestamo/actualizar_prestamo.php?dc="+id_prestamo;  

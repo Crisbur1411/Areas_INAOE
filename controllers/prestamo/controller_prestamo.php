@@ -74,6 +74,19 @@ public function getPrestamoInfo(){
 		}
 
 
+		public function deletePrestamo(){
+			$this->prestamo= new prestamo();
+			$data = $this->prestamo->deletePrestamo($_POST['id_prestamo']);
+			echo json_encode($data);
+		}
+
+		public function freePrestamo(){
+			$this->prestamo= new prestamo();
+			$data = $this->prestamo->freePrestamo($_POST['id_prestamo']);
+			echo json_encode($data);
+		}
+
+
 
 }
 
@@ -98,6 +111,10 @@ $obj = new prestamoController();
 	     	$obj->listPrestamosCancel();
 	    }if ($_POST["action"]==8){
 	     	$obj->listPrestamoFree();
+	    }if ($_POST["action"]==9){
+	     	$obj->deletePrestamo();
+	    }if ($_POST["action"]==10){
+	     	$obj->freePrestamo();
 	    }
 	}
 

@@ -244,4 +244,65 @@ public function savePrestamo($student, $description, $employee){
     }
 
 
+
+    public function deletePrestamo($id_prestamo){
+
+        try{
+
+        
+        $con=new DBconnection();
+        $con->openDB();
+
+        $prestamoDataDelete = ("UPDATE prestamo SET status = 0 WHERE id_prestamo = '$id_prestamo'");
+        $updateResult = $con->query($prestamoDataDelete);
+
+        $con->closeDB();
+
+
+
+        if ($updateResult )
+        {
+           $response = ['status' => 'success', 'message' => 'Prestamo eliminado correctamente'];
+        } else {
+            $response = ['status' => 'error', 'message' => 'Error al eliminar el prestamo'];
+        }
+        }
+        catch (Exception $e) {
+            $response = ['status' => 'error', 'message' => 'Error al eliminar el prestamo: ' . $e->getMessage()];
+        }
+        return $response;
+    }
+ 
+
+
+
+
+    public function freePrestamo($id_prestamo){
+
+        try{
+
+        
+        $con=new DBconnection();
+        $con->openDB();
+
+        $prestamoDataFree = ("UPDATE prestamo SET status = 2 WHERE id_prestamo = '$id_prestamo'");
+        $updateResult = $con->query($prestamoDataFree);
+
+        $con->closeDB();
+
+
+
+        if ($updateResult )
+        {
+           $response = ['status' => 'success', 'message' => 'Prestamo liberado correctamente'];
+        } else {
+            $response = ['status' => 'error', 'message' => 'Error al liberar el prestamo'];
+        }
+        }
+        catch (Exception $e) {
+            $response = ['status' => 'error', 'message' => 'Error al liberar el prestamo: ' . $e->getMessage()];
+        }
+        return $response;
+    }
+
 }
