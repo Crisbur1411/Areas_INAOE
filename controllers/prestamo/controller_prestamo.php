@@ -16,6 +16,20 @@ public function listPrestamos(){
 	      	echo json_encode($data);
 		}
 
+		public function listPrestamosCancel(){
+    		$this->prestamo= new prestamo();
+
+	      	$data = $this->prestamo->listPrestamosCancel();
+	      	echo json_encode($data);
+		}
+
+		public function listPrestamoFree(){
+			$this->prestamo = new prestamo();
+
+			$data = $this->prestamo->listPrestamoFree();
+	      	echo json_encode($data);	
+		}
+
 public function getStudents(){
     		$this->prestamo= new prestamo();
 
@@ -80,6 +94,10 @@ $obj = new prestamoController();
 	     	$obj->getPrestamoInfo();
 	    }if ($_POST["action"]==6){
 	     	$obj->savePrestamoEdit();
+	    }if ($_POST["action"]==7){
+	     	$obj->listPrestamosCancel();
+	    }if ($_POST["action"]==8){
+	     	$obj->listPrestamoFree();
 	    }
 	}
 

@@ -124,7 +124,7 @@
                 </div>
                
             <div class="seccionesEstatus">
-                <li><a>Prestamos registrados</a></li>
+                <li><a>Gestión de Prestamos Institucionales</a></li>
             </div>
             </div>
         </div>
@@ -132,12 +132,20 @@
 
 	<div class="container mt-5">
     <div id="info" class="d-none" style="text-align: center;">
-        <span style="color: black; font-weight: bold; font-size: 16px;">PRÉSTAMOS PENDIENTES</span><br><br><br>
+        <span style="color: black; font-weight: bold; font-size: 16px;">GESTIÓN DE PRÉSTAMOS INSTITUCIONALES</span><br><br><br>
         <div style="text-align: center; border-bottom: 3px solid #cecece; margin-bottom: 30px; margin-top: 30px">
             <nav class="navbar navbar-light">
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     <a class="nav-item nav-link active" id="nav-prestamo-tab" data-toggle="tab" href="#nav-prestamo" role="tab" aria-controls="nav-prestamo" aria-selected="true">
-                        Registros en sistema <span id="pf" class="badge badge-info">0</span>
+                        Préstamos pendientes <span id="pf" class="badge badge-info">0</span>
+                        <span class="sr-only">unread messages</span>
+                    </a>
+                    <a class="nav-item nav-link" id="nav-free-tab" data-toggle="tab" href="#nav-free" role="tab" aria-controls="nav-free" aria-selected="false">
+                        Préstamos Liberados <span id="pf3" class="badge badge-success">0</span>
+                        <span class="sr-only">unread messages</span>
+                    </a>
+                    <a class="nav-item nav-link" id="nav-cancel-tab" data-toggle="tab" href="#nav-cancel" role="tab" aria-controls="nav-cancel" aria-selected="false">
+                        Préstamos Eliminados <span id="pf4" class="badge badge-danger">0</span>
                         <span class="sr-only">unread messages</span>
                     </a>
                 </div>
@@ -146,6 +154,7 @@
         </div>
 
         <div class="tab-content" id="nav-tabContent">
+            <!-- Préstamos Pendientes -->
             <div class="tab-pane fade show active" id="nav-prestamo" role="tabpanel" aria-labelledby="nav-prestamo-tab">
                 <table class="table table-striped table-bordered">
                     <thead style="background: #691C32; color: white;">
@@ -155,6 +164,7 @@
                             <th scope="col" style="text-align:center">Adeudo(s)</th>
                             <th scope="col" style="text-align:center">Fecha y Hora de Préstamo</th>
                             <th scope="col" style="text-align:center">Editar Préstamo</th>
+                            <th scope="col" style="text-align:center">Liberar Préstamo</th>
                             <th scope="col" style="text-align:center">Cancelar Préstamo</th>
                         </tr>
                     </thead>
@@ -167,9 +177,50 @@
                     <h4 class="alert-heading">SIN REGISTROS</h4>
                 </div>
             </div>
+
+            <!-- Préstamos Liberados -->
+            <div class="tab-pane fade" id="nav-free" role="tabpanel" aria-labelledby="nav-free-tab">
+                <table class="table table-striped table-bordered">
+                    <thead style="background: #691C32; color: white;">
+                        <tr>
+                            <th scope="col" style="text-align:center"># REGISTRO</th>
+                            <th scope="col" style="text-align:center">Nombre del Estudiante</th>
+                            <th scope="col" style="text-align:center">Adeudo(s)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white" id="table-free"></tbody>
+                </table>
+                <div id="alert2" class="alert alert-danger text-center mt-3 animate__animated animate__fadeIn">
+                    <p>
+                        <i class="fa-solid fa-ban fa-2x"></i>
+                    </p>
+                    <h4 class="alert-heading">SIN REGISTROS</h4>
+                </div>
+            </div>
+
+            <!-- Préstamos Cancelados -->
+            <div class="tab-pane fade" id="nav-cancel" role="tabpanel" aria-labelledby="nav-cancel-tab">
+                <table class="table table-striped table-bordered">
+                    <thead style="background: #691C32; color: white;">
+                        <tr>
+                            <th scope="col" style="text-align:center"># REGISTRO</th>
+                            <th scope="col" style="text-align:center">Nombre del Estudiante</th>
+                            <th scope="col" style="text-align:center">Adeudo(s)</th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white" id="table-cancel"></tbody>
+                </table>
+                <div id="alert3" class="alert alert-danger text-center mt-3 animate__animated animate__fadeIn">
+                    <p>
+                        <i class="fa-solid fa-ban fa-2x"></i>
+                    </p>
+                    <h4 class="alert-heading">SIN REGISTROS</h4>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
 
 
 

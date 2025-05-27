@@ -51,6 +51,80 @@ WHERE
 
 
 
+    
+public function listPrestamosCancel(){
+        $con=new DBconnection(); 
+        $con->openDB();
+
+        $dataTitle = $con->query("SELECT 
+    prestamo.id_prestamo, 
+    prestamo.description, 
+    prestamo.date_register,
+	prestamo.fk_employee,
+	CONCAT(students.name || ' ' || students.surname || ' ' || second_surname)
+    AS student_name, prestamo.status
+FROM 
+    prestamo
+INNER JOIN 
+    students ON prestamo.fk_student = students.id_student
+WHERE 
+    prestamo.status = 0 ORDER BY id_prestamo ASC;");
+
+        $data = array();
+
+        while($row = pg_fetch_array($dataTitle)){
+            $dat = array(
+                "id_prestamo"=>$row["id_prestamo"],
+                "description"=>$row["description"],
+                "date_register"=>$row["date_register"],
+                "student_name"=>$row["student_name"],
+                "status" => $row["status"]
+            );
+            $data[] = $dat;
+        }
+        $con->closeDB();
+        
+        return $data;
+    }
+
+
+    public function listPrestamoFree(){
+        $con=new DBconnection(); 
+        $con->openDB();
+
+        $dataTitle = $con->query("SELECT 
+    prestamo.id_prestamo, 
+    prestamo.description, 
+    prestamo.date_register,
+	prestamo.fk_employee,
+	CONCAT(students.name || ' ' || students.surname || ' ' || second_surname)
+    AS student_name, prestamo.status
+FROM 
+    prestamo
+INNER JOIN 
+    students ON prestamo.fk_student = students.id_student
+WHERE 
+    prestamo.status = 2 ORDER BY id_prestamo ASC;");
+
+        $data = array();
+
+        while($row = pg_fetch_array($dataTitle)){
+            $dat = array(
+                "id_prestamo"=>$row["id_prestamo"],
+                "description"=>$row["description"],
+                "date_register"=>$row["date_register"],
+                "student_name"=>$row["student_name"],
+                "status" => $row["status"]
+            );
+            $data[] = $dat;
+        }
+        $con->closeDB();
+        
+        return $data;
+    }
+
+
+
     public function getStudents(){
         $con=new DBconnection();
         $con->openDB();

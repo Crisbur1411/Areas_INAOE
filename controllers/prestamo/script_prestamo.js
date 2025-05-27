@@ -27,6 +27,8 @@ $(function(){
     listPrestamos();
     getStudent();
     getEmployee();
+    listPrestamosCancel();
+    listPrestamosFree();
             
 });
 
@@ -60,6 +62,7 @@ function listPrestamos() {
                     + "<th style='text-align:center'>"+val.description+"</a></th>"                 
                     + "<th style='text-align:center'>"+fechaHoraFormateada+"</th>"
                     + "<th style='text-align:center'><button type='button' class='btn btn-secondary btn-sm' id='btn-edit' title='Click para editar' onclick='editPrestamo("+val.id_prestamo+")'>"+'<i class="fas fa-edit"></i>'+"</button></th>"
+                    + "<th style='text-align:center'><button type='button' class='btn btn-success btn-sm' id='btn-details' id-type-user='"+val.id_prestamo+"' title='Click para liberar' onclick='freePrestamo("+val.id_prestamo+")'>"+"<i class='fas fa-check'></i></button></th>"
                     + "<th style='text-align:center'><button type='button' class='btn btn-danger btn-sm' id='btn-details' id-type-user='"+val.id_prestamo+"' title='Click para eliminar' onclick='deletePrestamo("+val.id_prestamo+")'>"+'<i class="fas fa-trash"></i>'+"</button></th>"
                     + "</tr>";
                 }
@@ -67,6 +70,73 @@ function listPrestamos() {
             if(i1 != 0){
                 $('#table-prestamo').html(table);
                 $('#alert1').hide();
+            }
+        }, error: function (result){
+            console.log(result); 
+        }
+    }); 
+}
+
+
+
+function listPrestamosCancel() {
+  $.ajax({
+        url: "../../controllers/prestamo/controller_prestamo.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        data: { action: 7 },
+        success: function(result) {            
+            let i1 = +$('#pf4').text();
+            var table = "";
+            $.each(result, function(index, val) {
+                if (val.status == 0)
+                {
+                    $('#pf4').text(++i1);
+                    table += "<tr>"       
+                    + "<th style='text-align:center'>"+val.id_prestamo+"</th>"
+                    + "<th style='text-align:center'>"+val.student_name+"</th>"
+                    + "<th style='text-align:center'>"+val.description+"</a></th>"                 
+                    + "</tr>";
+                }
+            });
+            if(i1 != 0){
+                $('#table-cancel').html(table);
+                $('#alert3').hide();
+            }
+        }, error: function (result){
+            console.log(result); 
+        }
+    }); 
+}
+
+
+
+
+function listPrestamosFree() {
+  $.ajax({
+        url: "../../controllers/prestamo/controller_prestamo.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        data: { action: 8 },
+        success: function(result) {            
+            let i1 = +$('#pf3').text();
+            var table = "";
+            $.each(result, function(index, val) {
+                if (val.status == 2)
+                {
+                    $('#pf3').text(++i1);
+                    table += "<tr>"       
+                    + "<th style='text-align:center'>"+val.id_prestamo+"</th>"
+                    + "<th style='text-align:center'>"+val.student_name+"</th>"
+                    + "<th style='text-align:center'>"+val.description+"</a></th>"                 
+                    + "</tr>";
+                }
+            });
+            if(i1 != 0){
+                $('#table-free').html(table);
+                $('#alert2').hide();
             }
         }, error: function (result){
             console.log(result); 
