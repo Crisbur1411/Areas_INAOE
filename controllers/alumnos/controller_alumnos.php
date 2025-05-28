@@ -143,7 +143,7 @@ class alumnosController
     		$this->alumnos= new alumnos();
 
 			$data = $this->alumnos->getStudent($_POST["id_student"]);
-	      	echo json_encode(value: $data);
+	      	echo json_encode($data);
 		}
 
 		public function updateStudent(){

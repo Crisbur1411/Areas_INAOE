@@ -562,47 +562,28 @@ public function coursesAds($id_student){
         return $data;
     }
 
-    public function getState(){
-        $con=new DBconnection();
-        $con->openDB();
-
-        $inst = $con->query("SELECT id, name FROM  states");
-
-        $data = array();
-
-        while($row = pg_fetch_array($inst)){
-            $dat = array(
-                "id"=>$row["id"],
-                "name"=>$row["name"]
-            );
-            $data[] = $dat;
-        }
-        $con->closeDB();
-        return $data;
-    }
 
    public function getStudent($id_student){
         $con=new DBconnection();
         $con->openDB();
 
         $dataR = $con->query("SELECT students.id_student, students.name, students.surname, students.second_surname, students.control_number, students.email, students.status FROM students WHERE id_student=". $id_student);
-        $data = array();
 
-        while($row = pg_fetch_array($dataR)){
-            $dat = array(
-                "id_student" =>$row["id_student"],
-                "name" =>$row["name"], 
-                "surname" =>$row["surname"],
-                "second_surname" =>$row["second_surname"],
-                "control_number" =>$row["control_number"],
-                "email" =>$row["email"],
-                "status" =>$row["status"]
-            );
-            $data[] = $dat;
-        }
+        $row = pg_fetch_array($dataR);
+        
+        $dataR = array(
+            "id_student" =>$row["id_student"],
+            "name" =>$row["name"], 
+            "surname" =>$row["surname"],
+            "second_surname" =>$row["second_surname"],
+            "control_number" =>$row["control_number"],
+            "email" =>$row["email"],
+            "status" =>$row["status"]
+        );
+
         $con->closeDB();
         
-        return $data;
+        return array("status" => 200, "data" => $dataR);
     }
 
 
