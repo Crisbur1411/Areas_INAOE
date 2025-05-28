@@ -289,7 +289,7 @@ function changePassword() {
     `;
 
     bootbox.dialog({
-        title: "<h4>Nueva Área</h4>",
+        title: "<h4>Cambiar Contraseña</h4>",
         message: formHtml,
         closeButton: true,
         buttons: {
