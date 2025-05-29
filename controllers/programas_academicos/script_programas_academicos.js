@@ -70,7 +70,7 @@ function listPrograms() {
 
 function saveProgram() {
     var name = $("#name").val().trim();
-    var key = $("#key").val().trim();
+    var cve = $("#cve").val().trim();
     var select = document.getElementById("type_program");
     var selectedOption = select.options[select.selectedIndex];
 
@@ -79,7 +79,7 @@ function saveProgram() {
         return;
     }
 
-    var valor_tipo = selectedOption.value;
+    var type = selectedOption.value;
     var type_program = selectedOption.getAttribute("data-name");
 
 
@@ -91,21 +91,21 @@ function saveProgram() {
         return 0;
     }
 
-    if (key.length == 0) {
+    if (cve.length == 0) {
         alert("El campo clave no puede estar vacío");
-        $("#key").focus();
+        $("#cve").focus();
         return 0;
     }
 
     // Si todos están llenos, puedes hacer una validación final así:
-    if (name.length > 0 && key.length) {
+    if (name.length > 0 && cve.length) {
        
         $.ajax({
             url: "../../controllers/programas_academicos/controller_programas_academicos.php",
             cache: false,
             dataType: 'JSON',
             type: 'POST',
-            data: { action: 2, name: name, cve: key, valor_tipo: valor_tipo, type_program: type_program },
+            data: { action: 2, name: name, cve: cve, type: type, type_program: type_program },
             success: function (result) {
             location.href = "../programas_academicos/programas_academicos.php";         
             }, error: function (result) {
@@ -137,6 +137,145 @@ function saveProgram() {
 
 
 
+function preCargarDatosProgram() {
+    var programID = sessionStorage.getItem('id_academic_programs');
+if(!programID){
+  Swal.fire({
+    icon: 'error',
+    title: 'Sin selección',
+    text: 'No se ha seleccionado un programa academico para editar'
+  });
+  return;
+}
+    var formData = new FormData();
+    formData.append('action', 3);
+    formData.append('id_academic_programs', programID);
+
+    $.ajax({
+        url: "../../controllers/programas_academicos/controller_programas_academicos.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        processData: false,
+        contentType: false,
+        data: formData,
+        success: function (result) {
+            if (result.status == 200) {
+                var userData = result.data;
+                $('#name').val(userData.name);
+                $('#cve').val(userData.cve);
+                $('#type_program').val(userData.type);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ocurrió un error al editar el programa academico'
+                });
+            }
+        },
+        error: function (result) {
+            console.log("Hubo un error al realizar la solicitud");
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Ocurrió un error al realizar la solicitud'
+            });
+        }
+    });
+}
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    let id = new URLSearchParams(window.location.search).get('dc');
+    if(id){ // Solo si existe el id en la URL
+        preCargarDatosProgram(id);
+    }
+});
+
+
+
+
+function saveProgramEdit() {
+
+    var programID = sessionStorage.getItem('id_academic_programs');
+    var name = $("#name").val().trim();
+    var cve = $("#cve").val().trim();
+    var select = document.getElementById("type_program");
+    var selectedOption = select.options[select.selectedIndex];
+
+    if (selectedOption.value == "") {
+        alert("Selecciona un tipo de programa");
+        return;
+    }
+
+    var type = selectedOption.value;
+    var type_program = selectedOption.getAttribute("data-name");
+
+    if (name.length == 0) {
+        alert("Tiene que escribir el nombre")
+        $("#name").focus();
+        return 0;
+    }
+    if (cve.length == 0) {
+        alert("Tiene que escribir la clave")
+        $("#cve").focus();
+        return 0;
+    }
+
+
+    if (name.length > 0 && cve.length > 0) {
+        $.ajax({
+            url: "../../controllers/programas_academicos/controller_programas_academicos.php",
+            cache: false,
+            dataType: 'JSON',
+            type: 'POST',
+            data: { action: 4, id_academic_programs: programID, name: name, cve: cve, type: type, type_program: type_program },
+            success: function (result) {
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: 'Programa académico Actualizado correctamente',
+                    timer: 1000,
+                    timerProgressBar: true,
+                }).then((result) => {
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                    location.href = "../programas_academicos/programas_academicos.php";         
+
+                    }
+                });
+
+            }, error: function (jqXHR, textStatus, errorThrown) {
+    console.log("Error en Ajax:");
+    console.log("Estado: " + textStatus);
+    console.log("Error: " + errorThrown);
+    console.log("Respuesta completa: ", jqXHR);
+
+    Swal.fire({
+        icon: 'error',
+        title: 'Error al actualizar el programa académico',
+        html: `<b>Estado:</b> ${textStatus}<br><b>Error:</b> ${errorThrown}`,
+        footer: 'Revisa consola para más detalles',
+        timer: 10000,
+        timerProgressBar: true,
+    });
+            }
+        });
+    } 
+}
+
+
+
+
+
+//Redireccionar a pagina de actualizar programa academico
+
+function editProgram(id_academic_programs){
+    sessionStorage.setItem("id_academic_programs", id_academic_programs)
+    location.href = "../programas_academicos/actualizar_programas_academicos.php?dc="+id_academic_programs;  
+}
 
 
 

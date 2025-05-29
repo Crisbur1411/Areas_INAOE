@@ -38,14 +38,40 @@ class programasAcademicos{
 
 
 
-    public function savePrograms($cve, $name, $type_program, $valor_tipo){
+    public function getProgramInfo($id_academic_programs){
+
+        $con=new DBconnection(); 
+        $con->openDB();
+
+        $dataPrograms = $con->query("SELECT id_academic_programs, name, cve, type_program, type FROM academic_programs WHERE id_academic_programs = $id_academic_programs;");
+
+        $row =  pg_fetch_array($dataPrograms);
+
+        $dataPrograms = array(
+            "id_academic_programs"=>$row["id_academic_programs"],
+            "name"=>$row["name"],
+            "cve"=>$row["cve"],
+            "type_program"=>$row["type_program"],
+            "type"=>$row["type"]
+
+        );
+        $con->closeDB();
+        return array("status" => 200, "data" => $dataPrograms);
+    }
+
+
+
+    
+
+
+    public function savePrograms($cve, $name, $type_program, $type){
 
         $con=new DBconnection();
         $con->openDB();
 
 
         $programData = $con->query("INSERT INTO academic_programs (cve, name, type, type_program) 
-        VALUES ('".$cve."', '".$name."', '".$valor_tipo."', '".$type_program."')
+        VALUES ('".$cve."', '".$name."', '".$type."', '".$type_program."')
         RETURNING id_academic_programs;");
 
 
@@ -67,7 +93,28 @@ class programasAcademicos{
     }
 
 
+public function saveProgramEdit($id_academic_programs, $cve, $name, $type, $type_program){
 
+        $con=new DBconnection();
+        $con->openDB();
+
+        $programDataEdit = $con->query("UPDATE academic_programs SET cve = '".$cve."', name = '".$name."', type = '".$type."', type_program = '".$type_program."' WHERE id_academic_programs = ".$id_academic_programs." RETURNING id_academic_programs;");
+
+        $validateProgramDataEdit = pg_fetch_row($programDataEdit);
+
+        if ($validateProgramDataEdit > 0)
+        {
+            $con->closeDB();
+            return $validateProgramDataEdit[0];
+        }
+
+        else
+        {
+            
+        $con->closeDB();
+        return "error";
+        }
+    }
 
 }
 

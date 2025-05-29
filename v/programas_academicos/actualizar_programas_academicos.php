@@ -1,30 +1,30 @@
-<?php date_default_timezone_set("America/Mexico_City"); ?>
-<?php session_start();
+	<?php date_default_timezone_set("America/Mexico_City"); ?>
+	<?php session_start();
 
-if (isset($_SESSION['user_name']))
-{
-	echo '<script>location.href = "#";</script>';
-}
-?>
-<!DOCTYPE html> 
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Registro de programa académico</title>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-	<link rel="stylesheet" href="../../assets/css/bootstrap-select.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
-	<link rel="stylesheet" href="../../assets/css/estilos.css">
-	<link rel="stylesheet" href="../../assets/css/sidebar.css">
-	<link rel="stylesheet" href="../../assets/css/navInaoe.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
-<body>
-	<!-- <div class="loader">
-	    <img src="../../assets/loading.gif" alt="Cargando...">
-	</div> --> 
+	if (isset($_SESSION['user_name']))
+	{
+		echo '<script>location.href = "#";</script>';
+	}
+	?>
+	<!DOCTYPE html> 
+	<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>actualizar programa académico</title>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="../../assets/css/bootstrap-select.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
+		<link rel="stylesheet" href="../../assets/css/estilos.css">
+		<link rel="stylesheet" href="../../assets/css/sidebar.css">
+		<link rel="stylesheet" href="../../assets/css/navInaoe.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	</head>
+	<body>
+		<!-- <div class="loader">
+			<img src="../../assets/loading.gif" alt="Cargando...">
+		</div> --> 
 
-	<nav class="navbar navbar-expand-lg navbar-light bg-nav">
+		<nav class="navbar navbar-expand-lg navbar-light bg-nav">
 
         <div class="row mx-md-n5">
             <div class="col px-md-5">
@@ -46,7 +46,7 @@ if (isset($_SESSION['user_name']))
                     <ul class="nav sidebar-nav">
                         <div class="sidebar-header">
                             <div class="sidebar-brand">
-                                <span class="align:left" style="color: white; font-weight: bold; font-size: 20px;">Programas académicos</span>
+                                <span class="align:left" style="color: white; font-weight: bold; font-size: 20px;">Programas Académicos</span>
                             </div>
                         </div>
                         <?php if ($_SESSION['type'] == 0 ): ?>	
@@ -87,6 +87,7 @@ if (isset($_SESSION['user_name']))
                         </ul>
                         </li>
                     </ul>
+
                 </nav>
                 <!-- /#sidebar-wrapper -->
 
@@ -130,31 +131,30 @@ if (isset($_SESSION['user_name']))
                 </div>
                
             <div class="seccionesEstatus">
-                <li><a>Nuevo programa académico</a></li>
+                <li><a>Actualizar programa académico</a></li>
             </div>
             </div>
         </div>
     </nav>
 
 
-	<div class="container mt-5">
-		<div id="new" style="text-align: center;"><br><br>
-			<div style="text-align: center; border-bottom: 3px solid #cecece; margin-bottom: 30px;">
-				<h3>Registro de programa académico</h3>				
-			</div>	
-			<br>
-			<div class="form-group">
-				<div class="row">
-					<div class="col-sm-4">
-							<label for="name"><span class="text-danger">* </span>Nombre del programa académico</label>
-                            <input type="text" class="form-control" id="name">
-						</div>
+		<div class="container mt-5">
+			<div id="new" style="text-align: center;"><br><br>
+				<div style="text-align: center; border-bottom: 3px solid #cecece; margin-bottom: 30px;">
+					<h3>Actualizar programa académico</h3>				
+				</div>	
+				<br>
+				<div class="form-group">
+					<div class="row">
 						<div class="col-sm-4">
-							<label for="cve"><span class="text-danger">* </span>Clave de programa académico</label>
-							<input type="number" class="form-control"  id="cve" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">
-						</div>
-						
-						<div class="col-sm-4">
+								<label for="name"><span class="text-danger">* </span>Nombre del programa académico</label>
+								<input type="text" class="form-control" id="name">
+							</div>
+							<div class="col-sm-4">
+								<label for="cve"><span class="text-danger">* </span>Clave de programa académico</label>
+								<input type="number" class="form-control"  id="cve" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">
+							</div>
+							<div class="col-sm-4">
                             <label for="type_program"><span class="text-danger">* </span>Tipo de programa académico</label>
                             <select class="form-control" id="type_program">
                                 <option value="" disabled selected>Seleccione una opción</option>
@@ -163,32 +163,36 @@ if (isset($_SESSION['user_name']))
                                 <option value="3" data-name="Externo Licenciatura">EXTERNO LICENCIATURA</option>
                                 <option value="4" data-name="Externo Bachillerato">EXTERNO BACHILLERATO</option>
                             </select>
-                        </div>
+                        </div>					
+						</div>
 					</div>
-				</div>
-
-				<br><br>	
-				<div class="form-group" align="center">
-					<button type="button" class="btn btn-secondary w-20" id="cancel" onClick="history.go(-1);" >Cancelar</button>
-					<button type="button" class="btn btn-success w-20" id="save-exam" onclick="saveProgram();">Guardar</button>
-				</div>				
-			</div>	
-		</div>		
-	</div>
+					<br><br>	
+					<div class="form-group" align="center">
+						<button type="button" class="btn btn-secondary w-20" id="cancel" onClick="history.go(-1);" >Cancelar</button>
+						<button type="button" class="btn btn-success w-20" id="save-exam" onclick="saveProgramEdit();">Guardar</button>
+					</div>				
+				</div>	
+			</div>		
+		</div>
 
 	<br><br>
 	<?php include '../components/footer/footer.php'; ?>
 
 
-	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-	<script src="../../assets/js/bootstrap-select.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.3.2/bootbox.min.js"></script>
-	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-	<script src="../../assets/js/sidebar.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/all.min.js" integrity="sha512-6PM0qYu5KExuNcKt5bURAoT6KCThUmHRewN3zUFNaoI6Di7XJPTMoT6K0nsagZKk2OB4L7E3q1uQKHNHd4stIQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-	<script src="../../controllers/signin/script_login.js"></script>	
-	<script src="../../controllers/programas_academicos/script_programas_academicos.js"></script>
-</body>
-</html>
+		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script src="../../assets/js/bootstrap-select.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.3.2/bootbox.min.js"></script>
+		<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+		<script src="../../assets/js/sidebar.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/all.min.js" integrity="sha512-6PM0qYu5KExuNcKt5bURAoT6KCThUmHRewN3zUFNaoI6Di7XJPTMoT6K0nsagZKk2OB4L7E3q1uQKHNHd4stIQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+		
+		<script src="../../controllers/signin/script_login.js"></script>
+		<script src="../../controllers/programas_academicos/script_programas_academicos.js"></script>
+
+	
+	</body>
+	</html>
