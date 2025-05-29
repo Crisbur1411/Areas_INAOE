@@ -116,6 +116,39 @@ public function saveProgramEdit($id_academic_programs, $cve, $name, $type, $type
         }
     }
 
+
+
+
+
+
+    public function deleteProgram($id_academic_programs){
+
+        try{
+
+        
+        $con=new DBconnection();
+        $con->openDB();
+
+        $programDataDelete = ("UPDATE academic_programs SET status = 0 WHERE id_academic_programs = '$id_academic_programs'");
+        $updateResult = $con->query($programDataDelete);
+
+        $con->closeDB();
+
+
+
+        if ($updateResult )
+        {
+           $response = ['status' => 'success', 'message' => 'Programa académico eliminado correctamente'];
+        } else {
+            $response = ['status' => 'error', 'message' => 'Error al eliminar el programa académico'];
+        }
+        }
+        catch (Exception $e) {
+            $response = ['status' => 'error', 'message' => 'Error al eliminar el programa académico: ' . $e->getMessage()];
+        }
+        return $response;
+    }
+
 }
 
 ?>

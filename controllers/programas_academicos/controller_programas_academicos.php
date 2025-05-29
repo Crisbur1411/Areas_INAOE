@@ -41,6 +41,14 @@ class programasAcademicosController{
 		}
 
 
+        public function deleteProgram(){
+			$this->programasAcademicos= new programasAcademicos();
+			$data = $this->programasAcademicos->deleteProgram($_POST['id_academic_programs']);
+			echo json_encode($data);
+		
+		}
+
+
 }
 
 
@@ -55,6 +63,8 @@ $obj = new programasAcademicosController();
          	$obj->getProgramInfo();
         }if ($_POST["action"]==4){
          	$obj->saveProgramEdit();
+        }if ($_POST["action"]==5){
+         	$obj->deleteProgram();
         }
 	}
 
