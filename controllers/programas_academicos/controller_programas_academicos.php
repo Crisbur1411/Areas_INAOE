@@ -1,0 +1,41 @@
+<?php
+require_once '../../m/programas_academicos/model_programas_academicos.php';
+
+class programasAcademicosController{
+
+    private $programasAcademicos;
+
+
+    public function __construct(){
+   
+   
+    }
+
+    public function listPrograms(){
+        $this->programasAcademicos = new programasAcademicos();
+
+        $data = $this->programasAcademicos->listPrograms();
+        echo json_encode($data);
+    }
+
+    public function savePrograms(){
+        $this->programasAcademicos = new programasAcademicos();
+        $data = $this->programasAcademicos->savePrograms($_POST["cve"], $_POST["name"], $_POST["type_program"], $_POST["valor_tipo"]);
+        echo json_encode($data);
+    }
+
+
+}
+
+
+$obj = new programasAcademicosController();
+
+	if (isset($_POST["action"])){
+	    if ($_POST["action"]==1){
+	     	$obj->listPrograms();
+	    }if ($_POST["action"]==2){
+         	$obj->savePrograms();
+        }
+	}
+
+?>
