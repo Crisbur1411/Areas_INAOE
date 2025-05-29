@@ -53,6 +53,9 @@
 							<li><a class="dropdown-item" href="../administracion/administracion.php">Administración</a></li>
 							<?php endif; ?>
                             <?php if ($_SESSION['type'] == 1 || $_SESSION['type'] == 2): ?>
+							<li><a class="dropdown-item" href="../programas_academicos/programas_academicos.php">Programas académicos</a> </li>							
+							<?php endif; ?>
+                            <?php if ($_SESSION['type'] == 1 || $_SESSION['type'] == 2): ?>
 							<li><a class="dropdown-item" href="../areas/areas.php">Áreas</a></li>
 							<?php endif; ?>
                             <?php if ($_SESSION['type'] == 1 || $_SESSION['type'] == 2): ?>
@@ -63,9 +66,6 @@
 							<?php endif; ?>
                             <?php if ($_SESSION['type'] == 1 || $_SESSION['type'] == 2): ?>
 							<li><a class="dropdown-item" href="../usuarios/usuarios.php">Usuarios</a> </li>							
-							<?php endif; ?>
-                            <?php if ($_SESSION['type'] == 1 || $_SESSION['type'] == 2): ?>
-							<li><a class="dropdown-item" href="../programas_academicos/programas_academicos.php">Programas académicos</a> </li>							
 							<?php endif; ?>
 							<?php if ($_SESSION['type'] == 3): ?>
 							<li><a class="dropdown-item" href="../liberacion_area/liberacion_area.php">Liberación del área</a></li>
