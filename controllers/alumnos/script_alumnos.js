@@ -131,6 +131,21 @@ function turnSingAreas(id_student) {
                 data: { action: 3, id_student: id_student, user: $user },
                 success: function (result) {
                     console.log(result);
+
+                    // Aquí se envia la llamada para enviar el correo
+                    $.ajax({
+                        url: "../../services/send_email.php",
+                        type: 'GET',
+                        dataType: 'JSON',
+                        success: function(response) {
+                            console.log(response);
+                        },
+                        error: function(error) {
+                            console.error(error);
+                        }
+                    });
+
+                    // El segundo AJAX que ya tenías
                     $.ajax({
                         url: "../../controllers/alumnos/controller_alumnos.php",
                         cache: false,
@@ -164,6 +179,7 @@ function turnSingAreas(id_student) {
         }
     });
 }
+
 
 
 function listStudentInProgress() {
