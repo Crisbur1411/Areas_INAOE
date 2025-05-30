@@ -353,41 +353,34 @@ document.addEventListener('DOMContentLoaded', function() {
     var areaId = sessionStorage.getItem('areaId');
     var nameArea = sessionStorage.getItem('nameArea');
     var areaDetails = sessionStorage.getItem('areaDetails');
-    var extension 
     document.getElementById('nombreArea').value = nameArea;
     document.getElementById('detallesArea').value = areaDetails;
     document.getElementById('identificador').value = areaId;
 
-    
+    var extensiones = ['.jpg', '.jpeg', '.png', '.gif'];
+    var rutaBase = "../../res/imgs/" + areaId;
+    var imagenEncontrada = false;
 
-     
-     $.ajax({
-        url: "../../controllers/areas/controller_areas.php",
-        cache: false,
-        dataType: 'JSON',
-        type: 'POST',
-        data: { action: 5 ,area_id:areaId },
-        success: function(result) {
-             extension = result.extension[0].extension_imagen;
-
-             var rutaImagen = "../../res/imgs/" + areaId + extension;   
-            if(extension){
-                document.getElementById('enlaceImagen').setAttribute('href', rutaImagen);
-                document.getElementById('imagenArea').setAttribute('src', rutaImagen);
-            }else{
-                document.getElementById('imagenArea').style.display = 'none';
-
-            }
-           
-              
-        },
-        error: function(result) {
-            console.log(result);
-         
-
+    function probarExtension(index) {
+        if (index >= extensiones.length) {
+            document.getElementById('imagenArea').style.display = 'none';
+            return;
         }
-    });
+        var rutaImagen = rutaBase + extensiones[index];
+        var img = new Image();
+        img.onload = function() {
+            document.getElementById('enlaceImagen').setAttribute('href', rutaImagen);
+            document.getElementById('imagenArea').setAttribute('src', rutaImagen);
+            document.getElementById('imagenArea').style.display = 'block';
+            imagenEncontrada = true;
+        };
+        img.onerror = function() {
+            probarExtension(index + 1);
+        };
+        img.src = rutaImagen;
+    }
 
+    probarExtension(0);
 });
 
 
