@@ -177,13 +177,14 @@ if (isset($_SESSION['user_name']))
 					<div class="row">						
 						<div class="col-sm-4">
 							<label for="program-type"><span class="text-danger">* </span>Tipo de programa</label>
-							<select name="program" id="program" class="form-control" onchange="courses();">
-								<option value='null' selected disabled>Seleccione una opción</option>
-								<option value="1">MAESTRÍA</option>
-								<option value="2">DOCTORADO</option>
-								<option value="3">EXTERNO LICENCIATURA</option>
-								<option value="4">EXTERNO BACHILLERATO</option>
+							<select name="program" id="program" class="form-control" onchange="updateInstitucion(); courses();">
+							<option value='null' selected disabled>Seleccione una opción</option>
+							<option value="1">MAESTRÍA</option>
+							<option value="2">DOCTORADO</option>
+							<option value="3">EXTERNO LICENCIATURA</option>
+							<option value="4">EXTERNO BACHILLERATO</option>
 							</select>
+
 						</div>	
 						<div class="col-sm-8">
 							<label for="courses"><span class="text-danger">* </span>Área de Adscripción</label>
@@ -191,6 +192,18 @@ if (isset($_SESSION['user_name']))
 								<option value="null" selected disabled>Seleccione su área</option>
 							</select>
 						</div>															
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="row">
+						<div class="col-sm-8">
+							<label for="institucion"><span class="text-danger">* </span>Institución</label>
+							<input type="text" class="form-control" id="institucion" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">
+						</div>
+						<div class="col-sm-4">
+							<label for="date_conclusion"><span class="text-danger">* </span>Fecha de conclusión</label>
+							<input type="date" class="form-control" id="date_conclusion">
+						</div>																					
 					</div>
 				</div>	
 				<br><br>	

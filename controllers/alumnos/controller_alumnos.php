@@ -28,7 +28,7 @@ class alumnosController
 		public function saveStudent(){
     		$this->alumnos= new alumnos();
 
-	      	$data = $this->alumnos->saveStudent($_POST["name"], $_POST["surname"], $_POST["secondsurname"], $_POST["email"], $_POST["controlnumber"], $_POST["course"]);
+	      	$data = $this->alumnos->saveStudent($_POST["name"], $_POST["surname"], $_POST["secondsurname"], $_POST["email"], $_POST["controlnumber"], $_POST["course"], $_POST["institucion"], $_POST["date_conclusion"]);
 	      	echo ($data);
 		}
 

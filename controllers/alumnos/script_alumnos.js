@@ -515,6 +515,23 @@ function courses(){
     });
 }
 
+//Funciona para actualizar el campo institución en el registro de alumnos
+function updateInstitucion() {
+  var program = $("#program").val();
+  var institucionInput = $("#institucion");
+
+  if (program == "1" || program == "2") {
+    institucionInput.val("INAOE");
+    institucionInput.prop("readonly", true);
+  } else if (program == "3" || program == "4") {
+    institucionInput.val("");
+    institucionInput.prop("readonly", false);
+  } else {
+    institucionInput.val("");
+    institucionInput.prop("readonly", false);
+  }
+}
+
 
 
 
@@ -529,6 +546,10 @@ function saveStudent(){
     var email = $("#email").val().trim(); 
 
     var course = $("#course").val();
+
+    var institucion = $("#institucion").val().trim();
+
+    var date_conclusion = $("#date_conclusion").val().trim();
     
    
     if (name.length==0){
@@ -564,6 +585,18 @@ function saveStudent(){
         $("#course").focus();
         return 0;
     }
+
+    if (institucion==null){
+        alert("Tiene que ingresar la institución")
+        $("#institucion").focus();
+        return 0;
+    }
+
+    if (date_conclusion==null){
+        alert("Tiene que agregar la fecha de conclusión")
+        $("#date_conclusion").focus();
+        return 0;
+    }
     
     var expEmail = /^[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
     var validEmail = expEmail.test(email);
@@ -574,7 +607,7 @@ function saveStudent(){
             cache: false,
             dataType: 'JSON',
             type: 'POST',
-            data: { action: 15, name: name, surname: surname, secondsurname: secondsurname, email: email, controlnumber: controlnumber, course: course },
+            data: { action: 15, name: name, surname: surname, secondsurname: secondsurname, email: email, controlnumber: controlnumber, course: course, institucion: institucion, date_conclusion: date_conclusion },
             success: function(result) {
                 history.go(-1);         
             }, error: function(result) {

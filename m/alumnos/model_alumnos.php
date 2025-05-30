@@ -75,13 +75,13 @@ class alumnos
         return $data;
     }
 
-    public function saveStudent ($name, $surname, $secondsurname, $email, $controlnumber, $course)
+    public function saveStudent ($name, $surname, $secondsurname, $email, $controlnumber, $course, $institucion, $date_conclusion)
     {
         $con=new DBconnection();
         $con->openDB();
 
-        $studentData = $con->query("INSERT INTO students (name, surname, second_surname, control_number, email, fk_academic_programs, date_register) 
-        VALUES ('".$name."','".$surname."', '".$secondsurname."','".$controlnumber."','".$email."',".$course.",NOW()) 
+        $studentData = $con->query("INSERT INTO students (name, surname, second_surname, control_number, email, fk_academic_programs, institucion, fecha_conclusion, date_register) 
+        VALUES ('".$name."','".$surname."', '".$secondsurname."','".$controlnumber."','".$email."',".$course.", '".$institucion."', '".$date_conclusion."', NOW()) 
         RETURNING id_student");
 
         
