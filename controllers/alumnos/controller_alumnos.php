@@ -149,7 +149,7 @@ class alumnosController
 		public function updateStudent(){
     		$this->alumnos= new alumnos();
 
-	      	$data = $this->alumnos->updateStudent($_POST["id_student"], $_POST["name"], $_POST["surname"], $_POST["secondsurname"], $_POST["email"], $_POST["controlnumber"], $_POST["course"]);
+	      	$data = $this->alumnos->updateStudent($_POST["id_student"], $_POST["name"], $_POST["surname"], $_POST["secondsurname"], $_POST["email"], $_POST["controlnumber"], $_POST["course"], $_POST["institucion"], $_POST["date_conclusion"]);
 	      	echo ($data);
 		}
 }

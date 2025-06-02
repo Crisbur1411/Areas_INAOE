@@ -567,7 +567,7 @@ public function coursesAds($id_student){
         $con=new DBconnection();
         $con->openDB();
 
-        $dataR = $con->query("SELECT students.id_student, students.name, students.surname, students.second_surname, students.control_number, students.email, students.status FROM students WHERE id_student=". $id_student);
+        $dataR = $con->query("SELECT students.id_student, students.name, students.surname, students.second_surname, students.control_number, students.email, students.status, students.institucion,students.fecha_conclusion FROM students WHERE id_student=". $id_student);
 
         $row = pg_fetch_array($dataR);
         
@@ -578,7 +578,9 @@ public function coursesAds($id_student){
             "second_surname" =>$row["second_surname"],
             "control_number" =>$row["control_number"],
             "email" =>$row["email"],
-            "status" =>$row["status"]
+            "status" =>$row["status"],
+            "institucion" =>$row["institucion"],
+            "date_conclusion" =>$row["fecha_conclusion"]
         );
 
         $con->closeDB();
@@ -587,11 +589,11 @@ public function coursesAds($id_student){
     }
 
 
-    public function updateStudent ($id_student, $name, $surname, $secondsurname, $email, $controlnumber, $course)    {
+    public function updateStudent ($id_student, $name, $surname, $secondsurname, $email, $controlnumber, $course, $institucion, $date_conclusion)    {
         $con=new DBconnection();
         $con->openDB();
 
-        $updateData = $con->query("UPDATE students SET name = '".$name."', surname = '" .$surname."', second_surname = '" .$secondsurname."', email = '" .$email."', control_number = '" .$controlnumber."', fk_academic_programs = " .$course."
+        $updateData = $con->query("UPDATE students SET name = '".$name."', surname = '" .$surname."', second_surname = '" .$secondsurname."', email = '" .$email."', control_number = '" .$controlnumber."', fk_academic_programs = " .$course.", institucion = '" .$institucion."', fecha_conclusion = '" .$date_conclusion."'
          WHERE id_student= ". $id_student ." RETURNING id_student ");
 
         $validateupdateData = pg_fetch_row($updateData);

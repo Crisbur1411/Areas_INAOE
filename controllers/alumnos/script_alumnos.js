@@ -727,19 +727,41 @@ function getStudent() {
         dataType: 'JSON',
         type: 'POST',
         data: { action: 17, id_student:id_student },
-        success: function(result) {            
+        success: function(result) {
+                console.log(result); // <-- aquí  
+            
             $.each(result, function(index, val){                
                 $('#name').val(val.name);
                 $('#surname').val(val.surname); 
                 $('#second-surname').val(val.second_surname);
                 $('#email').val(val.email);
                 $('#control-number').val(val.control_number);
+                $('#institucion').val(val.institucion);
+                $('#date_conclusion').val(val.date_conclusion);
             });   
         }, error: function ( result) {
             console.log(result);
         } 
     }); 
 }
+
+
+
+function checkInstitution() {
+    let program = $("#program").val();
+
+    if (program == "1" || program == "2") {
+        $("#institucion").val("INAOE");
+        $("#institucion").prop("disabled", true);
+    } else if (program == "3" || program == "4") {
+        $("#institucion").val("");
+        $("#institucion").prop("disabled", false);
+    } else {
+        $("#institucion").val("");
+        $("#institucion").prop("disabled", false);
+    }
+}
+
 
 // Actualizar los datos del alumno
 function updateStudent(){
@@ -754,6 +776,8 @@ function updateStudent(){
     var email = $("#email").val().trim(); 
 
     var course = $("#course").val();
+    var institucion = $("#institucion").val().trim();
+    var date_conclusion = $("#date_conclusion").val().trim();
     
    
     if (name.length==0){
@@ -789,6 +813,16 @@ function updateStudent(){
         $("#course").focus();
         return 0;
     }
+    if (institucion==null){
+        alert("Tiene que agregar la institución")
+        $("#institucion").focus();
+        return 0;
+    }
+    if (date_conclusion==null){
+        alert("Tiene que agregar la fecha de conclusión")
+        $("#date_conclusion").focus();
+        return 0;
+    } 
     
     var expEmail = /^[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
     var validEmail = expEmail.test(email);
@@ -807,7 +841,9 @@ function updateStudent(){
             secondsurname: secondsurname, 
             email: email, 
             controlnumber: controlnumber, 
-            course: course 
+            course: course,
+            institucion: institucion,
+            date_conclusion: date_conclusion 
         },
         success: function(result) {
             history.go(-1);         
@@ -869,7 +905,9 @@ function updateStudent(){
 
 
 
-
+$(document).ready(function() {
+    checkInstitution(); // para inicializar el campo si ya hay un valor seleccionado
+});
 
 
 
