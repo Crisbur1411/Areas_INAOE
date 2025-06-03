@@ -1,69 +1,56 @@
 <?php
 date_default_timezone_set("America/Mexico_City");
-header("Content-Type: application/json");
-header("Access-Control-Allow-Origin: *");
-
-// Cargar PHPMailer
-require 'phpmailer/PHPMailer.php';
-require 'phpmailer/Exception.php';
-require 'phpmailer/SMTP.php';
-
-// Configuración
-$config = require 'config.php';
 
 // Cargar modelo de emails
 require_once __DIR__ . '/../m/email/model_email.php';
 
-
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-// Obtener correos desde modelo
-$emailModel = new EmailModel();
-$emails = $emailModel->listEmails();
+// Cargar PHPMailer
+require 'PHPMailer/src/Exception.php';
+require 'PHPMailer/src/PHPMailer.php';
+require 'PHPMailer/src/SMTP.php';
 
-if (empty($emails)) {
-    echo json_encode(['status' => 'error', 'message' => 'No hay correos disponibles']);
-    exit;
+// Función para enviar correo a un destinatario
+function enviarCorreo($correoDestino, $asunto, $mensaje, $usuario, $contrasena, $servidorCorreo) {
+    $mail = new PHPMailer(true);
+    try {
+        $mail->isSMTP();
+        $mail->CharSet = 'UTF-8';
+        $mail->Host = $servidorCorreo;
+        $mail->SMTPAuth = true;
+        $mail->Username = $usuario;
+        $mail->Password = $contrasena;
+        $mail->SMTPSecure = 'tls';
+        $mail->Port = 587;
+        $mail->setFrom('m.valencia@inaoep.mx', 'Miguel');
+        $mail->addAddress($correoDestino);
+        $mail->Subject = $asunto;
+        $mail->Body = $mensaje;
+        $mail->send();
+        return true;
+    } catch (Exception $e) {
+        return false;
+    }
 }
 
-// Crear correo
-$mail = new PHPMailer(true);
+// Parámetros del correo
+$asunto = "Prueba de correo electrónico 2";
+$mensaje = "Este es un mensaje de prueba.";
+$usuario = "m.valencia";
+$contrasena = "25v4l3ncia.Mig";
+$servidorCorreo = "ccc.inaoep.mx";
 
-try {
-    $mail->isSMTP();
-    $mail->Host       = $config['smtp_host'];
-    $mail->SMTPAuth   = true;
-    $mail->Username   = $config['smtp_username'];
-    $mail->Password   = $config['smtp_password'];
-    $mail->SMTPSecure = $config['smtp_secure'];
-    $mail->Port       = $config['smtp_port'];
-    $mail->CharSet    = 'UTF-8';
+// Obtener correos desde el modelo
+$emailModel = new EmailModel();
+$correos = $emailModel->listEmails();
 
-    $mail->setFrom($config['from_email'], $config['from_name']);
-
-    // Agregar cada correo destinatario
-    foreach ($emails as $email) {
-        $mail->addAddress($email);
+foreach ($correos as $correoDestino) {
+    if (enviarCorreo($correoDestino, $asunto, $mensaje, $usuario, $contrasena, $servidorCorreo)) {
+        echo "Correo enviado exitosamente a $correoDestino.<br>";
+    } else {
+        echo "Error al enviar el correo a $correoDestino.<br>";
     }
-
-    $mail->isHTML(true);
-    $mail->Subject = 'Aviso de nuevo estudiante registrado';
-
-    $currentTime = date("Y-m-d H:i:s");
-
-    $mail->Body = "
-        <div style='font-family: Arial, sans-serif; text-align: center;'>
-            <h3 style='color: #333;'>Aviso de Registro</h3>
-            <p>Se ha registrado un nuevo estudiante en el sistema.</p>
-            <small>Fecha de aviso: $currentTime</small>
-        </div>
-    ";
-
-    $mail->send();
-    echo json_encode(['status' => 'success', 'message' => 'Correo enviado correctamente a todos los destinatarios']);
-    
-} catch (Exception $e) {
-    echo json_encode(['status' => 'error', 'message' => 'Error al enviar correo: ' . $mail->ErrorInfo]);
 }
 ?>
