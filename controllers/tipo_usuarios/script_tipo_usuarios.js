@@ -36,23 +36,23 @@ function listTypeUsers() {
         type: 'POST',
         data: { action: 1 },
         success: function(result) {            
-            let i1 = +$('#pf').text();
+            let i1 = 0; // <-- Reinicia el contador aquí
             var table = "";
             $.each(result, function(index, val) {
-                //console.log(val);
                 if (val.status == 1)
                 {
-                $('#pf').text(++i1);
-                table += "<tr>"       
-                + "<th style='text-align:center'>"+val.id_type_users+"</th>"
-                + "<th style='text-align:center'>"+val.key+"</th>"
-                + "<th style='text-align:center'>"+val.name+"</a></th>"                 
-                + "<th style='text-align:center'>"+val.details+"</th>"
-                + "<th style='text-align:center'><button type='button' class='btn btn-secondary btn-sm' id='btn-edit' title='Click para editar' onclick='editTypeUser("+val.id_type_users+")'>"+'<i class="fas fa-edit"></i>'+"</button></th>"
-                + "<th style='text-align:center'><button type='button' class='btn btn-danger btn-sm' id='btn-details' id-type-user='"+val.id_type_users+"' title='Click para eliminar' onclick='deleteTypeUser("+val.id_type_users+")'>"+'<i class="fas fa-trash"></i>'+"</button></th>"
-                + "</tr>";
+                    i1++; // Solo incrementa aquí
+                    table += "<tr>"       
+                    + "<th style='text-align:center'>"+val.id_type_users+"</th>"
+                    + "<th style='text-align:center'>"+val.key+"</th>"
+                    + "<th style='text-align:center'>"+val.name+"</a></th>"                 
+                    + "<th style='text-align:center'>"+val.details+"</th>"
+                    + "<th style='text-align:center'><button type='button' class='btn btn-secondary btn-sm' id='btn-edit' title='Click para editar' onclick='editTypeUser("+val.id_type_users+")'>"+'<i class="fas fa-edit"></i>'+"</button></th>"
+                    + "<th style='text-align:center'><button type='button' class='btn btn-danger btn-sm' id='btn-details' id-type-user='"+val.id_type_users+"' title='Click para eliminar' onclick='deleteTypeUser("+val.id_type_users+")'>"+'<i class="fas fa-trash"></i>'+"</button></th>"
+                    + "</tr>";
                 }
             });
+            $('#pf').text(i1); // <-- Actualiza el contador aquí
             if(i1 != 0){
                 $('#table-type-users').html(table);
                 $('#alert1').hide();
