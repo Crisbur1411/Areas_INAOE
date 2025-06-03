@@ -34,13 +34,13 @@ function listUser() {
         dataType: 'JSON',
         type: 'POST',
         data: { action: 1 },
-        success: function(result) {            
-            let i1 = +$('#pf').text();
+        success: function(result) { 
+            let i1 = 0; // <-- Reinicia el contador aquí           
             var table = "";
             $.each(result, function(index, val) {
                 if (val.status == 1)
                 {
-                $('#pf').text(++i1);
+                i1++; // Solo incrementa aquí
                 table += "<tr>"       
                 + "<th style='text-align:center'>"+val.id_user+"</th>"
                 + "<th style='text-align:center'>"+val.full_name+"</a></th>"
@@ -52,6 +52,7 @@ function listUser() {
                 + "</tr>";
                 }
             });
+            $('#pf').text(i1); // <-- Actualiza el contador aquí
             if(i1 != 0){
                 $('#table-users').html(table);
                 $('#alert1').hide();
@@ -511,7 +512,7 @@ function saveUser() {
                     closeButton: false,
                     callback: function (result) {
                         if (result == false) {
-                            history.go(-1);
+                            window.location.href = "../usuarios/usuarios.php";
                         }
                     }
                 });
@@ -534,7 +535,7 @@ function saveUser() {
             closeButton: false,
             callback: function (result) {
                 if (result == false) {
-                    history.go(-1);
+                    window.location.href = "../usuarios/usuarios.php";
                 }
             }
         });
@@ -649,7 +650,7 @@ function saveUserEdit() {
                     timerProgressBar: true,
                 }).then((result) => {
                     if (result.dismiss === Swal.DismissReason.timer) {
-                        history.go(-1);
+                        window.location.href = "../usuarios/usuarios.php";
 
                     }
                 });

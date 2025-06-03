@@ -137,6 +137,7 @@ function turnSingAreas(id_student) {
                         url: "../../services/send_email.php",
                         type: 'GET',
                         dataType: 'JSON',
+                        data: { id_student: id_student },  // 👈 aquí enviamos el id_student
                         success: function(response) {
                             console.log(response);
                         },
@@ -144,6 +145,7 @@ function turnSingAreas(id_student) {
                             console.error(error);
                         }
                     });
+
 
                     // El segundo AJAX que ya tenías
                     $.ajax({
