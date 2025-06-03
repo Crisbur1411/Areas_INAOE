@@ -1,5 +1,8 @@
 <?php date_default_timezone_set("America/Mexico_City"); ?>
 <?php session_start();
+// Evita caché
+header("Cache-Control: no-cache, must-revalidate");
+header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
 ?>
 <!DOCTYPE html> 
 <html lang="en">
@@ -259,6 +262,8 @@
 </div>
 
 
+
+
 <br><br>
 
 	<?php include '../components/footer/footer.php'; ?>
@@ -274,10 +279,29 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/all.min.js" integrity="sha512-6PM0qYu5KExuNcKt5bURAoT6KCThUmHRewN3zUFNaoI6Di7XJPTMoT6K0nsagZKk2OB4L7E3q1uQKHNHd4stIQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	<script src="../../controllers/signin/script_login.js"></script>
 	<script src="../../controllers/alumnos/script_alumnos.js"></script>
+
+
+
+
 </body>
 </html>
 <?php
  ?>
+<div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="errorModalLabel">Error</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body" id="errorModalBody">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" >Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-xl" role="dialog">

@@ -212,24 +212,25 @@ class alumnos
         $con->openDB();
 
         $dataR = $con->query("SELECT 
-                                trace_student_areas.id_trace_student_area, 
-                                students.id_student, 
-                                CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name, 
-                                COALESCE(areas.name, '-') AS namearea, 
-                                COALESCE(to_char(trace_student_areas.date, 'YYYY-MM-DD HH24:MI:SS'), '-') AS formatted_date, 
-                                COALESCE(trace_student_areas.description, 'Sin autorizar') AS description, 
-                                COALESCE(students.status, 0) AS status
-                            FROM 
-                                students
-                            LEFT JOIN 
-                                trace_student_areas ON students.id_student = trace_student_areas.fk_student
-                            RIGHT JOIN 
-                                areas ON areas.id_area = trace_student_areas.fk_area
-                            WHERE 
-                                students.id_student = " . $id_student . " 
-                                OR trace_student_areas.id_trace_student_area IS NULL and areas.status = 1
-                            ORDER BY 
-                                areas.id_area;
+    trace_student_areas.id_trace_student_area, 
+    students.id_student, 
+    CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name, 
+    COALESCE(areas.name, '-') AS namearea, 
+    COALESCE(to_char(trace_student_areas.date, 'YYYY-MM-DD HH24:MI:SS'), '-') AS formatted_date, 
+    COALESCE(trace_student_areas.description, 'Sin autorizar') AS description, 
+    COALESCE(students.status, 0) AS status
+FROM 
+    areas
+LEFT JOIN 
+    trace_student_areas ON areas.id_area = trace_student_areas.fk_area 
+        AND trace_student_areas.fk_student = " . $id_student . "
+LEFT JOIN 
+    students ON students.id_student = trace_student_areas.fk_student
+WHERE 
+    areas.status = 1
+ORDER BY 
+    areas.id_area;
+
                             ");
 
         $data = array();
@@ -440,10 +441,14 @@ public function freeStudent($id_student, $user)
     $con->openDB();
 
     // Obtener el valor del curso del estudiante
- 
-
     $academicProgramQuery = $con->query("SELECT c.type FROM students s JOIN academic_programs c ON s.fk_academic_programs = c.id_academic_programs WHERE s.id_student = '$id_student'");
     $academicProgramRow = pg_fetch_array($academicProgramQuery);
+
+    if (!$academicProgramRow) {
+        $con->closeDB();
+        return array('error' => 'No se encontró el programa académico del estudiante.');
+    }
+
     $type = $academicProgramRow['type'];
 
     $pdfinfo = $con->query("SELECT CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
@@ -471,6 +476,11 @@ public function freeStudent($id_student, $user)
     }
 
     $con->closeDB();
+
+    // Validar si hay datos para generar PDF
+    if (count($pdfData) === 0) {
+        return array('error' => 'No se encontraron registros de áreas para este estudiante.');
+    }
 
     $pdf = new TCPDF('P', PDF_UNIT, 'A4', true, 'UTF-8', false);
     $pdf->SetCreator('FDA');
@@ -530,12 +540,13 @@ public function freeStudent($id_student, $user)
     $pdf->writeHTML($html, true, false, true, false, '');
 
     $pdfContent = $pdf->Output('student_certificate.pdf', 'S');
-    $pdfPath = '../../res/temp/' . $_POST["id_student"] . '.pdf';
+    $pdfPath = '../../res/temp/' . $id_student . '.pdf';
     file_put_contents($pdfPath, $pdfContent);
-    $pdfUrl = '../../res/temp/' . $_POST["id_student"] . '.pdf';
+    $pdfUrl = '../../res/temp/' . $id_student . '.pdf';
 
     return array('pdf_url' => $pdfUrl);
 }
+
 
 
 

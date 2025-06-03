@@ -456,6 +456,15 @@ function listStudentCancel() {
 
 
 //desarrollado por BRYAM el 03/04/2024 funcion para general el pdf de cada alumno
+function showError(message) {
+    $("#errorModalBody").text(message);
+    var errorModal = new bootstrap.Modal(document.getElementById('errorModal'));
+    errorModal.show();
+}
+
+
+
+
 function printPDF(id_student) {
     $.ajax({
         url: "../../controllers/alumnos/controller_alumnos.php",
@@ -463,7 +472,7 @@ function printPDF(id_student) {
         type: 'POST',
         data: { action: 13, id_student: id_student },
         success: function(result) {
-            console.log("Respuesta recibida:", result); // Ver en consola qué regresó
+            console.log("Respuesta recibida:", result);
 
             try {
                 var data = JSON.parse(result);
@@ -471,22 +480,28 @@ function printPDF(id_student) {
                 if (data.pdf_url) {
                     window.location.href = data.pdf_url;
                 } else {
-                    console.error('❌ Error: La respuesta JSON no contiene "pdf_url". Datos recibidos:', data);
+                    let errorMessage = 'No se pudo generar el PDF.\nVerifica que el alumno tenga las liberaciones necesarias.';
+                    showError(errorMessage);
+                    console.error(errorMessage, data);
                 }
 
             } catch (error) {
-                console.error('❌ Error al analizar la respuesta JSON:', error);
+                let errorMessage = 'Error al procesar la respuesta del servidor. Intenta de nuevo.';
+                showError(errorMessage);
+                console.error(errorMessage, error);
                 console.log('Respuesta sin procesar:', result);
             }
         },
         error: function(xhr, status, error) {
-            console.error("❌ Error en la petición AJAX.");
-            console.error("Estado:", status);
-            console.error("Error:", error);
+            let errorMessage = 'Error en la petición AJAX.\nEstado: ' + status + '\nError: ' + error;
+            showError(errorMessage);
+            console.error(errorMessage);
             console.error("Respuesta completa:", xhr.responseText);
         }
     });
 }
+
+
 
 
 
