@@ -454,7 +454,13 @@ function listStudentCancel() {
     }); 
 }
 
+//Funcion para imprimir el PDF de cada alumno "Temporal"
+function printPDF(id_student) {
+    window.open("http://192.168.73.131/liberacion_maina_funcional/res/temp/2.pdf", '_blank');
+}
 
+
+/*
 //desarrollado por BRYAM el 03/04/2024 funcion para general el pdf de cada alumno
 function showError(message) {
     $("#errorModalBody").text(message);
@@ -501,7 +507,7 @@ function printPDF(id_student) {
     });
 }
 
-
+*/
 
 
 
@@ -624,8 +630,8 @@ function saveStudent(){
             type: 'POST',
             data: { action: 15, name: name, surname: surname, secondsurname: secondsurname, email: email, controlnumber: controlnumber, course: course, institucion: institucion, date_conclusion: date_conclusion },
             success: function(result) {
-                history.go(-1);         
-            }, error: function(result) {
+    window.location.href = "../alumnos/alumnos.php";
+}, error: function(result) {
                 console.log(result);
                 bootbox.confirm({
                     title: "<h4>Error al registrar el alumno</h4>",
@@ -861,8 +867,8 @@ function updateStudent(){
             date_conclusion: date_conclusion 
         },
         success: function(result) {
-            history.go(-1);         
-        },
+    window.location.href = "../alumnos/alumnos.php";
+},
         error: function(jqXHR, textStatus, errorThrown) {
             console.error("Estado de la petición:", textStatus);
             console.error("Error lanzado:", errorThrown);
