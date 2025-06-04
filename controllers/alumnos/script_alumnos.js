@@ -147,7 +147,6 @@ function turnSingAreas(id_student) {
                     });
 
 
-                    // El segundo AJAX que ya tenías
                     $.ajax({
                         url: "../../controllers/alumnos/controller_alumnos.php",
                         cache: false,

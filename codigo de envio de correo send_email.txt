@@ -1,6 +1,7 @@
 <?php
 date_default_timezone_set("America/Mexico_City");
 
+
 // Cargar modelo de emails
 require_once __DIR__ . '/../m/email/model_email.php';
 use PHPMailer\PHPMailer\PHPMailer;
@@ -54,7 +55,7 @@ function enviarCorreo($correoDestino, $asunto, $mensaje, $usuario, $contrasena, 
         $mail->Password = $contrasena;
         $mail->SMTPSecure = 'tls';
         $mail->Port = 587;
-        $mail->setFrom('m.valencia@inaoep.mx', 'OFICINA ADMINISTRATIVA DFA');
+        $mail->setFrom('m.valencia@inaoep.mx', 'Sistema de Liberación de Adeudos Institucionales');
         $mail->addAddress($correoDestino);
         $mail->Subject = $asunto;
         $mail->Body = $mensaje;
@@ -72,16 +73,6 @@ $contrasena = "25v4l3ncia.Mig";
 $servidorCorreo = "ccc.inaoep.mx";
 
 // Fecha actual formateada
-$fecha = new DateTime();
-$formatter = new IntlDateFormatter(
-    'es_MX', // idioma y país
-    IntlDateFormatter::LONG, // formato largo de fecha
-    IntlDateFormatter::MEDIUM, // formato medio de hora
-    'America/Mexico_City',
-    IntlDateFormatter::GREGORIAN,
-    "d 'de' MMMM 'de' yyyy, HH:mm:ss"
-);
-
 $currentTime = date("Y-m-d H:i:s");
 
 
