@@ -64,93 +64,65 @@ function listAreas() {
 
 
 function newArea() {
-    var formHtml = `
-    
-   <p>¿Desea crear la nueva area?</p>
-`;    bootbox.dialog({
-        title: "<h4>Confirmar Nueva Área</h4>",
-        message: formHtml,
-        closeButton: true,
-        buttons: {
-            cancel: {
-                label: 'Cancelar',
-                className: 'btn-secondary',
-                callback: function () {
-                    console.log('Se canceló la creación del área');
-                }
-            },
-            confirm: {
-                label: 'Guardar',
-                className: 'btn-primary',
-                callback: function () {
+    var name = $("#nombreNuevaArea").val().trim();
+    var key = $("#identificador").val().trim();
+    var details = $("#descripcionArea").val().trim();
 
-                    var nombreArea = $('#nombreNuevaArea').val().trim();
-                    var detallesArea = $('#descripcionArea').val().trim();
-                    var identificadorArea = $('#identificador').val().trim();
-                    var imagen = $('#imagen')[0].files[0];
+    // Validación individual con mensajes específicos
+    if (name.length == 0) {
+        alert("El campo nombre no puede estar vacío");
+        $("#name").focus();
+        return 0;
+    }
 
+    if (key.length == 0) {
+        alert("El campo clave no puede estar vacío");
+        $("#key").focus();
+        return 0;
+    }
 
-                    var formData = new FormData();
-                    formData.append('action', 2);
-                    formData.append('nombre_area', nombreArea);
-                    formData.append('detalles_area', detallesArea);
-                    formData.append('identificador_area', identificadorArea);
-                    formData.append('imagen', imagen);
+    if (details.length == 0) {
+        alert("El campo descripción no puede estar vacío");
+        $("#details").focus();
+        return 0;
+    }
 
-                    if (nombreArea === '' || detallesArea === '' || identificadorArea === '') {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Todos los campos son obligatorios. Por favor, complete todos los campos.'
-                        });
-                        return false;
-                    }
-
-                    $.ajax({
-                        url: "../../controllers/areas/controller_areas.php",
-                        cache: false,
-                        dataType: 'JSON',
-                        type: 'POST',
-                        processData: false,
-                        contentType: false,
-                        data: formData,
-                        success: function (result) {
-                            console.log(result);
-
-                            if (result.status == 200) {
-                                console.log("Se creó el área");
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Éxito',
-                                    text: 'Área creada correctamente'
-                                });
-
-                                location.href = "./areas.php";
-
-
-                            } else {
-                                console.log("Hubo error al crear el área");
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: 'Ocurrió un error al crear el área'
-                                });
-                            }
+    // Si todos están llenos, puedes hacer una validación final así:
+    if (name.length > 0 && key.length > 0 && details.length > 0) {
+       
+        $.ajax({
+            url: "../../controllers/areas/controller_areas.php",
+            cache: false,
+            dataType: 'JSON',
+            type: 'POST',
+            data: { action: 2, name: name, key: key, details: details},
+            success: function (result) {
+            location.href = "../areas/areas.php";         
+            }, error: function (result) {
+                console.log(result);
+                bootbox.confirm({
+                    title: "<h4>Error al registrar el área</h4>",
+                    message: "<h5>Ocurrio un error al hacer el registro del área.</h5>",
+                    buttons: {
+                        cancel: {
+                            label: 'Cancelar',
+                            className: 'btn-secondary'
                         },
-                        error: function (result) {
-                            console.log(result);
-                            console.log("Hubo error al realizar la solicitud");
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'Ocurrió un error al realizar la solicitud'
-                            });
+                        confirm: {
+                            label: 'Aceptar',
+                            className: 'btn-success'
                         }
-                    });
-                }
+                    },
+                    closeButton: false,
+                    callback: function (result) {
+                        if (result == false) {
+                            history.go(-1);
+                        }
+                    }
+                });
             }
-        }
-    });
+        });
+    }
 }
 
 

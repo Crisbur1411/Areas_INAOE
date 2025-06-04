@@ -54,7 +54,7 @@ function enviarCorreo($correoDestino, $asunto, $mensaje, $usuario, $contrasena, 
         $mail->Password = $contrasena;
         $mail->SMTPSecure = 'tls';
         $mail->Port = 587;
-        $mail->setFrom('m.valencia@inaoep.mx', 'OFICINA ADMINISTRATIVA DFA');
+        $mail->setFrom('m.valencia@inaoep.mx', 'Sistema de Liberación de Adeudos Institucionales');
         $mail->addAddress($correoDestino);
         $mail->Subject = $asunto;
         $mail->Body = $mensaje;

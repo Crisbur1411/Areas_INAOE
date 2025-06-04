@@ -145,7 +145,7 @@
                         <input type="text" class="form-control" id="nombreNuevaArea" name="nombreNuevaArea" required>
                     </div>
                     <div class="col-sm-4">
-                        <label for="descripcionArea">Identificador Área</label>
+                        <label for="identificador">Identificador Área</label>
                         <input type="text" class="form-control" id="identificador" name="identificador" required>
                     </div>
                     <div class="col-sm-4">
@@ -154,16 +154,6 @@
                     </div>
                 </div>
                 <br>
-                <div class="row">
-
-                    <div class="col-sm-4">
-                        <label for="imagen">Subir Sello de Área:</label>
-                        <input type="file" class="form-control-file" id="imagen" name="imagen" accept="image/*">
-                    </div>
-                    <div class="col-sm-8">
-                        <img id="previewImage" src="#" alt="Vista previa de la imagen" style="max-width: 100%; max-height: 200px;display: none;">
-                    </div>
-                </div>
                 <br>
                 <button type="button" class="btn btn-secondary w-20" onclick="cancelNewArea()">cancelar</button>
                 <button type="button" class="btn btn-success w-20" onclick="newArea()">Crear</button>

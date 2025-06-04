@@ -34,31 +34,27 @@ class areas{
         
         return $data;
     }
-    public function createArea($nameArea, $detailsArea, $identificadorArea, $extension, $rutaTemporal, $rutaDestino) {
+    public function createArea($name, $key, $details) {
         $con = new DBconnection(); 
         $con->openDB();
     
-        try {
-            if (isset($rutaTemporal) && !empty($rutaTemporal) && move_uploaded_file($rutaTemporal, $rutaDestino)) {
-                $query = "INSERT INTO public.areas (name, key, details, status) VALUES ('$nameArea', '$identificadorArea', '$detailsArea', 1)";
-                $con->query($query);
-    
-                $con->closeDB();
-                http_response_code(200); 
-                return array("status" => 200, "message" => "Área creada correctamente");
-            } else {
-                $query = "INSERT INTO public.areas (name, key, details, status) VALUES ('$nameArea', '$identificadorArea', '$detailsArea', 1)";
-                $con->query($query);
-    
-                $con->closeDB();
-                http_response_code(200); 
-                return array("status" => 200, "message" => "Área creada correctamente"); 
-            }
-        } catch (Exception $e) {
+        $areasData = $con->query("INSERT INTO areas (name, key, details) VALUES ('".$name."', '".$key."', '".$details."') RETURNING id_area");
+        
+        $validateAreas = pg_fetch_row($areasData);
+
+        if ($validateAreas > 0)
+        {
             $con->closeDB();
-            http_response_code(500);
-            return array("status" => 500, "message" => "Error al insertar el área: " . $e->getMessage());
+            return $validateAreas[0];
         }
+
+        else
+        {
+            
+        $con->closeDB();
+        return "error";
+        }
+        
     }
     
     public function updateArea($nameArea, $detailsArea, $identificadorArea,$extension,$rutaTemporal,$rutaDestino ) {
@@ -106,6 +102,8 @@ class areas{
             return array("status" => 500, "message" => "Error al modificar el área: " . $e->getMessage());
         }
     }
+
+    
         public function deleteArea($identificadorArea) {
         $con = new DBconnection(); 
         $con->openDB();
