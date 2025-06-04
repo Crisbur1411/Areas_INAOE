@@ -87,7 +87,7 @@ $currentTime = date("Y-m-d H:i:s");
 
 
 // Enlace al sistema
-$enlaceSistema = "http://192.168.73.131/liberacion_maina_funcional/";
+$enlaceSistema = "http://adria.inaoep.mx:11038/liberacion_maina_funcional/";
 
 // Armar el cuerpo del correo
 $mensajeCorreo = "Estimado/a Responsable de Área,\n\n";
