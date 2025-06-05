@@ -142,15 +142,15 @@
                 <div class="row">
                     <div class="col-sm-4">
                         <label for="nombreNuevaArea">Nombre del Área</label>
-                        <input type="text" class="form-control" id="nombreNuevaArea" name="nombreNuevaArea" required>
+                        <input type="text" class="form-control" id="nombreNuevaArea" name="nombreNuevaArea" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();" required>
                     </div>
                     <div class="col-sm-4">
                         <label for="identificador">Identificador Área</label>
-                        <input type="text" class="form-control" id="identificador" name="identificador" required>
+                        <input type="text" class="form-control" id="identificador" name="identificador" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();"  required>
                     </div>
                     <div class="col-sm-4">
                         <label for="descripcionArea">Descripción</label>
-                        <textarea class="form-control" id="descripcionArea" name="descripcionArea" rows="1" required></textarea>
+                        <textarea class="form-control" id="descripcionArea" name="descripcionArea" style="text-transform:uppercase;"  onkeyup="javascript:this.value=this.value.toUpperCase();"  rows="1" required></textarea>
                     </div>
                 </div>
                 <br>

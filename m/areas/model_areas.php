@@ -16,7 +16,7 @@ class areas{
         $con=new DBconnection(); 
         $con->openDB();
 
-            $dataTitle = $con->query("SELECT id_area, name, key, details, status FROM areas WHERE status = 1;");
+            $dataTitle = $con->query("SELECT id_area, name, key, details, status FROM areas WHERE status = 1 ORDER BY id_area ASC;");
 
         $data = array();
 
@@ -57,50 +57,22 @@ class areas{
         
     }
     
-    public function updateArea($nameArea, $detailsArea, $identificadorArea,$extension,$rutaTemporal,$rutaDestino ) {
+    public function updateArea($id_area, $name, $key,$details) {
         $con = new DBconnection(); 
         $con->openDB();
     
-        try {
-            if (!empty($rutaTemporal) && is_uploaded_file($rutaTemporal)) {
-
-                if (move_uploaded_file($rutaTemporal, $rutaDestino)) {
-
-                    
-                    $archivosEnCarpeta = glob('../../res/imgs/' . $identificadorArea . '.*');
-
-                    foreach ($archivosEnCarpeta as $archivo) {
-                        
-                        if (is_file($archivo) && $archivo !== $rutaDestino) {
-                            unlink($archivo);
-                        }
-                    }
-                } else {
-                    return array("status" => 500, "message" => "Error al insertar imagen ");
-                }
-
-                $query = "UPDATE public.areas SET name = '$nameArea', details = '$detailsArea'WHERE key = '$identificadorArea'";
-                $con->query($query);
+        $areaDataEdit = $con->query("UPDATE areas SET name = '".$name."', key = '".$key."', details = '".$details."' WHERE id_area = ".$id_area." RETURNING id_area;");
         
-                $con->closeDB();
-                http_response_code(200); 
-                return array("status" => 200, "message" => "Área modificada correctamente");
-            }else{
-              
-                $query = "UPDATE public.areas SET name = '$nameArea', details = '$detailsArea' WHERE key = '$identificadorArea'";
-                $con->query($query);
-        
-                $con->closeDB();
-                http_response_code(200); 
-                return array("status" => 200, "message" => "Área modificada correctamente");  
-            }
+        $validatAreaDataEdit = pg_fetch_row($areaDataEdit);
 
-           
-        } catch (Exception $e) {
+        if ($validatAreaDataEdit > 0) {
             $con->closeDB();
-            http_response_code(500);
-            return array("status" => 500, "message" => "Error al modificar el área: " . $e->getMessage());
+            return $validatAreaDataEdit[0];
+        } else {
+            $con->closeDB();
+            return "error";
         }
+
     }
 
     
@@ -123,33 +95,24 @@ class areas{
         }
     }
 
-        public function obtenerExtension($identificadorArea) {
-            $con = new DBconnection(); 
-            $con->openDB();
-        
-            try {
-                
+    public function getAreaInfo($id_area){
 
-                $extensionObtenida = $con->query("SELECT extension FROM areas WHERE key = '$identificadorArea';");
+        $con=new DBconnection(); 
+        $con->openDB();
 
-                $data = array();
+        $dataArea = $con->query("SELECT id_area,name, key, details FROM areas WHERE id_area = $id_area;");
 
-                while($row = pg_fetch_array($extensionObtenida)){
-                    $dat = array(
-                        "extension_imagen"=>$row["extension"]
-                    );
-                    $data[] = $dat;
-                }
-            
-                $con->closeDB();
-                http_response_code(200); 
-                return array("status" => 200, "message" => "Extension obtenida correctamente","extension"=> $data);
-            } catch (Exception $e) {
-                $con->closeDB();
-                http_response_code(500);
-                return array("status" => 500, "message" => "Fallo al obtener Extension " . $e->getMessage());
-            }
-        }
+        $row =  pg_fetch_array($dataArea);
+
+        $dataArea = array(
+            "id_area"=>$row["id_area"],
+            "name"=>$row["name"],
+            "key"=>$row["key"],
+            "details"=>$row["details"]
+        );
+        $con->closeDB();
+        return array("status" => 200, "data" => $dataArea);
+    }
     
     
     

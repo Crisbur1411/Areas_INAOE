@@ -142,44 +142,21 @@
             <div class="form-group">
                 <div class="row">
                     <div class="col-sm-4">
-                        <label for="nombreArea">Nombre del Área:</label>
-                        <input type="text" class="form-control" id="nombreArea" name="nombreArea" placeholder="Ingrese el nombre del área" required>
+                        <label for="name">Nombre del Área:</label>
+                        <input type="text" class="form-control" id="name" name="name" placeholder="Ingrese el nombre del área" required style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">
                     </div>
 
                     <div class="col-sm-4">
-                        <label for="detallesArea">Detalles del Área:</label>
-                        <textarea class="form-control" id="detallesArea" name="detallesArea" placeholder="Ingrese los detalles del área" rows="1" required></textarea>
+                        <label for="details">Detalles del Área:</label>
+                        <textarea class="form-control" id="details" name="details" placeholder="Ingrese los detalles del área" rows="1" required style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();"></textarea>
                     </div>
 
                     <div class="col-sm-4">
-                        <label for="identificador">Identificador del Área:</label>
-                        <input type="text" class="form-control" id="identificador" name="identificador" placeholder="ID del área" disabled>
+                        <label for="key">Identificador del Área:</label>
+                        <input type="text" class="form-control" id="key" name="key" placeholder="ID del área" required style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">
                     </div>
 
                 </div>
-            </div>
-
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-sm-4">
-                        <label for="imagen">Sello del Área:</label>
-                        <br>
-                        <a id="enlaceImagen" href="#" target="_blank">
-                            <img id="imagenArea" src="#" class="img-fluid mb-2" alt="Imagen del área" style="max-width: 300px; width: 200px; height: 200px; ">
-                        </a>
-                    </div>
-
-                    <div class="col-sm-4">
-                        <label for="imagen">Remplzar imagen:</label>
-                        <input type="file" class="form-control-file" id="imagen" name="imagen" accept="image/*">
-                    </div>
-
-                    <div class="col-sm-4">
-                        <img id="previewImage" src="#" alt="Vista previa de la imagen" style="max-width: 100%; max-height: 200px;display: none;">
-                    </div>
-
-                </div>
-
             </div>
         </div>
         <div class="form-group" align="center">

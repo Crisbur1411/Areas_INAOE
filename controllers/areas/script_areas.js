@@ -44,7 +44,7 @@ function listAreas() {
                         "<th style='text-align:center'>" + val.key + "</th>" +
                         "<th style='text-align:center'>" + val.name + "</th>" +
                             "<th style='text-align:center'>" + val.details + "</th>" +
-                            "<th style='text-align:center'><button type='button' class='btn btn-secondary btn-sm' id='btn-edit' title='Click para editar' onclick='redirigirUpdateArea(\"" + val.key + "\", \"" + val.name + "\", \"" + val.details + "\")'><i class='fas fa-edit'></i></button></th>" +
+                            "<th style='text-align:center'><button type='button' class='btn btn-secondary btn-sm' id='btn-edit' title='Click para editar' onclick='redirigirUpdateArea(" + val.id_area + ")'><i class='fas fa-edit'></i></button></th>" +
                             "<th style='text-align:center'><button type='button' class='btn btn-danger btn-sm' data-id-area='" + val.id_area + "' data-key='" + val.key + "' title='Click para eliminar' onclick='deleteArea(this)'><i class='fas fa-trash'></i></button></th>" +
                         "</tr>";
                 }
@@ -155,7 +155,8 @@ function deleteArea(element) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Éxito',
-                            text: 'Área eliminada correctamente'
+                            text: 'Área eliminada correctamente',
+                            window: location.reload()
                         });
                     } else {
                         Swal.fire({
@@ -178,187 +179,142 @@ function deleteArea(element) {
     });
 }
 
+//Función para cargar los datos del area a editar
 
+function preCargarDatosArea() {
+    var areaID = sessionStorage.getItem('id_area');
+if(!areaID){
+  Swal.fire({
+    icon: 'error',
+    title: 'Sin selección',
+    text: 'No se ha seleccionado un área para editar'
+  });
+  return;
+}
+    var formData = new FormData();
+    formData.append('action', 5);
+    formData.append('id_area', areaID);
 
-
-function editArea() {    
-    var formHtml = 'desea editar';
- 
-    bootbox.dialog({
-        title: "<h4>Editar Área</h4>",
-        message: formHtml,
-        closeButton: true,
-        buttons: {
-            cancel: {
-                label: "Cancelar",
-                className: "btn-secondary",
-                callback: function () {
-
-                }
-            },
-            save: {
-                label: "Guardar",
-                className: "btn-primary",
-                callback: function () {
-                    var nombreArea = $('#nombreArea').val().trim();
-                    var detallesArea = $('#detallesArea').val().trim();
-                    var identificadorArea = $('#identificador').val().trim();
-                    var imagen = $('#imagen')[0].files[0];
-
-                    if (nombreArea === '' || detallesArea === '' ) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Todos los campos son obligatorios. Por favor, complete todos los campos y seleccione una imagen.'
-                        });
-                        return false;
-                    }
-
-                    var formData = new FormData();
-                    formData.append('action', 4);
-                    formData.append('nombre_area', nombreArea);
-                    formData.append('detalles_area', detallesArea);
-                    formData.append('identificador_area', identificadorArea);
-                    formData.append('imagen', imagen);
-
-                    $.ajax({
-                        url: "../../controllers/areas/controller_areas.php",
-                        cache: false,
-                        dataType: 'JSON',
-                        type: 'POST',
-                        processData: false,
-                        contentType: false,
-                        data: formData,
-                        success: function (result) {
-                            console.log(result);
-
-                            if (result.status == 200) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Éxito',
-                                    text: 'Área editada correctamente'
-                                });
-
-                                location.href = "./areas.php";
-
-                            } else {
-                                console.log("Hubo error al editar el área");
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    text: 'Ocurrió un error al editar el área'
-                                });
-                            }
-                        },
-                        error: function (result) {
-                            console.log(result);
-                            console.log("Hubo error al realizar la solicitud");
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error',
-                                text: 'Ocurrió un error al realizar la solicitud'
-                            });
-                        }
-                    });
-                }
+    $.ajax({
+        url: "../../controllers/areas/controller_areas.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        processData: false,
+        contentType: false,
+        data: formData,
+        success: function (result) {
+            if (result.status == 200) {
+                var areaData = result.data;
+                $('#name').val(areaData.name);
+                $('#key').val(areaData.key);
+                $('#details').val(areaData.details);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ocurrió un error al editar el área'
+                });
             }
+        },
+        error: function (result) {
+            console.log("Hubo un error al realizar la solicitud");
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Ocurrió un error al realizar la solicitud'
+            });
         }
     });
 }
 
-
-document.getElementById('imagen').addEventListener('change', function() {
-    var file = this.files[0];
-    var reader = new FileReader();
-
-    reader.onload = function(e) {
-        document.getElementById('previewImage').src = e.target.result;
-        // Verificar si se ha cargado una imagen
-        if (file && file.name.split('.').pop() !== 'null') {
-            // Si hay una imagen y la extensión no es 'null', hacer visible la vista previa
-            document.getElementById('previewImage').style.display = 'block';
-        } else {
-            // Si no hay imagen o la extensión es 'null', hacer invisible la vista previa
-            document.getElementById('previewImage').style.display = 'none';
-        }
-    };
-
-    if (file && file.name.split('.').pop() !== 'null') {
-        reader.readAsDataURL(file);
-    } else {
-        document.getElementById('previewImage').src = "#";
+document.addEventListener('DOMContentLoaded', function () {
+    let id = new URLSearchParams(window.location.search).get('dc');
+    if(id){ // Solo si existe el id en la URL
+        preCargarDatosArea(id);
     }
 });
 
 
+function editArea() {    
+ var areaID = sessionStorage.getItem('id_area');
+    var name = $("#name").val().trim();
+    var key = $("#key").val().trim();
+    var details = $("#details").val().trim();
 
-
-
-function previewImage(event) {
-    var input = event.target;
-    var preview = document.getElementById('previewImage');
-    var file = input.files[0];
-
-    var reader = new FileReader();
-    reader.onload = function() {
-        preview.src = reader.result;
-        preview.style.display = 'block'; // Mostrar la imagen de vista previa
-    };
-    
-    if (file) {
-        reader.readAsDataURL(file);
-    } else {
-        preview.src = "#";
-        preview.style.display = 'none'; // Ocultar la imagen de vista previa si no se selecciona ningún archivo
+    if (name.length == 0) {
+        alert("Tiene que escribir el nombre")
+        $("#name").focus();
+        return 0;
     }
+    if (key.length == 0) {
+        alert("Tiene que escribir la clave")
+        $("#key").focus();
+        return 0;
+    }
+
+    if (details.length == 0) {
+        alert("Tiene que escribir la descripción")
+        $("#details").focus();
+        return 0;
+    }
+
+
+
+    if (name.length > 0 && key.length > 0 && details.length > 0) {
+        $.ajax({
+            url: "../../controllers/areas/controller_areas.php",
+            cache: false,
+            dataType: 'JSON',
+            type: 'POST',
+            data: { action: 4, id_area: areaID, name: name, key: key, details: details},
+            success: function (result) {
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: 'Área Actualizada correctamente',
+                    timer: 1000,
+                    timerProgressBar: true,
+                }).then((result) => {
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                    location.href = "../areas/areas.php";         
+
+                    }
+                });
+
+            }, error: function (jqXHR, textStatus, errorThrown) {
+    console.log("Error en Ajax:");
+    console.log("Estado: " + textStatus);
+    console.log("Error: " + errorThrown);
+    console.log("Respuesta completa: ", jqXHR);
+
+    Swal.fire({
+        icon: 'error',
+        title: 'Error al actualizar el área',
+        html: `<b>Estado:</b> ${textStatus}<br><b>Error:</b> ${errorThrown}`,
+        footer: 'Revisa consola para más detalles',
+        timer: 10000,
+        timerProgressBar: true,
+    });
+            }
+        });
+    } 
 }
 
 
-function redirigirUpdateArea(areaId, nameArea, areaDetails){
-    sessionStorage.setItem('areaId', areaId);
-    sessionStorage.setItem('nameArea', nameArea);
-    sessionStorage.setItem('areaDetails', areaDetails);
-    location.href = "../areas/update_area.php";
+
+
+
+
+
+
+
+function redirigirUpdateArea(id_area){
+    sessionStorage.setItem("id_area", id_area)
+    location.href = "../areas/update_area.php?dc="+id_area;  
 }
-
-document.addEventListener('DOMContentLoaded', function() {
-    var areaId = sessionStorage.getItem('areaId');
-    var nameArea = sessionStorage.getItem('nameArea');
-    var areaDetails = sessionStorage.getItem('areaDetails');
-    document.getElementById('nombreArea').value = nameArea;
-    document.getElementById('detallesArea').value = areaDetails;
-    document.getElementById('identificador').value = areaId;
-
-    var extensiones = ['.jpg', '.jpeg', '.png', '.gif'];
-    var rutaBase = "../../res/imgs/" + areaId;
-    var imagenEncontrada = false;
-
-    function probarExtension(index) {
-        if (index >= extensiones.length) {
-            document.getElementById('imagenArea').style.display = 'none';
-            return;
-        }
-        var rutaImagen = rutaBase + extensiones[index];
-        var img = new Image();
-        img.onload = function() {
-            document.getElementById('enlaceImagen').setAttribute('href', rutaImagen);
-            document.getElementById('imagenArea').setAttribute('src', rutaImagen);
-            document.getElementById('imagenArea').style.display = 'block';
-            imagenEncontrada = true;
-        };
-        img.onerror = function() {
-            probarExtension(index + 1);
-        };
-        img.src = rutaImagen;
-    }
-
-    probarExtension(0);
-});
-
-
-
-
-
 
 function cancelEditArea(){
     location.href = "../areas/areas.php";
