@@ -49,7 +49,7 @@ function listStudentInProgress() {
                         + "<th style='text-align:center'>"+val.id_student+"</th>"
                         + "<th style='text-align:center'>"+val.control_number+"</a></th>"
                         + "<th style='text-align:center'>"+val.full_name+"</th>" 
-                        + "<th style='text-align:center'><button type='button' class='btn btn-primary btn-sm' title='Click para finalizar el trámite' onClick='signStudent("+val.id_student+");'><i class='fa-solid fa-file-import'></i></button></a></th>"
+                        + "<th style='text-align:center'><button type='button' class='btn btn-primary btn-sm' title='Click para finalizar el trámite' onClick='signStudent("+val.id_student+", \""+val.full_name.replace(/"/g, '&quot;')+"\");'><i class='fa-solid fa-file-import'></i></button></a></th>"
                         + "<th style='text-align:center'><button type='button' class='btn btn-secondary btn-sm' title='Click para ver las notas' data-toggle='modal' onClick='notesStudent("+val.id_student+");'><i class='fa-solid fa-eye'></i></button></a></th>"
                         + "</tr>";
                     } else {
@@ -57,7 +57,7 @@ function listStudentInProgress() {
                         + "<th style='text-align:center'>"+val.id_student+"</th>"
                         + "<th style='text-align:center'>"+val.control_number+"</a></th>"
                         + "<th style='text-align:center'>"+val.full_name+"</th>" 
-                        + "<th style='text-align:center'><button type='button' class='btn btn-primary btn-sm' title='Click para finalizar el trámite' onClick='signStudent("+val.id_student+");'><i class='fa-solid fa-file-import'></i></button></a></th>"
+                        + "<th style='text-align:center'><button type='button' class='btn btn-primary btn-sm' title='Click para finalizar el trámite' onClick='signStudent("+val.id_student+", \""+val.full_name.replace(/"/g, '&quot;')+"\");'><i class='fa-solid fa-file-import'></i></button></a></th>"
                         + "<th style='text-align:center'><button type='button' class='btn btn-info btn-sm' title='Click para agregar una nota en el trámite' onClick='noteStudent("+val.id_student+");'><i class='fa-solid fa-file-lines'></i></button></a></th>"
                         + "</tr>";
                     }
@@ -75,7 +75,7 @@ function listStudentInProgress() {
     }); 
 }
 
-function signStudent(id_student) {
+function signStudent(id_student, full_name) {
     $u = document.getElementById("user");
     $user = $u.innerHTML;
 
@@ -113,7 +113,7 @@ function signStudent(id_student) {
                                 cache: false,
                                 dataType: 'JSON',
                                 type: 'POST',
-                                data: { action: 2, id_student: id_student, user: $user },
+                                data: { action: 2, id_student: id_student, user: $user, full_name: full_name },
                                 success: function (result) {},
                                 error: function (result) {
                                     console.log(result);

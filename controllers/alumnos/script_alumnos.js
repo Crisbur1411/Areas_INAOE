@@ -456,12 +456,10 @@ function listStudentCancel() {
 }
 
 //Funcion para imprimir el PDF de cada alumno "Temporal"
-function printPDF(id_student) {
-    window.open("http://192.168.73.131/liberacion_maina_funcional/res/temp/2.pdf", '_blank');
-}
 
 
-/*
+
+
 //desarrollado por BRYAM el 03/04/2024 funcion para general el pdf de cada alumno
 function showError(message) {
     $("#errorModalBody").text(message);
@@ -508,7 +506,7 @@ function printPDF(id_student) {
     });
 }
 
-*/
+
 
 
 

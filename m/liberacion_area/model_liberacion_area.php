@@ -55,10 +55,11 @@ class liberacionArea{
         return $data;
     }
 
-    public function signStudent($id_student, $user){
+    public function signStudent($id_student, $user, $full_name){
     $con = new DBconnection();
     $con->openDB();
     $descrip = 'Autorizado por: '.$user;
+    $clave = 'Lib3r4c10n-1N403';
 
     session_start();
     $fk_area  = $_SESSION["id_area"];
@@ -66,8 +67,8 @@ class liberacionArea{
     // Fecha actual desde PHP
     $date = date('Y-m-d H:i:s');
 
-    // Hash md5(id_student|user|fecha)
-    $hash_release = md5($id_student . '|' . $user . '|' . $date);
+    // Hash sha256(id_student|user|fecha|clave)
+    $hash_release = hash('sha256', $date . '|' . $full_name . '|' . $user . '|' . $clave);
 
     $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, fk_area, status, hash_release) 
                                 VALUES (".$id_student.", '".$descrip."', '".$date."', ".$fk_area.", 2, '".$hash_release."') 
@@ -86,6 +87,7 @@ class liberacionArea{
         return "error"; 
     }
 }
+
 
 
     public function listStudentFree(){
