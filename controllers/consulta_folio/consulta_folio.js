@@ -23,6 +23,9 @@ $(document).ready(function () {
                     window.open(pdfUrl, '_blank');
 
                     $('#folio').val('');
+                    $('#alert_success').hide();
+                    $('#alert_error').hide();
+
                 } else {
                     // Mostrar alerta de error
                     $('#alert_error').show();
