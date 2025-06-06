@@ -455,6 +455,7 @@ public function freeStudent($id_student, $user)
                                                     a.name AS area_name,
                                                     a.key AS key, 
                                                     ta.description AS libera,
+													 ta.hash_release AS firma,	
                                                     DATE(ta.date) AS date
                                             FROM students s
                                             JOIN trace_student_areas ta ON s.id_student = ta.fk_student
@@ -470,6 +471,7 @@ public function freeStudent($id_student, $user)
             "area_name" => $row["area_name"],
             "key" => $row["key"],
             "libera" => $row["libera"],
+            "firma" => $row["firma"],
             "date" => $row["date"]
         );
         $pdfData[] = $dat;
@@ -494,17 +496,21 @@ public function freeStudent($id_student, $user)
 
     $studentData = $pdfData[0];
 
-    // Marcar casillas según el valor de fk_course
-    $maestriaChecked = in_array($type, [1]) ? 'X' : ' ';
-    $doctoradoChecked = in_array($type, [2]) ? 'X' : ' ';
-    $externolicenciaturaChecked = in_array($type, [3]) ? 'X' : ' ';
-    $externobachilleratoChecked = in_array($type, [4]) ? 'X' : ' ';
+    $programNames = [
+    1 => 'Maestría',
+    2 => 'Doctorado',
+    3 => 'Externo de Licenciatura',
+    4 => 'Externo de Bachillerato'
+    ];
+
+    $programName = isset($programNames[$type]) ? $programNames[$type] : 'Programa desconocido';
+
 
     $html = '
         <center>
         <img src="../../res/temp/encabezado2.png" style="width: 900px; height: 130px;">
         <div>
-        <p>Por este medio los abajo firmantes hacemos constar que el (la) alumno(a): ' . $studentData["full_name"] . ' del Programa de: Maestría ( ' . $maestriaChecked . ' ) Doctorado ( ' . $doctoradoChecked . ' ) Externo de Licenciatura ( ' . $externolicenciaturaChecked . ') Externo de Bachillerato ( ' . $externobachilleratoChecked . ') , NO TIENE ningún ADEUDO en los departamentos o laboratorios a nuestro cargo.</p>
+        <p>Por este medio los abajo firmantes hacemos constar que el (la) alumno(a): ' . $studentData["full_name"] . ' del Programa de: ' . $programName . ', NO TIENE ningún ADEUDO en los departamentos o laboratorios a nuestro cargo.</p>
         </div>
         <br></br>
         <br></br>
@@ -512,7 +518,7 @@ public function freeStudent($id_student, $user)
             <thead>
                 <tr style="text-align: center;">
                     <td>Área</td>
-                    <td>Autorizó</td>
+                    <td>Firmante</td>
                     <td>Fecha de Liberación</td>
                     <td>Sello de Área</td>
                 </tr>
@@ -525,7 +531,7 @@ public function freeStudent($id_student, $user)
                     <td height="60">' . $area["area_name"] . '</td>
                     <td>' . $area["libera"] . '</td>
                     <td>' . $area["date"] . '</td>
-                    <td><img src="../../res/imgs/' . $imageName . '" style="width: 50px; height: 50px;"></td>
+                    <td>' . $area["firma"] . '</td>
                   </tr>';
     }
 
