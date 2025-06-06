@@ -435,7 +435,7 @@ public function freeStudent($id_student, $user)
 
     //desarrollaod por bryam el 09/04/2024 trae todo los datos que lleva el pdf
 
-    public function generatePDF($id_student)
+    public function generatePDF($id_student, $full_name)
 {
     $con = new DBconnection();
     $con->openDB();
@@ -484,6 +484,11 @@ public function freeStudent($id_student, $user)
         return array('error' => 'No se encontraron registros de áreas para este estudiante.');
     }
 
+    // Generar el folio, de este modo si el id del estudiane y el nombre es el mismo, el folio siempre será el mismo
+    $folioSeed = $id_student . '-' . $full_name;
+    $folioHash = strtoupper(substr(md5($folioSeed), 0, 16)); // puedes cambiar 8 por la longitud que gustes
+    $folio = 'FDA-' . $folioHash;
+
     $pdf = new TCPDF('P', PDF_UNIT, 'A4', true, 'UTF-8', false);
     $pdf->SetCreator('FDA');
     $pdf->SetAuthor('YO');
@@ -510,6 +515,7 @@ public function freeStudent($id_student, $user)
         <center>
         <img src="../../res/temp/encabezado2.png" style="width: 900px; height: 130px;">
         <div>
+        <p style="text-align:right;"><strong>Folio: ' . $folio . '</strong></p>
         <p>Por este medio los abajo firmantes hacemos constar que el (la) alumno(a): ' . $studentData["full_name"] . ' del Programa de: ' . $programName . ', NO TIENE ningún ADEUDO en los departamentos o laboratorios a nuestro cargo.</p>
         </div>
         <br></br>
@@ -546,9 +552,9 @@ public function freeStudent($id_student, $user)
     $pdf->writeHTML($html, true, false, true, false, '');
 
     $pdfContent = $pdf->Output('student_certificate.pdf', 'S');
-    $pdfPath = '../../res/temp/' . $id_student . '.pdf';
+    $pdfPath = '../../res/temp/' . $folio . '.pdf';
     file_put_contents($pdfPath, $pdfContent);
-    $pdfUrl = '../../res/temp/' . $id_student . '.pdf';
+    $pdfUrl = '../../res/temp/' . $folio . '.pdf';
 
     return array('pdf_url' => $pdfUrl);
 }

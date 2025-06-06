@@ -339,7 +339,7 @@ function listStudentFree() {
                     + "<th style='text-align:center'>"+val.control_number+"</a></th>"
                     + "<th style='text-align:center'>"+val.full_name+"</th>" 
                     + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showRegisterAreas("+val.id_student+");'>"+val.date+"</a></th>"
-                    + "<th style='text-align:center'><button type='button' class='btn btn-primary btn-sm' title='Click para imprimir la constancia' onClick='printPDF("+val.id_student+");'><i class='fa-solid fa-print'></i></button></a></th>"
+                    + "<th style='text-align:center'><button type='button' class='btn btn-primary btn-sm' title='Click para imprimir la constancia' onClick='printPDF("+val.id_student+", \""+val.full_name.replace(/"/g, '&quot;')+"\");'><i class='fa-solid fa-print'></i></button></a></th>"
                     + "</tr>";
                 }
             });
@@ -470,12 +470,12 @@ function showError(message) {
 
 
 
-function printPDF(id_student) {
+function printPDF(id_student, full_name) {
     $.ajax({
         url: "../../controllers/alumnos/controller_alumnos.php",
         cache: false,
         type: 'POST',
-        data: { action: 13, id_student: id_student },
+        data: { action: 13, id_student: id_student, full_name: full_name },
         success: function(result) {
             console.log("Respuesta recibida:", result);
 
