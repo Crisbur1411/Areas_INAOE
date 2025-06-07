@@ -17,25 +17,30 @@ class liberacionArea{
         session_start();
         $fk_area  = $_SESSION["id_area"];
 
-        $dataR = $con->query("SELECT students.id_student, 
-                                CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
-                                students.control_number,                                    
-                                students.status,
-                                    COUNT(notes.id_note) AS note_count
-                            FROM students
-                            LEFT JOIN trace_student_areas ON trace_student_areas.fk_student = students.id_student
-                            LEFT JOIN notes ON notes.fk_student = students.id_student
-                            WHERE students.status = 2
-                            AND NOT EXISTS (
-                                SELECT 1 FROM trace_student_areas 
-                                WHERE fk_student = students.id_student 
-                                AND fk_area = ".$fk_area." 
-                            )
-                            GROUP BY students.id_student, 
-                                    CONCAT(students.name, ' ', students.surname, ' ', students.second_surname),
-                                    students.control_number,
-                                    students.status
-                            ORDER BY students.id_student;
+        $dataR = $con->query("SELECT 
+    students.id_student, 
+    CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
+    students.control_number,                                    
+    students.status,
+    SUM(CASE WHEN notes.fk_area = ".$fk_area." THEN 1 ELSE 0 END) AS note_count
+FROM students
+LEFT JOIN trace_student_areas 
+    ON trace_student_areas.fk_student = students.id_student
+LEFT JOIN notes 
+    ON notes.fk_student = students.id_student
+WHERE students.status = 2
+AND NOT EXISTS (
+    SELECT 1 
+    FROM trace_student_areas 
+    WHERE fk_student = students.id_student 
+    AND fk_area = ".$fk_area."
+)
+GROUP BY 
+    students.id_student, 
+    CONCAT(students.name, ' ', students.surname, ' ', students.second_surname),
+    students.control_number,
+    students.status
+ORDER BY students.id_student;
                                     ");
 
         $data = array();
