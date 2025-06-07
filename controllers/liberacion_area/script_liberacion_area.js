@@ -227,6 +227,21 @@ function noteStudent(id_student) {
                     $("#info").removeClass("d-none");
                     listStudentInProgress();
                     listStudentFree();
+
+
+                    // Aquí se envia la llamada para enviar el correo
+                    $.ajax({
+                        url: "../../services/send_email_notes.php",
+                        type: 'GET',
+                        dataType: 'JSON',
+                        data: { id_student: id_student }, 
+                        success: function(response) {
+                            console.log(response);
+                        },
+                        error: function(error) {
+                            console.error(error);
+                        }
+                    });
                 }
             });            
             swal("Nota agregada al tramite !", {
