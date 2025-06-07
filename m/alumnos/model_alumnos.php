@@ -535,9 +535,9 @@ public function freeStudent($id_student, $user)
         $imageName = $area["key"] . ".png";
         $html .= '<tr>
                     <td height="60">' . $area["area_name"] . '</td>
-                    <td>' . $area["libera"] . '</td>
+                    <td>' . $area["libera"] . '<br>FIRMA:<br>' . $area["firma"] . '</td>
                     <td>' . $area["date"] . '</td>
-                    <td>' . $area["firma"] . '</td>
+                    <td></td>
                   </tr>';
     }
 
