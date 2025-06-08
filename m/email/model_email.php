@@ -48,31 +48,6 @@ class EmailModel {
 
 
 
-// Funciones para envio de correo a estudante en caso de que le agreguen notas
-
-public function getDataStudentNotes($id_student){
-    $con = new DBconnection(); 
-    $con->openDB();
-
-
-    $dataTitle = $con->query("SELECT id_student, 
-                                    CONCAT(name, ' ', surname, ' ', second_surname) AS full_name,
-                                    email
-                              FROM students 
-                              WHERE id_student = '$id_student';");
-
-    $data = array();
-    while($row = pg_fetch_assoc($dataTitle)){
-        $data[] = [
-            'id_student'   => $row['id_student'],
-            'full_name'    => $row['full_name'],
-            'email'        => $row['email']
-        ];
-    }
-
-    $con->closeDB();
-    return $data;
-}
 
 
 public function getNotes($id_student){

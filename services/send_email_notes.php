@@ -18,7 +18,7 @@ if (!$id_student) {
 $emailModel = new EmailModel();
 
 // Obtener datos del estudiante
-$studentData = $emailModel->getDataStudentNotes($id_student);
+$studentData = $emailModel->getDataStudent($id_student);
 if (empty($studentData)) {
     echo json_encode(['status' => 'error', 'message' => 'No se encontraron datos del estudiante']);
     exit;
@@ -47,7 +47,7 @@ require 'PHPMailer/src/PHPMailer.php';
 require 'PHPMailer/src/SMTP.php';
 
 // Función para enviar correo
-function enviarCorreo($correoDestino, $asunto, $mensaje, $usuario, $contrasena, $servidorCorreo) {
+function enviarCorreoNotes($correoDestino, $asunto, $mensaje, $usuario, $contrasena, $servidorCorreo) {
     $mail = new PHPMailer(true);
     try {
         $mail->isSMTP();
@@ -87,7 +87,7 @@ $mensajeCorreo .= "Para cualquier aclaración o duda, acude con tu responsable d
 $mensajeCorreo .= "Atentamente,\nSistema de No Adeudo Institucional\nDirección de Formación Académica – INAOE";
 
 // Enviar correo al estudiante
-if (enviarCorreo($correoEstudiante, $asunto, $mensajeCorreo, $usuario, $contrasena, $servidorCorreo)) {
+if (enviarCorreoNotes($correoEstudiante, $asunto, $mensajeCorreo, $usuario, $contrasena, $servidorCorreo)) {
     echo json_encode(['status' => 'success', 'message' => "Correo enviado a $correoEstudiante"]);
 } else {
     echo json_encode(['status' => 'error', 'message' => "Error al enviar correo a $correoEstudiante"]);

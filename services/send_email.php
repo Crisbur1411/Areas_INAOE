@@ -72,16 +72,6 @@ $contrasena = "25v4l3ncia.Mig";
 $servidorCorreo = "ccc.inaoep.mx";
 
 // Fecha actual formateada
-$fecha = new DateTime();
-$formatter = new IntlDateFormatter(
-    'es_MX', // idioma y país
-    IntlDateFormatter::LONG, // formato largo de fecha
-    IntlDateFormatter::MEDIUM, // formato medio de hora
-    'America/Mexico_City',
-    IntlDateFormatter::GREGORIAN,
-    "d 'de' MMMM 'de' yyyy, HH:mm:ss"
-);
-
 $currentTime = date("Y-m-d H:i:s");
 
 
