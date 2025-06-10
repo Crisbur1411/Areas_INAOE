@@ -137,7 +137,7 @@ function turnSingAreas(id_student) {
                         url: "../../services/send_email.php",
                         type: 'GET',
                         dataType: 'JSON',
-                        data: { id_student: id_student },  // 👈 aquí enviamos el id_student
+                        data: { id_student: id_student },
                         success: function(response) {
                             console.log(response);
                         },
@@ -296,6 +296,21 @@ function freeStudent(id_student) {
                             console.log(result);
                         }
                     });
+
+                    // Aquí se envia la llamada para enviar el correo
+                    $.ajax({
+                        url: "../../services/send_email_liberacion.php",
+                        type: 'GET',
+                        dataType: 'JSON',
+                        data: { id_student: id_student },
+                        success: function(response) {
+                            console.log(response);
+                        },
+                        error: function(error) {
+                            console.error(error);
+                        }
+                    });
+
                 },
                 error: function (result) {
                     console.log(result);

@@ -28,15 +28,7 @@ $student = $studentData[0];
 $nombreEstudiante = $student['full_name'];
 $correoEstudiante = $student['email'];
 
-$studentNotes = $emailModel->getNotes($id_student);
-if (empty($studentNotes)) {
-    echo json_encode(['status' => 'error', 'message' => 'No se encontraron notas para el estudiante']);
-    exit;
-}
 
-$notesStudent = $studentNotes[0];
-$nombreArea = $notesStudent['area_name'];
-$descriptionNote = $notesStudent['note_description'];
 
 
 // Cargar PHPMailer
@@ -45,7 +37,7 @@ require 'PHPMailer/src/PHPMailer.php';
 require 'PHPMailer/src/SMTP.php';
 
 // Función para enviar correo
-function enviarCorreoNotes($correoDestino, $asunto, $mensaje, $usuario, $contrasena, $servidorCorreo) {
+function enviarCorreoLiberacion($correoDestino, $asunto, $mensaje, $usuario, $contrasena, $servidorCorreo) {
     $mail = new PHPMailer(true);
     try {
         $mail->isSMTP();
@@ -68,7 +60,7 @@ function enviarCorreoNotes($correoDestino, $asunto, $mensaje, $usuario, $contras
 }
 
 // Parámetros de conexión al servidor de correo
-$asunto = "Aviso de Nota en liberación de No Adeudo";
+$asunto = "Aviso conclución en el trámite de liberación de No Adeudo";
 $usuario = "m.valencia";
 $contrasena = "25v4l3ncia.Mig";
 $servidorCorreo = "ccc.inaoep.mx";
@@ -78,14 +70,12 @@ $currentTime = date("Y-m-d H:i:s");
 
 // Armar mensaje al estudiante
 $mensajeCorreo = "Estimado/a $nombreEstudiante,\n\n";
-$mensajeCorreo .= "Te informamos que el área de $nombreArea ha registrado una nota en el sistema de No Adeudo.\n\n";
-$mensajeCorreo .= "$descriptionNote\n\n";
+$mensajeCorreo .= "Te informamos que tu trámite de liberación ha concluido, por lo cual puedes acudir a la oficina de la Dirección de Formación Académica para solicitar tu constancia de liberación.\n\n";
 $mensajeCorreo .= "Fecha de aviso: $currentTime\n\n";
-$mensajeCorreo .= "Para cualquier aclaración o duda, acude con tu responsable de área o a Dirección de Formación Académica.\n\n";
 $mensajeCorreo .= "Atentamente,\nSistema de No Adeudo Institucional\nDirección de Formación Académica – INAOE";
 
 // Enviar correo al estudiante
-if (enviarCorreoNotes($correoEstudiante, $asunto, $mensajeCorreo, $usuario, $contrasena, $servidorCorreo)) {
+if (enviarCorreoLiberacion($correoEstudiante, $asunto, $mensajeCorreo, $usuario, $contrasena, $servidorCorreo)) {
     echo json_encode(['status' => 'success', 'message' => "Correo enviado a $correoEstudiante"]);
 } else {
     echo json_encode(['status' => 'error', 'message' => "Error al enviar correo a $correoEstudiante"]);

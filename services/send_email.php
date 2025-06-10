@@ -25,7 +25,6 @@ if (empty($studentData)) {
     exit;
 }
 
-// Solo debería haber un registro, así que tomamos el primero
 $student = $studentData[0];
 $nombreEstudiante = $student['full_name'];
 $correoEstudiante = $student['email'];
