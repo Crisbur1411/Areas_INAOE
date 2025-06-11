@@ -69,24 +69,24 @@ public function listStudentInProgress($email)
     $id_student = intval($id_student); // <-- aquí casteas a entero
 
     $dataR = $con->query("SELECT 
-                            trace_student_areas.id_trace_student_area, 
-                            students.id_student, 
-                            CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name, 
-                            COALESCE(areas.name, '-') AS namearea, 
-                            COALESCE(to_char(trace_student_areas.date, 'YYYY-MM-DD HH24:MI:SS'), '-') AS formatted_date, 
-                            COALESCE(trace_student_areas.description, 'Sin autorizar') AS description, 
-                            COALESCE(students.status, 0) AS status
-                        FROM 
-                            students
-                        LEFT JOIN 
-                            trace_student_areas ON students.id_student = trace_student_areas.fk_student
-                        RIGHT JOIN 
-                            areas ON areas.id_area = trace_student_areas.fk_area
-                        WHERE 
-                            students.id_student = '$id_student'
-                            OR trace_student_areas.id_trace_student_area IS NULL AND areas.status = 1
-                        ORDER BY 
-                            areas.id_area;
+    trace_student_areas.id_trace_student_area, 
+    students.id_student, 
+    CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name, 
+    COALESCE(areas.name, '-') AS namearea, 
+    COALESCE(to_char(trace_student_areas.date, 'YYYY-MM-DD HH24:MI:SS'), '-') AS formatted_date, 
+    COALESCE(trace_student_areas.description, 'Sin autorizar') AS description, 
+    COALESCE(students.status, 0) AS status
+FROM 
+    areas
+LEFT JOIN 
+    trace_student_areas ON areas.id_area = trace_student_areas.fk_area 
+        AND trace_student_areas.fk_student = " . $id_student . "
+LEFT JOIN 
+    students ON students.id_student = trace_student_areas.fk_student
+WHERE 
+    areas.status = 1
+ORDER BY 
+    areas.id_area;
                         ");
 
     $data = array();
@@ -134,18 +134,17 @@ public function listStudentInProgress($email)
         $con = new DBconnection();
         $con->openDB();
 
-        $dataR = $con->query("SELECT
-                                CONCAT(users.name, ' ', users.surname, ' ', users.second_surname) AS full_name,
-                                CASE
-                                    WHEN users.fk_type = type_users.id_type_users THEN areas.name
-                                    ELSE 'Sin área asignada'
-                                END AS area_name
-                                FROM users
-                                INNER JOIN type_users ON users.fk_type = type_users.id_type_users
-                                INNER JOIN user_area ON users.id_user = user_area.fk_user
-                                INNER JOIN areas ON user_area.fk_area = areas.id_area
-                                WHERE users.status = 1
-                                ORDER BY users.id_user
+        $dataR = $con->query("SELECT a.name AS area_name,
+                                    CONCAT (u.name, ' ', u.surname, ' ', u.second_surname) AS full_name
+                                    FROM 
+                                        user_area AS ua
+                                    JOIN
+                                        areas AS a ON ua.fk_area = a.id_area
+                                    JOIN
+                                        users AS u ON ua.fk_user = u.id_user
+                                    WHERE 
+                                        u.status = 1
+                                    ORDER BY a.name ASC
                                     ");
 
         $data = array();
