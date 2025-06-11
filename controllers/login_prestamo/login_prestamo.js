@@ -108,7 +108,7 @@ $("#login-form").submit(function(event) {
                                 closeButton: false,
                                 callback: function(result) {
                                     if (result != false) {
-                                         location.href = "v/efirma/efirma_cer.php";
+                                         location.href = "view/efirma/efirma_cer.php";
                                     }
                                     else
                                     {
@@ -116,7 +116,7 @@ $("#login-form").submit(function(event) {
                                     }
                                 }
                             });*/
-                            location.href = "../../v/prestamo/prestamo.php";
+                            location.href = "../../view/prestamo/prestamo.php";
                 }
             }
         });

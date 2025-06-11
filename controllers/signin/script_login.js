@@ -106,7 +106,7 @@ $("#login-form").submit(function(event) {
                                 closeButton: false,
                                 callback: function(result) {
                                     if (result != false) {
-                                         location.href = "v/efirma/efirma_cer.php";
+                                         location.href = "view/efirma/efirma_cer.php";
                                     }
                                     else
                                     {
@@ -114,15 +114,15 @@ $("#login-form").submit(function(event) {
                                     }
                                 }
                             });*/
-                            location.href = "v/alumnos/alumnos.php";
+                            location.href = "view/alumnos/alumnos.php";
                         } 
                         if(response == 2)
                         {
-                            location.href = "v/alumnos/alumnos.php";
+                            location.href = "view/alumnos/alumnos.php";
                         }
                         if(response == 3)
                         {
-                            location.href = "v/liberacion_area/liberacion_area.php";
+                            location.href = "view/liberacion_area/liberacion_area.php";
                         }
                         
                         

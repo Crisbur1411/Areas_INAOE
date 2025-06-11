@@ -23,9 +23,6 @@
         </div>
         <div class="collapse navbar-collapse" id="subenlaces">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="../../v/consulta_folio/consulta_folio.html">Consultar Folio</a></li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
                 <li><a href="../../index.php">Inicio</a></li>
             </ul>
         </div>

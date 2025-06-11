@@ -50,8 +50,9 @@ else
                 </div>
                
             <div class="seccionesEstatus">
-                <li><a href="v/validacion_proceso/validateProcess.php">ESTATUS DE SOLICITUD</a></li>
-				<li><a href="v/login_prestamo/login_prestamo.php">REALIZAR PRESTAMO</a></li>
+                <li><a href="view/validacion_proceso/validateProcess.php">ESTATUS DE SOLICITUD</a></li>
+				<li><a href="view/login_prestamo/login_prestamo.php">REALIZAR PRESTAMO</a></li>
+				<li><a href="view/consulta_folio/consulta_folio.html">CONSULTAR FOLIO</a></li>
             </div>
             </div>
         </div>
@@ -95,7 +96,7 @@ else
 		</div>
 <br><br><br>
 
-<?php include './v/components/footer/footer.php'; ?>
+<?php include './view/components/footer/footer.php'; ?>
 <?php  
 }
 ?>

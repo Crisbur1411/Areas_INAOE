@@ -94,7 +94,7 @@ else
 		</div>
 <br><br><br>
 
-<?php include '../../v/components/footer/footer.php'; ?>
+<?php include '../../view/components/footer/footer.php'; ?>
 <?php  
 }
 ?>
