@@ -1,6 +1,6 @@
 <?php date_default_timezone_set("America/Mexico_City"); 
 // Validar sesión activa
-if (!isset($_SESSION['id'])) {
+if (!isset($_SESSION['username'])) {
     // Si no hay sesión iniciada, redirigir al index (login)
     header("Location: ../../index.php");
     exit();
@@ -48,7 +48,7 @@ if (!isset($_SESSION['id'])) {
         <div class="container-fluid">
             <div class="contNav">
                 <div class="seccionesINAOE">
-                    <li><a href="#">INAOEP</a></li>
+                    <li><a href="#">INAOE</a></li>
                 </div>
                
             <div class="seccionesEstatus">

@@ -3,13 +3,12 @@
 // Evita caché
 header("Cache-Control: no-cache, must-revalidate");
 header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
-
-// Validar sesión activa
-if (!isset($_SESSION['id'])) {
-    // Si no hay sesión iniciada, redirigir al index (login)
-    header("Location: ../../index.php");
+// Validar si hay sesión iniciada
+if (!isset($_SESSION['username'])) {
+    header("Location: ../../index.php"); // o la ruta a tu login
     exit();
 }
+
 ?>
 <!DOCTYPE html> 
 <html lang="en">
@@ -138,7 +137,7 @@ if (!isset($_SESSION['id'])) {
         <div class="container-fluid">
             <div class="contNav">
                 <div class="seccionesINAOE">
-                    <li><p class="text_inaoe">INAOEP</p></li>
+                    <li><p class="text_inaoe">INAOE</p></li>
                 </div>
                
             <div class="seccionesEstatus">
