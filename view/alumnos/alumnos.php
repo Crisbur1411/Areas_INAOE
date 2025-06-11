@@ -366,28 +366,28 @@ if (!isset($_SESSION['username'])) {
         <table class="table table-bordered">
           <tbody>
             <tr>
-              <th >Nombre Completo</th>
-              <td id="student-fullname"></td>
+              <th class="text-center" >Nombre Completo</th>
+              <td id="student-fullname" class="text-center"></td>
             </tr>
             <tr>
-              <th>Número de Control</th>
-              <td id="student-control-number"></td>
+              <th class="text-center">Número de Control</th>
+              <td id="student-control-number" class="text-center"></td>
             </tr>
             <tr>
-              <th>Correo</th>
-              <td id="student-email"></td>
+              <th class="text-center">Correo</th>
+              <td id="student-email" class="text-center"></td>
             </tr>
             <tr>
-              <th>Institución</th>
-              <td id="student-institucion"></td>
+              <th class="text-center">Institución</th>
+              <td id="student-institucion" class="text-center"></td>
             </tr>
             <tr>
-              <th>Fecha de Conclusión</th>
-              <td id="student-fecha-conclusion"></td>
+              <th class="text-center">Fecha de Conclusión</th>
+              <td id="student-fecha-conclusion" class="text-center"></td>
             </tr>
             <tr>
-              <th>Programa Académico</th>
-              <td id="student-programa-academico"></td>
+              <th class="text-center">Programa Académico</th>
+              <td id="student-programa-academico" class="text-center"></td>
             </tr>
           </tbody>
         </table>

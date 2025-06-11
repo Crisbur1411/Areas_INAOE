@@ -1,6 +1,4 @@
-<?php date_default_timezone_set("America/Mexico_City"); 
-
-?>
+<?php date_default_timezone_set("America/Mexico_City"); ?>
 
 
 
@@ -8,7 +6,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<title>Validacion de proceso</title>
+	<title>Consulta de Folio</title>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 	<link rel="stylesheet" href="../../assets/css/bootstrap-select.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
@@ -43,7 +41,7 @@
         <div class="container-fluid">
             <div class="contNav">
                 <div class="seccionesINAOE">
-                    <li><a href="#">INAOE</a></li>
+                    <li><a href="#">INAOEP</a></li>
                 </div>
                
             <div class="seccionesEstatus">
@@ -54,41 +52,36 @@
     </nav>
 <div class="container mt-5">
     <div id="info" class="d-block" style="text-align: center;">
-        <span style="color: black; font-weight: bold; font-size: 16px;">PROCESO DE LIBERACIÓN</span><br>
+        <span style="color: black; font-weight: bold; font-size: 16px;">CONSULTA DE FOLIO DE LIBERACIÓN</span><br>
         <br><br>
         <div style="text-align: center; border-bottom: 3px solid #cecece; margin-bottom: 30px; margin-top: 30px">
             <nav class="navbar navbar-light ">
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     <span class="gov-style-label">
-                    Proceso
+                    DETALLES DE LIBERACIÓN
                     </span>
 
                 </div>
-                <button type='button' class='btn btn-outline-success' id='btn-new-student' onClick='helper()'>AYUDA</button>
             </nav>
         </div>
-
         <div class="tab-content" id="nav-tabContent">
 
-            <div class="tab-pane fade show active" id="nav-inProgress" role="tabpanel" aria-labelledby="nav-inProgress-tab">
+            <div class="tab-pane fade show active" id="nav-free" role="tabpanel" aria-labelledby="nav-free-tab">
                 <table class="table table-striped table-bordered">
                     <thead style="background: #691C32; color: white;">
                         <tr>
                             <th scope="col" style="text-align:center"># REGISTRO</th>
                             <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>
-                            <th scope="col" style="text-align:center">CORREO</th>
-                            <th scope="col" style="text-align:center">MATRÍCULA</th>
-                            <th scope="col" style="text-align:center">TOTAL DE ÁREAS LIBERADAS</th>
                             <th scope="col" style="text-align:center">DETALLES</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white" id="table-students-in-progress"></tbody>
+                    <tbody class="bg-white" id="table-students-free"></tbody>
                 </table>
                 <div id="alert2" class="alert alert-danger text-center mt-3 animate__animated animate__fadeIn">
                     <p>
                         <i class="fa-solid fa-ban fa-2x"></i>
                     </p>
-                    <h4 class="alert-heading">SIN SOLICITUDES EN PROCESO</h4>
+                    <h4 class="alert-heading">SIN REGISTROS DE LIBERACIÓN</h4>
                 </div>
             </div>
 
@@ -96,6 +89,63 @@
     </div>
 </div>
 
+
+<div class="modal fade" id="modalStudentDetails" tabindex="-1" role="dialog" aria-labelledby="modalStudentDetailsTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="background: #691C32; color: white;">
+        <h5 class="modal-title w-100 text-center">Verificación de Registro de Liberación</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar" style="color: white;">
+            <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+
+      <div class="modal-body">
+        <table class="table table-bordered">
+          <tbody>
+            <tr>
+                <th class="text-center">Nombre Completo</th>
+                <td id="student-fullname" class="text-center"></td>
+            </tr>
+            <tr>
+                <th class="text-center">Número de Control</th>
+                <td id="student-control-number" class="text-center"></td>
+            </tr>
+            <tr>
+                <th class="text-center">Correo</th>
+                <td id="student-email" class="text-center"></td>
+            </tr>
+            <tr>
+                <th class="text-center">Institución</th>
+                <td id="student-institucion" class="text-center"></td>
+            </tr>
+            <tr>
+                <th class="text-center">Fecha de Conclusión</th>
+                <td id="student-fecha-conclusion"  class="text-center"></td>
+            </tr>
+            <tr>
+                <th class="text-center">Programa Académico</th>
+                <td id="student-programa-academico"  class="text-center"></td>
+            </tr>
+            <tr>
+                <th class="text-center">Estado</th>
+                <td id="student-status" class="text-center align-middle"></td>
+            </tr>
+            <tr>
+                <th class="text-center">Folio</th>
+                <td id="student-folio" class="text-center"></td>
+            </tr>
+            </tbody>
+        </table>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 <br><br>
@@ -111,89 +161,13 @@
     <script src="../../assets/js/sidebar.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/all.min.js" integrity="sha512-6PM0qYu5KExuNcKt5bURAoT6KCThUmHRewN3zUFNaoI6Di7XJPTMoT6K0nsagZKk2OB4L7E3q1uQKHNHd4stIQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	<script src="../../controller/signin/script_login.js"></script>
-	<script src="../../controller/validacion_proceso/script_validacion.js"></script>
+	<script src="../../controller/consulta_folio/script_consulta_folio.js"></script>
 </body>
 </html>
 <?php
  ?>
 
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-  <div class="modal-dialog modal-xl" role="dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalCenterTitle"></h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="row"> 
-            <div class="col-1">
-                <b>ALUMNO:</b>
-            </div>
-            <div class="col-9">
-                <h5 id="title-name-student"></h5>
-            </div>
-        </div>
-        <br>
-    <div class="row" aria-labelledby="nav-titlesCast-tab">
-		<table class="table table-striped table-bordered">
-			<thead style="background: #691C32; color: white;">
-				<tr>
-					<th scope="col" style="text-align:center">ÁREA</th>
-					<th scope="col" style="text-align:center">FECHA DE LIBERACIÓN</th>
-					<th scope="col" style="text-align:center">DESCRIPCIÓN</th>
-				</tr>
-			</thead>
-			<tbody class="bg-gray" id="table-modal-info-areas">
-				<!-- Aquí se llenarán las filas con JavaScript -->
-			</tbody>
-		</table>
-	</div>
 
-      <div class="modal-footer">
-	  <!-- <button type="button" class="btn btn-success" >Descargar</button> -->
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
-      </div>
-    </div>
-  </div>
-</div>
-</div>
-
-
-<div class="modal fade" id="responsablesModal" tabindex="-1" role="dialog" aria-labelledby="responsablesModalTitle" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <div>
-            <h5 class="modal-title" id="responsablesModalTitle"></h5>
-            <small id="responsablesModalSubtitle" class="text-muted"></small>
-        </div>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
-            <span aria-hidden="true">&times;</span>
-        </button>
-        </div>
-      <div class="modal-body">
-        <div class="row" aria-labelledby="nav-titlesCast-tab">
-          <table class="table table-striped table-bordered">
-            <thead style="background: #691C32; color: white;">
-              <tr>
-                <th scope="col" style="text-align:center">ÁREA</th>
-                <th scope="col" style="text-align:center">RESPONSABLE</th>
-              </tr>
-            </thead>
-            <tbody class="bg-gray" id="table-modal-responsables">
-              <!-- Aquí se llenarán las filas con JavaScript -->
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 
 

@@ -1,9 +1,12 @@
+<?php date_default_timezone_set("America/Mexico_City"); ?>
+
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Validación de Constancia de Liberación</title>
+    <title>Consulta de Folio</title>
     <link rel="shortcut icon" href="src/favicon.png" type="image/x-icon">
     <link href="https://framework-gb.cdn.gob.mx/assets/styles/main.css" rel="stylesheet">
 </head>
@@ -29,9 +32,10 @@
     <div class="container">
         <div class="col">
             <div id="app">
+                <!-- Aquí insertas el componente NavBar <nav-researcher></nav-researcher> -->
             </div>
             <div style="padding-top: 8rem;">
-                <h3>Validación de Constancias de Liberación</h3>
+                <h3>Validación de Folio de Liberación</h3>
                 <hr class="red">
             </div>
             <div style="display: flex; justify-content: center; padding: 4rem;">
@@ -39,9 +43,9 @@
                     <div class="card-body">
                         <form class="form-horizontal" role="form" id="validationForm" novalidate>
                             <div class="form-group row">
-                                <label for="folio" class="col-sm-10 col-form-label">Folio de la Constancia</label>
+                                <label for="folio" class="col-sm-10 col-form-label">Folio de Liberación</label>
                                 <div class="col-sm-10">
-                                    <input class="form-control" id="folio" name="folio" placeholder="Ingrese el folio de la constancia" type="text" required>
+                                    <input class="form-control" id="folio" name="folio" placeholder="Ingrese su folio" type="text" required>
                                 </div>
                             </div>
                             <div class="form-group row mt-4">
@@ -56,8 +60,7 @@
 
                         <div class="row">
                             <div class="col">
-                                <div class="alert alert-danger mt-2" role="alert" id="alert_error" style="display:none">Error: Constancia no encontrada.</div>
-                                <div class="alert alert-success mt-2" role="alert" id="alert_success" style="display:none">Constancia válida.</div>
+                                <div class="alert alert-danger mt-2" role="alert" id="alert_error" style="display:none">Error: Folio no encontrado.</div>
                             </div>
                         </div>
                     </div>
@@ -69,8 +72,8 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://framework-gb.cdn.gob.mx/gobmx.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../controller/consulta_folio/consulta_folio.js"></script>
-    
+    <script src="../../controller/consulta_folio/script_consulta_folio.js"></script>
+
 </body>
 
 </html>
