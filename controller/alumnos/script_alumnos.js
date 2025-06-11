@@ -37,7 +37,7 @@ $(function(){
 function listStudent() {
     let i1 = 0; // Inicializamos i1 con 0
     $.ajax({
-        url: "../../controllers/alumnos/controller_alumnos.php",
+        url: "../../controller/alumnos/controller_alumnos.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -87,7 +87,7 @@ function deleteStudent(id_student) {
     }).then((deleteDoc) => {
         if (deleteDoc) {
             $.ajax({
-                url: "../../controllers/alumnos/controller_alumnos.php",
+                url: "../../controller/alumnos/controller_alumnos.php",
                 cache: false,
                 dataType: 'JSON',
                 type: 'POST',
@@ -124,7 +124,7 @@ function turnSingAreas(id_student) {
     }).then((sendDoc) => {
         if (sendDoc) {
             $.ajax({
-                url: "../../controllers/alumnos/controller_alumnos.php",
+                url: "../../controller/alumnos/controller_alumnos.php",
                 cache: false,
                 dataType: 'JSON',
                 type: 'POST',
@@ -148,7 +148,7 @@ function turnSingAreas(id_student) {
 
 
                     $.ajax({
-                        url: "../../controllers/alumnos/controller_alumnos.php",
+                        url: "../../controller/alumnos/controller_alumnos.php",
                         cache: false,
                         dataType: 'JSON',
                         type: 'POST',
@@ -186,7 +186,7 @@ function turnSingAreas(id_student) {
 function listStudentInProgress() {
     let i2 = 0; // Inicializamos i1 con 0
     $.ajax({
-        url: "../../controllers/alumnos/controller_alumnos.php",
+        url: "../../controller/alumnos/controller_alumnos.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -234,7 +234,7 @@ function showRegisterAreas(id_student) {
     modal.find('.modal-title').text('Detalles')
 
     $.ajax({
-           url: "../../controllers/alumnos/controller_alumnos.php",
+           url: "../../controller/alumnos/controller_alumnos.php",
            cache: false,
            dataType: 'JSON',
            type: 'POST',
@@ -279,14 +279,14 @@ function freeStudent(id_student) {
     }).then((sendDoc) => {
         if (sendDoc) {
             $.ajax({
-                url: "../../controllers/alumnos/controller_alumnos.php",
+                url: "../../controller/alumnos/controller_alumnos.php",
                 cache: false,
                 dataType: 'JSON',
                 type: 'POST',
                 data: { action: 6, id_student: id_student, user: $user },
                 success: function (result) {
                     $.ajax({
-                        url: "../../controllers/alumnos/controller_alumnos.php",
+                        url: "../../controller/alumnos/controller_alumnos.php",
                         cache: false,
                         dataType: 'JSON',
                         type: 'POST',
@@ -338,7 +338,7 @@ function freeStudent(id_student) {
 function listStudentFree() {
     let i3 = 0; // Inicializamos i1 con 0
     $.ajax({
-        url: "../../controllers/alumnos/controller_alumnos.php",
+        url: "../../controller/alumnos/controller_alumnos.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -392,14 +392,14 @@ function cancelStudent(id_student) {
     }).then((motivo) => {
         if (motivo) {
             $.ajax({
-                url: "../../controllers/alumnos/controller_alumnos.php",
+                url: "../../controller/alumnos/controller_alumnos.php",
                 cache: false,
                 dataType: 'JSON',
                 type: 'POST',
                 data: { action: 10, id_student: id_student, user: $user, motivo: motivo },
                 success: function (result) {
                     $.ajax({
-                        url: "../../controllers/alumnos/controller_alumnos.php",
+                        url: "../../controller/alumnos/controller_alumnos.php",
                         cache: false,
                         dataType: 'JSON',
                         type: 'POST',
@@ -440,7 +440,7 @@ function listStudentCancel() {
     
     let i4 = 0; // Inicializamos i1 con 0
     $.ajax({
-        url: "../../controllers/alumnos/controller_alumnos.php",
+        url: "../../controller/alumnos/controller_alumnos.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -487,7 +487,7 @@ function showError(message) {
 
 function printPDF(id_student, full_name) {
     $.ajax({
-        url: "../../controllers/alumnos/controller_alumnos.php",
+        url: "../../controller/alumnos/controller_alumnos.php",
         cache: false,
         type: 'POST',
         data: { action: 13, id_student: id_student, full_name: full_name },
@@ -534,7 +534,7 @@ function courses(){
     $(".loader").fadeOut("slow");
     var program = $("#program").val();
     $.ajax({
-        url: "../../controllers/alumnos/controller_alumnos.php",
+        url: "../../controller/alumnos/controller_alumnos.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -639,7 +639,7 @@ function saveStudent(){
    
     if(validEmail == true){
         $.ajax({
-            url: "../../controllers/alumnos/controller_alumnos.php",
+            url: "../../controller/alumnos/controller_alumnos.php",
             cache: false,
             dataType: 'JSON',
             type: 'POST',
@@ -701,7 +701,7 @@ function getCourses(){
     var program = $("#program").val();
     
     $.ajax({
-        url: "../../controllers/alumnos/controller_alumnos.php",
+        url: "../../controller/alumnos/controller_alumnos.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -725,7 +725,7 @@ function coursesAds(){
     let params = new URLSearchParams(location.search);
     id_student = parseInt(params.get('dc'));
     $.ajax({
-        url: "../../controllers/alumnos/controller_alumnos.php",
+        url: "../../controller/alumnos/controller_alumnos.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -758,7 +758,7 @@ function getStudent() {
     id_student = parseInt(params.get('dc'));
    
     $.ajax({
-        url: "../../controllers/alumnos/controller_alumnos.php",
+        url: "../../controller/alumnos/controller_alumnos.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -865,7 +865,7 @@ function updateStudent(){
    
     if (validEmail == true) {
     $.ajax({
-        url: "../../controllers/alumnos/controller_alumnos.php",
+        url: "../../controller/alumnos/controller_alumnos.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',

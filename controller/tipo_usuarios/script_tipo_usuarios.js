@@ -30,7 +30,7 @@ $(function(){
 
 function listTypeUsers() {
   $.ajax({
-        url: "../../controllers/tipo_usuarios/controller_tipo_usuarios.php",
+        url: "../../controller/tipo_usuarios/controller_tipo_usuarios.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -93,7 +93,7 @@ function saveTypeUser() {
     if (name.length > 0 && key.length > 0 && details.length > 0) {
        
         $.ajax({
-            url: "../../controllers/tipo_usuarios/controller_tipo_usuarios.php",
+            url: "../../controller/tipo_usuarios/controller_tipo_usuarios.php",
             cache: false,
             dataType: 'JSON',
             type: 'POST',
@@ -170,7 +170,7 @@ function deleteTypeUser(id_type_users) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: "../../controllers/tipo_usuarios/controller_tipo_usuarios.php",
+                url: "../../controller/tipo_usuarios/controller_tipo_usuarios.php",
                 cache: false,
                 dataType: 'JSON',
                 type: 'POST',
@@ -235,7 +235,7 @@ if(!userID){
     formData.append('id_type_users', userID);
 
     $.ajax({
-        url: "../../controllers/tipo_usuarios/controller_tipo_usuarios.php",
+        url: "../../controller/tipo_usuarios/controller_tipo_usuarios.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -307,7 +307,7 @@ function saveTypeUserEdit() {
 
     if (name.length > 0 && key.length > 0 && details.length > 0) {
         $.ajax({
-            url: "../../controllers/tipo_usuarios/controller_tipo_usuarios.php",
+            url: "../../controller/tipo_usuarios/controller_tipo_usuarios.php",
             cache: false,
             dataType: 'JSON',
             type: 'POST',

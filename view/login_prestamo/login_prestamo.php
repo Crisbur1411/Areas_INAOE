@@ -103,10 +103,10 @@ else
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.3.2/bootbox.min.js"></script>
-	<script src="../../controllers/login_prestamo/login_prestamo.js"></script>
+	<script src="../../controller/login_prestamo/login_prestamo.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/all.min.js" integrity="sha512-6PM0qYu5KExuNcKt5bURAoT6KCThUmHRewN3zUFNaoI6Di7XJPTMoT6K0nsagZKk2OB4L7E3q1uQKHNHd4stIQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-	<!-- <script src="../../controllers/signatureDocument/script_signature.js"></script> -->
+	<!-- <script src="../../controller/signatureDocument/script_signature.js"></script> -->
 	<script>
 		$(document).ready(function() {
             function disableBack() {

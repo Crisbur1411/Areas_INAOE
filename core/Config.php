@@ -30,7 +30,7 @@ $config["default_view"] = "login";
  * Módulo por defecto
  * 
  * @description:    Este parametro indica la carpeta donde se encuentra alojado el controlador que será llamado por defecto, por ejemplo,
- *                  si la ubicación del controlador es la siguiente src/controllers/website/index.php la carpeta del controlador es "website"
+ *                  si la ubicación del controlador es la siguiente src/controller/website/index.php la carpeta del controlador es "website"
  *                  y solo se debe escribir este titulo.
  * @example:        website
  * 

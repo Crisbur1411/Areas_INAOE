@@ -192,8 +192,8 @@ if (!isset($_SESSION['username'])) {
 		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 		
-		<script src="../../controllers/signin/script_login.js"></script>
-		<script src="../../controllers/programas_academicos/script_programas_academicos.js"></script>
+		<script src="../../controller/signin/script_login.js"></script>
+		<script src="../../controller/programas_academicos/script_programas_academicos.js"></script>
 
 	
 	</body>

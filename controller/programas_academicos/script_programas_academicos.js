@@ -30,7 +30,7 @@ $(function(){
 
 function listPrograms() {
   $.ajax({
-        url: "../../controllers/programas_academicos/controller_programas_academicos.php",
+        url: "../../controller/programas_academicos/controller_programas_academicos.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -101,7 +101,7 @@ function saveProgram() {
     if (name.length > 0 && cve.length) {
        
         $.ajax({
-            url: "../../controllers/programas_academicos/controller_programas_academicos.php",
+            url: "../../controller/programas_academicos/controller_programas_academicos.php",
             cache: false,
             dataType: 'JSON',
             type: 'POST',
@@ -152,7 +152,7 @@ if(!programID){
     formData.append('id_academic_programs', programID);
 
     $.ajax({
-        url: "../../controllers/programas_academicos/controller_programas_academicos.php",
+        url: "../../controller/programas_academicos/controller_programas_academicos.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -227,7 +227,7 @@ function saveProgramEdit() {
 
     if (name.length > 0 && cve.length > 0) {
         $.ajax({
-            url: "../../controllers/programas_academicos/controller_programas_academicos.php",
+            url: "../../controller/programas_academicos/controller_programas_academicos.php",
             cache: false,
             dataType: 'JSON',
             type: 'POST',
@@ -286,7 +286,7 @@ function deleteProgram(id_academic_programs) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: "../../controllers/programas_academicos/controller_programas_academicos.php",
+                url: "../../controller/programas_academicos/controller_programas_academicos.php",
                 cache: false,
                 dataType: 'JSON',
                 type: 'POST',

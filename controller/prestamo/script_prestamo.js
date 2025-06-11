@@ -37,7 +37,7 @@ $(function(){
 
 function listPrestamos() {
   $.ajax({
-        url: "../../controllers/prestamo/controller_prestamo.php",
+        url: "../../controller/prestamo/controller_prestamo.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -81,7 +81,7 @@ function listPrestamos() {
 
 function listPrestamosCancel() {
   $.ajax({
-        url: "../../controllers/prestamo/controller_prestamo.php",
+        url: "../../controller/prestamo/controller_prestamo.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -115,7 +115,7 @@ function listPrestamosCancel() {
 
 function listPrestamosFree() {
   $.ajax({
-        url: "../../controllers/prestamo/controller_prestamo.php",
+        url: "../../controller/prestamo/controller_prestamo.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -150,7 +150,7 @@ function listPrestamosFree() {
 function getStudent(callback){    
     $(".loader").fadeOut("slow");
     $.ajax({
-        url: "../../controllers/prestamo/controller_prestamo.php",
+        url: "../../controller/prestamo/controller_prestamo.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -178,7 +178,7 @@ function getEmployee(){
 
     $(".loader").fadeOut("slow");
     $.ajax({
-        url: "../../controllers/prestamo/controller_prestamo.php",
+        url: "../../controller/prestamo/controller_prestamo.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -235,7 +235,7 @@ if (employee.length == 0) {
 
     // Si todos están llenos, ejecuta el AJAX
     $.ajax({
-        url: "../../controllers/prestamo/controller_prestamo.php",
+        url: "../../controller/prestamo/controller_prestamo.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -301,7 +301,7 @@ if(!prestamoID){
     formData.append('id_prestamo', prestamoID);
 
     $.ajax({
-        url: "../../controllers/prestamo/controller_prestamo.php",
+        url: "../../controller/prestamo/controller_prestamo.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -373,7 +373,7 @@ function savePrestamoEdit() {
 
     if (student.length > 0 && description.length > 0 && employee.length > 0) {
         $.ajax({
-            url: "../../controllers/prestamo/controller_prestamo.php",
+            url: "../../controller/prestamo/controller_prestamo.php",
             cache: false,
             dataType: 'JSON',
             type: 'POST',
@@ -432,7 +432,7 @@ function deletePrestamo(id_prestamo) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: "../../controllers/prestamo/controller_prestamo.php",
+                url: "../../controller/prestamo/controller_prestamo.php",
                 cache: false,
                 dataType: 'JSON',
                 type: 'POST',
@@ -497,7 +497,7 @@ function freePrestamo(id_prestamo) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: "../../controllers/prestamo/controller_prestamo.php",
+                url: "../../controller/prestamo/controller_prestamo.php",
                 cache: false,
                 dataType: 'JSON',
                 type: 'POST',

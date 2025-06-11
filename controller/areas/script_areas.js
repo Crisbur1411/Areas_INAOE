@@ -27,7 +27,7 @@ $(function() {
 
 function listAreas() {
     $.ajax({
-        url: "../../controllers/areas/controller_areas.php",
+        url: "../../controller/areas/controller_areas.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -91,7 +91,7 @@ function newArea() {
     if (name.length > 0 && key.length > 0 && details.length > 0) {
        
         $.ajax({
-            url: "../../controllers/areas/controller_areas.php",
+            url: "../../controller/areas/controller_areas.php",
             cache: false,
             dataType: 'JSON',
             type: 'POST',
@@ -144,7 +144,7 @@ function deleteArea(element) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: "../../controllers/areas/controller_areas.php",
+                url: "../../controller/areas/controller_areas.php",
                 cache: false,
                 dataType: 'JSON',
                 type: 'POST',
@@ -196,7 +196,7 @@ if(!areaID){
     formData.append('id_area', areaID);
 
     $.ajax({
-        url: "../../controllers/areas/controller_areas.php",
+        url: "../../controller/areas/controller_areas.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -264,7 +264,7 @@ function editArea() {
 
     if (name.length > 0 && key.length > 0 && details.length > 0) {
         $.ajax({
-            url: "../../controllers/areas/controller_areas.php",
+            url: "../../controller/areas/controller_areas.php",
             cache: false,
             dataType: 'JSON',
             type: 'POST',

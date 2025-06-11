@@ -3,8 +3,8 @@
 /*
  * 
  * function __autoload($class_name) {
-    if (file_exists('./controllers/' . $GLOBALS["path"]["module"] . "/" . $class_name . '.php')) {
-        include_once './controllers/' . $GLOBALS["path"]["module"] . "/" . $class_name . '.php';
+    if (file_exists('./controller/' . $GLOBALS["path"]["module"] . "/" . $class_name . '.php')) {
+        include_once './controller/' . $GLOBALS["path"]["module"] . "/" . $class_name . '.php';
     } else if (file_exists('./models/' . $GLOBALS["path"]["module"] . "/" . $class_name . '.php')) {
         include_once './models/' . $GLOBALS["path"]["module"] . "/" . $class_name . '.php';
     } else if (file_exists('./core/'. $class_name .'.php')) {

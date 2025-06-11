@@ -29,7 +29,7 @@ $(function(){
 
 function listUser() {
   $.ajax({
-        url: "../../controllers/usuarios/controller_usuarios.php",
+        url: "../../controller/usuarios/controller_usuarios.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -77,7 +77,7 @@ $(function() {
 
 function getUserInfo(id_user) {
     $.ajax({
-        url: "../../controllers/usuarios/controller_usuarios.php",
+        url: "../../controller/usuarios/controller_usuarios.php",
         method: "POST",
         dataType: "JSON",
         data: { action: 2, id_user: id_user },
@@ -116,7 +116,7 @@ function saveChanges(id_user) {
         return;
     }
     $.ajax({
-        url: '../../controllers/usuarios/controller_usuarios.php',
+        url: '../../controller/usuarios/controller_usuarios.php',
         method: 'POST',
         dataType: "JSON",
         data: { action: 3, id_user: id_user, currentPassword: currentPassword, newPassword: newPassword },
@@ -151,7 +151,7 @@ function deleteUser( key) {
     }).then((result) => {
         if (result.isConfirmed) {
             $.ajax({
-                url: "../../controllers/usuarios/controller_usuarios.php",
+                url: "../../controller/usuarios/controller_usuarios.php",
                 cache: false,
                 dataType: 'JSON',
                 type: 'POST',
@@ -210,7 +210,7 @@ function preCargarDatos() {
 
 
     $.ajax({
-        url: "../../controllers/usuarios/controller_usuarios.php",
+        url: "../../controller/usuarios/controller_usuarios.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -319,7 +319,7 @@ function changePassword() {
                     }
 
                     $.ajax({
-                        url: "../../controllers/usuarios/controller_usuarios.php",
+                        url: "../../controller/usuarios/controller_usuarios.php",
                         cache: false,
                         dataType: 'JSON',
                         type: 'POST',
@@ -367,7 +367,7 @@ function areas() {
 
     $(".loader").fadeOut("slow");
     $.ajax({
-        url: "../../controllers/usuarios/controller_usuarios.php",
+        url: "../../controller/usuarios/controller_usuarios.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -392,7 +392,7 @@ function typeUsers(fk_type) {
 
     $(".loader").fadeOut("slow");
     $.ajax({
-        url: "../../controllers/usuarios/controller_usuarios.php",
+        url: "../../controller/usuarios/controller_usuarios.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -485,7 +485,7 @@ function saveUser() {
 
     if (validEmail == true) {
         $.ajax({
-            url: "../../controllers/usuarios/controller_usuarios.php",
+            url: "../../controller/usuarios/controller_usuarios.php",
             cache: false,
             dataType: 'JSON',
             type: 'POST',
@@ -546,7 +546,7 @@ function saveUser() {
 
 function userArea(id_user, $area) {
     $.ajax({
-        url: "../../controllers/usuarios/controller_usuarios.php",
+        url: "../../controller/usuarios/controller_usuarios.php",
         cache: false,
         dataType: 'JSON', 
         type: 'POST',
@@ -635,7 +635,7 @@ function saveUserEdit() {
 
     if (validEmail == true) {
         $.ajax({
-            url: "../../controllers/usuarios/controller_usuarios.php",
+            url: "../../controller/usuarios/controller_usuarios.php",
             cache: false,
             dataType: 'JSON',
             type: 'POST',

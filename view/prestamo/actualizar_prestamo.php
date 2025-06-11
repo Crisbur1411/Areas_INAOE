@@ -191,8 +191,8 @@ if (!isset($_SESSION['username'])) {
 		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 		
-		<script src="../../controllers/signin/script_login.js"></script>
-		<script src="../../controllers/prestamo/script_prestamo.js"></script>
+		<script src="../../controller/signin/script_login.js"></script>
+		<script src="../../controller/prestamo/script_prestamo.js"></script>
 
 	
 	</body>

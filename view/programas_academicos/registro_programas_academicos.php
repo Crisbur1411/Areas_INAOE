@@ -190,7 +190,7 @@ if (!isset($_SESSION['username'])) {
 	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 	<script src="../../assets/js/sidebar.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/all.min.js" integrity="sha512-6PM0qYu5KExuNcKt5bURAoT6KCThUmHRewN3zUFNaoI6Di7XJPTMoT6K0nsagZKk2OB4L7E3q1uQKHNHd4stIQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-	<script src="../../controllers/signin/script_login.js"></script>	
-	<script src="../../controllers/programas_academicos/script_programas_academicos.js"></script>
+	<script src="../../controller/signin/script_login.js"></script>	
+	<script src="../../controller/programas_academicos/script_programas_academicos.js"></script>
 </body>
 </html>

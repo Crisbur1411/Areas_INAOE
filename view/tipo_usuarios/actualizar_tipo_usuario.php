@@ -187,8 +187,8 @@ if (!isset($_SESSION['username'])) {
 		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 		
-		<script src="../../controllers/signin/script_login.js"></script>
-		<script src="../../controllers/tipo_usuarios/script_tipo_usuarios.js"></script>
+		<script src="../../controller/signin/script_login.js"></script>
+		<script src="../../controller/tipo_usuarios/script_tipo_usuarios.js"></script>
 
 	
 	</body>

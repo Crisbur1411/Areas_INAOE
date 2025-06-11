@@ -32,7 +32,7 @@ $(function(){
 function listStudentInProgress() {
     let i2 = 0; // Inicializamos i1 con 0
     $.ajax({
-        url: "../../controllers/liberacion_area/controller_liberacion_area.php",
+        url: "../../controller/liberacion_area/controller_liberacion_area.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -100,7 +100,7 @@ function signStudent(id_student, full_name) {
         if (value === "Liberar") {
             var password = $(".swal-content__input").val();
             $.ajax({
-                url: "../../controllers/liberacion_area/controller_liberacion_area.php",
+                url: "../../controller/liberacion_area/controller_liberacion_area.php",
                 cache: false,
                 dataType: 'JSON',
                 type: 'POST',
@@ -109,7 +109,7 @@ function signStudent(id_student, full_name) {
                     $.each(result, function (index, val) {
                         if (val.success === 't') {
                             $.ajax({
-                                url: "../../controllers/liberacion_area/controller_liberacion_area.php",
+                                url: "../../controller/liberacion_area/controller_liberacion_area.php",
                                 cache: false,
                                 dataType: 'JSON',
                                 type: 'POST',
@@ -160,7 +160,7 @@ function signStudent(id_student, full_name) {
 function listStudentFree() {
     let i3 = 0; // Inicializamos i1 con 0
     $.ajax({
-        url: "../../controllers/liberacion_area/controller_liberacion_area.php",
+        url: "../../controller/liberacion_area/controller_liberacion_area.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -213,7 +213,7 @@ function noteStudent(id_student) {
       .then((motivo) => {
         if (motivo) {
             $.ajax({
-                url: "../../controllers/liberacion_area/controller_liberacion_area.php",
+                url: "../../controller/liberacion_area/controller_liberacion_area.php",
                 cache: false,
                 dataType: 'JSON',
                 type: 'POST',
@@ -259,7 +259,7 @@ function notesStudent(id_student) {
     modal.find('.modal-title').text('Detalles')
 
     $.ajax({
-           url: "../../controllers/liberacion_area/controller_liberacion_area.php",
+           url: "../../controller/liberacion_area/controller_liberacion_area.php",
            cache: false,
            dataType: 'JSON',
            type: 'POST',
@@ -293,7 +293,7 @@ function listStudentCancel() {
     
     let i4 = 0; // Inicializamos i1 con 0
     $.ajax({
-        url: "../../controllers/liberacion_area/controller_liberacion_area.php",
+        url: "../../controller/liberacion_area/controller_liberacion_area.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',

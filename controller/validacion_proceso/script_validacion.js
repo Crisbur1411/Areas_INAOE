@@ -34,7 +34,7 @@ $(document).ready(function() {
         }
 
         $.ajax({
-            url: '../../controllers/validacion_proceso/controller_validacionProceso.php',
+            url: '../../controller/validacion_proceso/controller_validacionProceso.php',
             type: 'POST',
             data: { 
                 action: 3,
@@ -72,7 +72,7 @@ function listStudentInProgress() {
 
 
     $.ajax({
-        url: "../../controllers/validacion_proceso/controller_validacionProceso.php",
+        url: "../../controller/validacion_proceso/controller_validacionProceso.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -124,7 +124,7 @@ function showRegisterAreas(id_student) {
     var modal = $('#exampleModalCenter')
     modal.find('.modal-title').text('Detalles')
     $.ajax({
-        url: "../../controllers/validacion_proceso/controller_validacionProceso.php",
+        url: "../../controller/validacion_proceso/controller_validacionProceso.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
@@ -160,7 +160,7 @@ function helper() {
     $('#responsablesModalSubtitle').text('Responsables de la liberación de cada área en caso de requerir atención especial.')
 
     $.ajax({
-        url: "../../controllers/validacion_proceso/controller_validacionProceso.php",
+        url: "../../controller/validacion_proceso/controller_validacionProceso.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',

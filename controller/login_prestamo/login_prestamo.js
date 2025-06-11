@@ -24,7 +24,7 @@ $(document).ready(function() {
 
 function logout() {
     $.ajax({
-        url: "../../controllers/login_prestamo/controller_login_prestamo.php",
+        url: "../../controller/login_prestamo/controller_login_prestamo.php",
         cache: false,
         type: 'POST',
         data: { action: 2 },
@@ -65,7 +65,7 @@ $("#login-form").submit(function(event) {
 
     if (email != '' || password != '') {
         $.ajax({
-            url: "../../controllers/login_prestamo/controller_login_prestamo.php",
+            url: "../../controller/login_prestamo/controller_login_prestamo.php",
             cache: false,
             type: 'POST',
             data: { action: 1, email: email, password: password },
@@ -165,7 +165,7 @@ $("#btnLogoutPem").click(function() {
 function deleteInfo() {
 
      $.ajax({
-        url: "../../controllers/firmar/controller_firmar.php",
+        url: "../../controller/firmar/controller_firmar.php",
         cache: false,
         type: 'POST',
         data: { action: 2 },
