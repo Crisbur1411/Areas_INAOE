@@ -1,58 +1,4 @@
 <?php
-//============================================================+
-// File name   : pdf417.php
-// Version     : 1.0.005
-// Begin       : 2010-06-03
-// Last Update : 2014-04-25
-// Author      : Nicola Asuni - Tecnick.com LTD - www.tecnick.com - info@tecnick.com
-// License     : GNU-LGPL v3 (http://www.gnu.org/copyleft/lesser.html)
-// -------------------------------------------------------------------
-// Copyright (C) 2010-2013  Nicola Asuni - Tecnick.com LTD
-//
-// This file is part of TCPDF software library.
-//
-// TCPDF is free software: you can redistribute it and/or modify it
-// under the terms of the GNU Lesser General Public License as
-// published by the Free Software Foundation, either version 3 of the
-// License, or (at your option) any later version.
-//
-// TCPDF is distributed in the hope that it will be useful, but
-// WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-// See the GNU Lesser General Public License for more details.
-//
-// You should have received a copy of the GNU Lesser General Public License
-// along with TCPDF.  If not, see <http://www.gnu.org/licenses/>.
-//
-// See LICENSE.TXT file for more information.
-// -------------------------------------------------------------------
-//
-// DESCRIPTION :
-//
-// Class to create PDF417 barcode arrays for TCPDF class.
-// PDF417 (ISO/IEC 15438:2006) is a 2-dimensional stacked bar code created by Symbol Technologies in 1991.
-// It is one of the most popular 2D codes because of its ability to be read with slightly modified handheld laser or linear CCD scanners.
-// TECHNICAL DATA / FEATURES OF PDF417:
-//		Encodable Character Set:     All 128 ASCII Characters (including extended)
-//		Code Type:                   Continuous, Multi-Row
-//		Symbol Height:               3 - 90 Rows
-//		Symbol Width:                90X - 583X
-//		Bidirectional Decoding:      Yes
-//		Error Correction Characters: 2 - 512
-//		Maximum Data Characters:     1850 text, 2710 digits, 1108 bytes
-//
-//============================================================+
-
-/**
- * @file
- * Class to create PDF417 barcode arrays for TCPDF class.
- * PDF417 (ISO/IEC 15438:2006) is a 2-dimensional stacked bar code created by Symbol Technologies in 1991.
- * (requires PHP bcmath extension)
- * @package com.tecnick.tcpdf
- * @author Nicola Asuni
- * @version 1.0.005
- */
-
 // definitions
 if (!defined('PDF417DEFS')) {
 
@@ -132,27 +78,6 @@ class PDF417 {
 		'30' => array(29), '31' => array(29,27), '32' => array(29,28) //
 	);
 
-	/**
-	 * Clusters of codewords (0, 3, 6)<br/>
-	 * Values are hex equivalents of binary representation of bars (1 = bar, 0 = space).<br/>
-	 * The codewords numbered from 900 to 928 have special meaning, some enable to switch between modes in order to optimise the code:<ul>
-	 * <li>900 : Switch to "Text" mode</li>
-	 * <li>901 : Switch to "Byte" mode</li>
-	 * <li>902 : Switch to "Numeric" mode</li>
-	 * <li>903 - 912 : Reserved</li>
-	 * <li>913 : Switch to "Octet" only for the next codeword</li>
-	 * <li>914 - 920 : Reserved</li>
-	 * <li>921 : Initialization</li>
-	 * <li>922 : Terminator codeword for Macro PDF control block</li>
-	 * <li>923 : Sequence tag to identify the beginning of optional fields in the Macro PDF control block</li>
-	 * <li>924 : Switch to "Byte" mode (If the total number of byte is multiple of 6)</li>
-	 * <li>925 : Identifier for a user defined Extended Channel Interpretation (ECI)</li>
-	 * <li>926 : Identifier for a general purpose ECI format</li>
-	 * <li>927 : Identifier for an ECI of a character set or code page</li>
-	 * <li>928 : Macro marker codeword to indicate the beginning of a Macro PDF Control Block</li>
-	 * </ul>
-	 * @protected
-	 */
 	protected $clusters = array(
 		array( // cluster 0 -----------------------------------------------------------------------
 			0x1d5c0,0x1eaf0,0x1f57c,0x1d4e0,0x1ea78,0x1f53e,0x1a8c0,0x1d470,0x1a860,0x15040, //  10

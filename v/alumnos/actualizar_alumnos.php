@@ -1,9 +1,11 @@
 <?php date_default_timezone_set("America/Mexico_City"); ?>
 <?php session_start();
 
-if (isset($_SESSION['user_name']))
-{
-	echo '<script>location.href = "#";</script>';
+// Validar sesión activa
+if (!isset($_SESSION['id'])) {
+    // Si no hay sesión iniciada, redirigir al index (login)
+    header("Location: ../../index.php");
+    exit();
 }
 ?>
 <!DOCTYPE html>
@@ -227,9 +229,9 @@ if (isset($_SESSION['user_name']))
 				</div>	
 				<br><br>	
 				<div class="form-group" align="center">
-					<button type="button" class="btn btn-secondary w-20" id="cancel" onClick="history.go(-1);" >Cancelar</button>
-					<button type="button" class="btn btn-success w-20" id="save-exam" onclick="updateStudent();">Guardar</button>
-				</div>				
+					<button type="button" class="btn btn-danger w-20" id="cancel" onClick="history.go(-1);">Cancelar</button>
+					<button type="button" class="btn btn-success-guardar w-20" id="save-exam" onclick="updateStudent();">Guardar</button>
+				</div>
 			</div>	
 		</div>		
 	</div>

@@ -1,5 +1,12 @@
 <?php date_default_timezone_set("America/Mexico_City"); ?>
 <?php session_start();
+
+// Validar sesión activa
+if (!isset($_SESSION['id'])) {
+    // Si no hay sesión iniciada, redirigir al index (login)
+    header("Location: ../../index.php");
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -155,8 +162,8 @@
                 </div>
                 <br>
                 <br>
-                <button type="button" class="btn btn-secondary w-20" onclick="cancelNewArea()">cancelar</button>
-                <button type="button" class="btn btn-success w-20" onclick="newArea()">Crear</button>
+                <button type="button" class="btn btn-danger w-20" id="cancel" onclick="cancelNewArea()">Cancelar</button>
+                <button type="button" class="btn btn-success-guardar w-20" id="save-exam" onclick="newArea()">Crear</button>
 
             </div>
         </div>

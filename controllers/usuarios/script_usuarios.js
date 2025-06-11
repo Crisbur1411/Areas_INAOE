@@ -296,11 +296,11 @@ function changePassword() {
         buttons: {
             cancel: {
                 label: 'Cancelar',
-                className: 'btn-secondary'
+                className: 'btn-danger'
             },
             confirm: {
                 label: 'Guardar',
-                className: 'btn-primary',
+                className: 'btn-success-guardar',
                 callback: function () {
                     var newPassword = $('#newPassword').val().trim();
                     var confirmNewPassword = $('#confirmNewPassword').val().trim();

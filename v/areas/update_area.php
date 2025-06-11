@@ -1,5 +1,12 @@
 <?php date_default_timezone_set("America/Mexico_City"); ?>
 <?php session_start();
+
+// Validar sesión activa
+if (!isset($_SESSION['id'])) {
+    // Si no hay sesión iniciada, redirigir al index (login)
+    header("Location: ../../index.php");
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -161,8 +168,8 @@
         </div>
         <div class="form-group" align="center">
 
-            <button type="button" class="btn btn-secondary w-20" id="cancel" onClick="history.go(-1);">Cancelar</button>
-            <button type="button" class="btn btn-success w-20" onclick="editArea()">Guardar</button>
+            <button type="button" class="btn btn-danger w-20" id="cancel" onClick="history.go(-1);">Cancelar</button>
+            <button type="button" class="btn btn-success-guardar w-20" id="save-exam" onclick="editArea()">Guardar</button>
         </div>
 
         </form>

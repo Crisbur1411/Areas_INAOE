@@ -3,6 +3,13 @@
 // Evita caché
 header("Cache-Control: no-cache, must-revalidate");
 header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
+
+// Validar sesión activa
+if (!isset($_SESSION['id'])) {
+    // Si no hay sesión iniciada, redirigir al index (login)
+    header("Location: ../../index.php");
+    exit();
+}
 ?>
 <!DOCTYPE html> 
 <html lang="en">

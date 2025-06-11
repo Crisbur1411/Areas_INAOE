@@ -498,7 +498,8 @@ function printPDF(id_student, full_name) {
                 var data = JSON.parse(result);
 
                 if (data.pdf_url) {
-                    window.location.href = data.pdf_url;
+                    // Abre el PDF en una nueva ventana/pestaña
+                    window.open(data.pdf_url, '_blank');
                 } else {
                     let errorMessage = 'No se pudo generar el PDF.\nVerifica que el alumno tenga las liberaciones necesarias.';
                     showError(errorMessage);

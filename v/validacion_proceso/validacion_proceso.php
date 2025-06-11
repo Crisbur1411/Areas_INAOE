@@ -1,4 +1,11 @@
-<?php date_default_timezone_set("America/Mexico_City"); ?>
+<?php date_default_timezone_set("America/Mexico_City"); 
+// Validar sesión activa
+if (!isset($_SESSION['id'])) {
+    // Si no hay sesión iniciada, redirigir al index (login)
+    header("Location: ../../index.php");
+    exit();
+}
+?>
 
 
 

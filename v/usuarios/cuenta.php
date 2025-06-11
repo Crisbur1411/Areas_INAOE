@@ -1,5 +1,12 @@
 <?php date_default_timezone_set("America/Mexico_City"); ?>
 <?php session_start();
+
+// Validar sesión activa
+if (!isset($_SESSION['id'])) {
+    // Si no hay sesión iniciada, redirigir al index (login)
+    header("Location: ../../index.php");
+    exit();
+}
 ?>
 <!DOCTYPE html> 
 <html lang="en">
@@ -133,36 +140,6 @@
 		<div id="info"  class="d-none" style="text-align: center;" >  
 		<span style="color: black; font-weight: bold; font-size: 16px; align:left; ">MI CUENTA</span><br>
 		<br><br>
-  			<!--<div style="text-align: center; border-bottom: 3px solid #cecece; margin-bottom: 30px; margin-top: 30px">
-				<nav class="navbar navbar-light ">
-  				<div class="nav nav-tabs" id="nav-tab" role="tablist">
-    				<a class="nav-item nav-link active" id="nav-users-tab" data-toggle="tab" href="#nav-users" role="tab" aria-controls="nav-toSign" aria-selected="true">
-						Registros en sistema <span id="pf" class="badge badge-info">0</span>
-  						<span class="sr-only">unread messages</span>
-					</a>									
-  				</div> 
-				  <button type='button' class='btn btn-outline-success'  id='btn-new-user' onClick='newUser()'>NUEVO USUARIO</button>
-				</nav>
-		    </div>
-
-			<div class="tab-content" id="nav-tabContent">
-  				<div class="tab-pane fade show active" id="nav-users" role="tabpanel" aria-labelledby="nav-users-tab">
-				  <div class="tab-pane fade show active" id="nav-users" role="tabpanel" aria-labelledby="nav-users-tab">
-					<table class="table table-striped table-bordered">
-						<thead style="background: #2967B2; color: white;">
-							<tr>
-								<th scope="col" style="text-align:center"># REGISTRO</th>
-								<th scope="col" style="text-align:center">NOMBRE DEL USUARIO</th>
-								<th scope="col" style="text-align:center">ÁREA</th>
-								<th scope="col" style="text-align:center">TIPO DE USUARIO</th>
-								<th scope="col" style="text-align:center">FECHA DE REGISTRO</th>
-								<th scope="col" style="text-align:center"></th>
-								<th scope="col" style="text-align:center"></th>
-							</tr>
-						</thead>
-						<tbody class="bg-white" id="table-users"></tbody>
-					</table>
-	              </div>  -->
 
 				<!--desarrollado por bryam el 29/03/2024 en esta sección se muestra los datos del usuario-->
 			<div id="user_id" data-id="<?php echo $_SESSION['id_user']; ?>" style="display: none;"></div>
@@ -216,8 +193,8 @@
 							<input type="password" id="confirmPassword">
 						</div>
 						<div class="modal-footer">
-						<button type="button" class="btn btn-primary" onclick="saveChanges(<?php echo $_SESSION['id_user']; ?>)">Guardar</button>
-							<button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+						<button type="button" class="btn btn-danger w-20" id="cancel"  data-dismiss="modal">Cerrar</button>
+						<button type="button" class="btn btn-success-guardar w-20" id="save-exam"  onclick="saveChanges(<?php echo $_SESSION['id_user']; ?>)">Guardar</button>
 						</div>
 					</div>
 				</div>

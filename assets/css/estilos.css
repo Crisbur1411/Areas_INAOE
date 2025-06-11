@@ -82,6 +82,27 @@ body{
 }
 
 
+.btn-success-guardar {
+  background-color: #28a745;
+  color: #FFFFFF;
+  border: 2px solid #28a745;
+  box-shadow: none;
+  transition: all 0.3s ease;
+}
+
+.btn-success-guardar:hover {
+  background-color: #218838;
+  border-color: #218838;
+  color: #FFFFFF;
+  font-weight: bold;
+}
+
+.btn-success-guardar:focus {
+  box-shadow: none;
+}
+
+
+
 .btn-primary {
   background: #691C32!important;
   border: 2px solid #691C32 !important;

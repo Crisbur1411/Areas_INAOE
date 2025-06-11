@@ -487,7 +487,7 @@ public function freeStudent($id_student, $user)
     // Generar el folio, de este modo si el id del estudiane y el nombre es el mismo, el folio siempre será el mismo
     $folioSeed = $id_student . '-' . $full_name;
     $folioHash = strtoupper(substr(md5($folioSeed), 0, 16)); // puedes cambiar 8 por la longitud que gustes
-    $folio = 'FDA-' . $folioHash;
+    $folio = 'DFA-' . $folioHash;
 
     $pdf = new TCPDF('P', PDF_UNIT, 'A4', true, 'UTF-8', false);
     $pdf->SetCreator('FDA');
@@ -535,9 +535,9 @@ public function freeStudent($id_student, $user)
         $imageName = $area["key"] . ".png";
         $html .= '<tr>
                     <td height="60">' . $area["area_name"] . '</td>
-                    <td>' . $area["libera"] . '<br>FIRMA:<br>' . $area["firma"] . '</td>
+                    <td>' . $area["libera"] . '</td>
                     <td>' . $area["date"] . '</td>
-                    <td></td>
+                    <td>' . $area["firma"] . '</td>
                   </tr>';
     }
 
@@ -545,7 +545,7 @@ public function freeStudent($id_student, $user)
         </table>
         </center>
         <div style="text-align: center;">
-            <p>Formato acreditado por la FDA, Santa María Tonantzintla a Fecha: ' . date("d-m-Y") . '</p>
+            <p>Formato acreditado por la DFA, Santa María Tonantzintla a Fecha: ' . date("d-m-Y") . '</p>
         </div>';
 
     $pdf->SetFont('helvetica', '', 12);
