@@ -1,5 +1,5 @@
 <?php
-require_once '../../m/usuarios/model_usuarios.php';
+require_once '../../model/usuarios/model_usuarios.php';
 
 class usuariosController
 {

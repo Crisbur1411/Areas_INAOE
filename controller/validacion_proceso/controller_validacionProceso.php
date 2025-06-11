@@ -1,5 +1,5 @@
 <?php
-require_once '../../m/validacion_proceso/model_validacion.php';
+require_once '../../model/validacion_proceso/model_validacion.php';
 
 
 class validacionController{

@@ -1,5 +1,5 @@
 <?php
-    require_once '../../m/tipo_usuarios/model_tipo_usuarios.php';
+    require_once '../../model/tipo_usuarios/model_tipo_usuarios.php';
 
     class tipoUsuariosController{
     	private $tipoUsuarios;

@@ -1,6 +1,6 @@
 <?php
 	date_default_timezone_set("America/Mexico_City");
-	require_once  '../../m/db_connection.php';
+	require_once  '../../model/db_connection.php';
 	function getRealIpAddr() {
 		if (!empty($_SERVER['HTTP_CLIENT_IP']))   //check ip from share internet
 		{

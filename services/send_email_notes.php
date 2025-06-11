@@ -2,7 +2,7 @@
 date_default_timezone_set("America/Mexico_City");
 
 // Cargar modelo de emails
-require_once __DIR__ . '/../m/email/model_email.php';
+require_once __DIR__ . '/../model/email/model_email.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 

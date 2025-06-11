@@ -1,5 +1,5 @@
 <?php
-    require_once '../../m/prestamo/model_prestamo.php';
+    require_once '../../model/prestamo/model_prestamo.php';
 
 class prestamoController{
 

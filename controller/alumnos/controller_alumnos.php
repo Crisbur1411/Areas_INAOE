@@ -1,5 +1,5 @@
 <?php
-require_once '../../m/alumnos/model_alumnos.php';
+require_once '../../model/alumnos/model_alumnos.php';
 require_once('../../res/tcpdf/tcpdf.php');
 
 class alumnosController

@@ -1,5 +1,5 @@
 <?php
-    require_once '../../m/liberacion_area/model_liberacion_area.php';
+    require_once '../../model/liberacion_area/model_liberacion_area.php';
 
     class liberacionAreaController{
     	private $liberacionArea;

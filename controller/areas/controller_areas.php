@@ -1,5 +1,5 @@
 <?php
-    require_once '../../m/areas/model_areas.php';
+    require_once '../../model/areas/model_areas.php';
 
     class areasController {
         private $areas;

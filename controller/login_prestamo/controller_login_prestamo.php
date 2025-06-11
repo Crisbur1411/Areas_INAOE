@@ -1,5 +1,5 @@
 <?php
-    require_once '../../m/login_prestamo/model_login_prestamo.php';
+    require_once '../../model/login_prestamo/model_login_prestamo.php';
 
     class loginController{
     	private $login;

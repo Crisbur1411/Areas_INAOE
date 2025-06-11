@@ -1,5 +1,5 @@
 <?php
-require_once '../../m/programas_academicos/model_programas_academicos.php';
+require_once '../../model/programas_academicos/model_programas_academicos.php';
 
 class programasAcademicosController{
 
