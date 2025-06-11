@@ -308,6 +308,7 @@ public function freeStudent($id_student, $user)
                                     students.control_number, 
                                     COUNT(trace_student_areas.fk_area) AS areas_count,  
                                     DATE(trace_student_areas.date) AS date,
+									 students.date_register,
                                     students.status
                                     FROM 
                                         students
@@ -333,7 +334,8 @@ public function freeStudent($id_student, $user)
                 "full_name" => $row["full_name"],
                 "control_number" => $row["control_number"],
                 "date" => $row["date"],
-                "status" => $row["status"]
+                "status" => $row["status"],
+                "date_register" => $row["date_register"]
             );
             $data[] = $dat;
         }
@@ -435,7 +437,7 @@ public function freeStudent($id_student, $user)
 
     //desarrollaod por bryam el 09/04/2024 trae todo los datos que lleva el pdf
 
-    public function generatePDF($id_student, $full_name)
+    public function generatePDF($id_student, $full_name, $control_number, $date_register)
 {
     $con = new DBconnection();
     $con->openDB();
@@ -485,9 +487,16 @@ public function freeStudent($id_student, $user)
     }
 
     // Generar el folio, de este modo si el id del estudiane y el nombre es el mismo, el folio siempre será el mismo
-    $folioSeed = $id_student . '-' . $full_name;
+    $folioSeed = $id_student . '-' . $full_name . '-' . $control_number . '-' . $date_register;
     $folioHash = strtoupper(substr(md5($folioSeed), 0, 16)); // puedes cambiar 8 por la longitud que gustes
     $folio = 'DFA-' . $folioHash;
+
+    //Se inserta el folio al estudiante en la base de datos
+    $con = new DBconnection();
+    $con->openDB();
+    $con->query("UPDATE students SET folio = '$folio' WHERE id_student = '$id_student'");
+    $con->closeDB();
+
 
     $pdf = new TCPDF('P', PDF_UNIT, 'A4', true, 'UTF-8', false);
     $pdf->SetCreator('FDA');

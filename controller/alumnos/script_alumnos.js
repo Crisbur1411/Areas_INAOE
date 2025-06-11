@@ -351,11 +351,16 @@ function listStudentFree() {
                     i3++; // Incrementamos i1 solo si el estudiante cumple con la condición
                     table += "<tr>"       
                     + "<th style='text-align:center'>"+val.id_student+"</th>"
-                    + "<th style='text-align:center'>"+val.control_number+"</a></th>"
-                    + "<th style='text-align:center'>"+val.full_name+"</th>" 
-                    + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showRegisterAreas("+val.id_student+");'>"+val.date+"</a></th>"
-                    + "<th style='text-align:center'><button type='button' class='btn btn-primary btn-sm' title='Click para imprimir la constancia' onClick='printPDF("+val.id_student+", \""+val.full_name.replace(/"/g, '&quot;')+"\");'><i class='fa-solid fa-print'></i></button></a></th>"
+                    + "<th style='text-align:center'>"+val.control_number+"</th>"
+                    + "<th style='text-align:center'>"+val.full_name+"</th>"
+                    + "<th style='text-align:center'><a href='#' data-toggle='modal' onClick='showRegisterAreas("+val.id_student+");'>"+val.date+"</a></th>"
+                    + "<th style='text-align:center'>"
+                    + "<button type='button' class='btn btn-primary btn-sm' title='Click para imprimir la constancia' "
+                    + "onClick='printPDF("+val.id_student+", \""+val.full_name.replace(/"/g, '&quot;')+"\", \""+val.control_number+"\", \""+val.date_register+"\");'>"
+                    + "<i class='fa-solid fa-print'></i></button>"
+                    + "</th>"
                     + "</tr>";
+
                 }
             });
             $('#pf3').text(i3); // Actualizamos el valor en el elemento con id 'pf'
@@ -485,12 +490,12 @@ function showError(message) {
 
 
 
-function printPDF(id_student, full_name) {
+function printPDF(id_student, full_name,control_number, date_register) {
     $.ajax({
         url: "../../controller/alumnos/controller_alumnos.php",
         cache: false,
         type: 'POST',
-        data: { action: 13, id_student: id_student, full_name: full_name },
+        data: { action: 13, id_student: id_student, full_name: full_name, control_number: control_number, date_register: date_register },
         success: function(result) {
             console.log("Respuesta recibida:", result);
 

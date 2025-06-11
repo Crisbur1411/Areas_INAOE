@@ -124,7 +124,7 @@ class alumnosController
 	public function generatePDF()
 	{
 		$this->alumnos = new alumnos();
-		$pdfData= $this->alumnos->generatePDF($_POST["id_student"], $_POST["full_name"]);
+		$pdfData= $this->alumnos->generatePDF($_POST["id_student"], $_POST["full_name"], $_POST["control_number"], $_POST["date_register"] );
 		return json_encode($pdfData);
 	}
 
