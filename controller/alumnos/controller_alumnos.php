@@ -152,6 +152,14 @@ class alumnosController
 	      	$data = $this->alumnos->updateStudent($_POST["id_student"], $_POST["name"], $_POST["surname"], $_POST["secondsurname"], $_POST["email"], $_POST["controlnumber"], $_POST["course"], $_POST["institucion"], $_POST["date_conclusion"]);
 	      	echo ($data);
 		}
+
+		public function getDetailsStudent()
+	{
+		$this->alumnos = new alumnos();
+
+		$data = $this->alumnos->getDetailsStudent($_POST["id_student"]);
+		echo json_encode($data);
+	}
 }
 
 $obj = new alumnosController();
@@ -210,6 +218,8 @@ if (isset($_POST["action"])) {
 	}
 	if ($_POST["action"] == 18) {
 		$obj->updateStudent();
+	}if ($_POST["action"] == 19) {
+		$obj->getDetailsStudent();
 	}
 	
 }

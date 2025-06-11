@@ -633,4 +633,41 @@ public function coursesAds($id_student){
         }
     }
 
+    public function getDetailsStudent($id_student)
+{
+    $con = new DBconnection();
+    $con->openDB();
+
+    $dataR = $con->query("SELECT s.id_student,
+        CONCAT(s.name, ' ', s.surname, ' ', s.second_surname, ' ') AS full_name,
+        s.control_number,
+        s.email,
+        s.institucion,
+        s.fecha_conclusion,
+        p.name AS programa_academico
+        FROM students AS s
+        JOIN academic_programs AS p
+        ON s.fk_academic_programs = p.id_academic_programs
+        WHERE s.id_student = " . $id_student . ";");
+
+    $data = null;
+
+    if ($row = pg_fetch_array($dataR)) {
+        $data = array(
+            "id_student" => $row["id_student"],
+            "full_name" => $row["full_name"],
+            "control_number" => $row["control_number"],
+            "email" => $row["email"],
+            "institucion" => $row["institucion"],
+            "fecha_conclusion" => $row["fecha_conclusion"],
+            "programa_academico" => $row["programa_academico"]
+        );
+    }
+
+    $con->closeDB();
+
+    return array("status" => 200, "data" => $data);
+}
+
+
 }

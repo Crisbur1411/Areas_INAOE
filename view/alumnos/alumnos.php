@@ -350,3 +350,53 @@ if (!isset($_SESSION['username'])) {
     </div>
   </div>
 </div>
+</div>
+
+<div class="modal fade" id="modalStudentDetails" tabindex="-1" role="dialog" aria-labelledby="modalStudentDetailsTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="background: #691C32; color: white;">
+        <h5 class="modal-title">Detalles del Alumno</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar" style="color: white;">
+            <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <table class="table table-bordered">
+          <tbody>
+            <tr>
+              <th >Nombre Completo</th>
+              <td id="student-fullname"></td>
+            </tr>
+            <tr>
+              <th>Número de Control</th>
+              <td id="student-control-number"></td>
+            </tr>
+            <tr>
+              <th>Correo</th>
+              <td id="student-email"></td>
+            </tr>
+            <tr>
+              <th>Institución</th>
+              <td id="student-institucion"></td>
+            </tr>
+            <tr>
+              <th>Fecha de Conclusión</th>
+              <td id="student-fecha-conclusion"></td>
+            </tr>
+            <tr>
+              <th>Programa Académico</th>
+              <td id="student-programa-academico"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>
+

@@ -200,7 +200,7 @@ function listStudentInProgress() {
                     table += "<tr>"       
                     + "<th style='text-align:center'>"+val.id_student+"</th>"
                     + "<th style='text-align:center'>"+val.control_number+"</a></th>"
-                    + "<th style='text-align:center'>"+val.full_name+"</th>" 
+                    + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
                     + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showRegisterAreas("+val.id_student+");'>"+val.areas_count+"</a></th>"
                     + "<th style='text-align:center'><button type='button' class='btn btn-primary btn-sm' title='Click para finalizar el trámite' onClick='freeStudent("+val.id_student+");'><i class='fa-solid fa-file-import'></i></button></a></th>"
                     + "<th style='text-align:center'><button type='button' class='btn btn-danger btn-sm' title='Click para cancelar el trámite' onClick='cancelStudent("+val.id_student+");'><i class='fa-solid fa-file-excel'></i></button></a></th>"
@@ -209,7 +209,7 @@ function listStudentInProgress() {
                     table += "<tr>"       
                     + "<th style='text-align:center'>"+val.id_student+"</th>"
                     + "<th style='text-align:center'>"+val.control_number+"</a></th>"
-                    + "<th style='text-align:center'>"+val.full_name+"</th>" 
+                    + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
                     + "<th style='text-align:center'>"+val.areas_count+"</th>"
                     + "<th style='text-align:center'><button type='button' class='btn btn-primary btn-sm' title='Click para finalizar el trámite' onClick='freeStudent("+val.id_student+");'><i class='fa-solid fa-file-import'></i></button></a></th>"
                     + "<th style='text-align:center'><button type='button' class='btn btn-danger btn-sm' title='Click para cancelar el trámite' onClick='cancelStudent("+val.id_student+");'><i class='fa-solid fa-file-excel'></i></button></a></th>"
@@ -937,6 +937,45 @@ function updateStudent(){
             }
         });
     }
+
+
+function showStudentDetails(id_student) {
+  $('#modalStudentDetails').modal();
+
+  // Limpiar antes de cargar
+  $('#student-fullname').text('');
+  $('#student-control-number').text('');
+  $('#student-email').text('');
+  $('#student-institucion').text('');
+  $('#student-fecha-conclusion').text('');
+  $('#student-programa-academico').text('');
+
+  $.ajax({
+    url: "../../controller/alumnos/controller_alumnos.php",
+    type: "POST",
+    dataType: "JSON",
+    data: { action: 19, id_student: id_student },
+    success: function(result) {
+      if (result.status == 200 && result.data) {
+        const alumno = result.data;
+        $('#student-fullname').text(alumno.full_name);
+        $('#student-control-number').text(alumno.control_number);
+        $('#student-email').text(alumno.email);
+        $('#student-institucion').text(alumno.institucion);
+        $('#student-fecha-conclusion').text(alumno.fecha_conclusion);
+        $('#student-programa-academico').text(alumno.programa_academico);
+      } else {
+        console.warn("No se encontraron datos del alumno.");
+      }
+    },
+    error: function(err) {
+      console.error("Error al obtener los datos del alumno", err);
+    }
+  });
+}
+
+
+
 
 
 
