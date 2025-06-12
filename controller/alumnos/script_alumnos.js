@@ -51,7 +51,7 @@ function listStudent() {
                     table += "<tr>"       
                     + "<th style='text-align:center'>"+val.id_student+"</th>"
                     + "<th style='text-align:center'>"+val.control_number+"</a></th>"
-                    + "<th style='text-align:center'>"+val.full_name+"</th>" 
+                    + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
                     + "<th style='text-align:center'>"+val.namecourse+"</th>"
                     + "<th style='text-align:center'>"+val.date+"</th>"
                     + "<th style='text-align:center'><button type='button' class='btn btn-secondary btn-sm' id='btn-edit' title='Click para editar' onclick='editStudent("+val.id_student+")'>"+'<i class="fas fa-edit"></i>'+"</button></th>"
@@ -352,7 +352,7 @@ function listStudentFree() {
                     table += "<tr>"       
                     + "<th style='text-align:center'>"+val.id_student+"</th>"
                     + "<th style='text-align:center'>"+val.control_number+"</th>"
-                    + "<th style='text-align:center'>"+val.full_name+"</th>"
+                    + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
                     + "<th style='text-align:center'><a href='#' data-toggle='modal' onClick='showRegisterAreas("+val.id_student+");'>"+val.date+"</a></th>"
                     + "<th style='text-align:center'>"
                     + "<button type='button' class='btn btn-primary btn-sm' title='Click para imprimir la constancia' "
@@ -459,7 +459,7 @@ function listStudentCancel() {
                     table += "<tr>"       
                     + "<th style='text-align:center'>"+val.id_student+"</th>"
                     + "<th style='text-align:center'>"+val.control_number+"</a></th>"
-                    + "<th style='text-align:center'>"+val.full_name+"</th>" 
+                    + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
                     + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showRegisterAreas("+val.id_student+");'>"+val.date+"</a></th>"
                     + "</tr>";
                 }

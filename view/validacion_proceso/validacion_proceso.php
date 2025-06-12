@@ -43,7 +43,7 @@
         <div class="container-fluid">
             <div class="contNav">
                 <div class="seccionesINAOE">
-                    <li><a href="#">INAOE</a></li>
+                    <li><a>INAOE</a></li>
                 </div>
                
             <div class="seccionesEstatus">

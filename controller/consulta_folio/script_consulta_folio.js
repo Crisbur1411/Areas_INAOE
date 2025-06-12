@@ -32,16 +32,13 @@ $(function(){
 
 
 $(document).ready(function() {
-    $('#validationForm').on('submit', function(e) {
-        e.preventDefault();
+    // Detecta en qué página estás
+    const isLoginPage = window.location.pathname.endsWith('consulta_folio_login.php');
+    const urlParams = new URLSearchParams(window.location.search);
+    const folio = urlParams.get('folio');
 
-        let folio = $('#folio').val();
-
-        if (folio.trim() === '') {
-            $('#alert_error').text("Ingrese un correo electrónico.").show();
-            return;
-        }
-
+    if (isLoginPage && folio) {
+        // Solo en el login, valida y redirige
         $.ajax({
             url: '../../controller/consulta_folio/controller_consulta_folio.php',
             type: 'POST',
@@ -50,16 +47,10 @@ $(document).ready(function() {
                 folio: folio
             },
             success: function(response) {
-                console.log(response); // Para debug
-
                 if (response !== '"error"') {
-                    // Guardamos el id_student en sessionStorage
                     sessionStorage.setItem("id_student", response);
                     sessionStorage.setItem("folio", folio);
-
-
-                    // Redirigimos al usuario con su folio y su id en la URL
-                    window.location.href = 'consulta_folio.php?dc='+folio+'&id_student='+response;
+                    window.location.href = 'consulta_folio.php?folio='+folio;
                 } else {
                     $('#alert_error').text("Error: Folio no encontrado.").show();
                 }
@@ -68,13 +59,36 @@ $(document).ready(function() {
                 $('#alert_error').text("Error en la petición. Intente nuevamente.").show();
             }
         });
+    }
+
+    // El submit del formulario sigue igual...
+    $('#validationForm').on('submit', function(e) {
+        // tu código submit aquí...
     });
 });
 
 
-function listStudentFree(){
+
+function getFolio() {
     let folio = sessionStorage.getItem("folio");
+    if (!folio) {
+        const params = new URLSearchParams(window.location.search);
+        folio = params.get('folio');
+        if (folio) sessionStorage.setItem("folio", folio);
+    }
+    return folio;
+}
+
+function listStudentFree(){
+    let folio = getFolio();
     let i2 = 0;
+
+    if (!folio) {
+        // Si no hay folio, no hace nada o muestra alerta
+        $('#table-students-free').html('');
+        $('#alert2').show();
+        return;
+    }
 
     $.ajax({
         url: "../../controller/consulta_folio/controller_consulta_folio.php",
@@ -87,7 +101,6 @@ function listStudentFree(){
 
             $.each(result, function(index, val) {
                 i2++;
-
                 table += "<tr>"
                     + "<th style='text-align:center'>" + val.id_student + "</th>"
                     + "<th style='text-align:center'>" + val.full_name + "</th>"
@@ -102,6 +115,9 @@ function listStudentFree(){
             if (i2 != 0) {
                 $('#table-students-free').html(table);
                 $('#alert2').hide();
+            } else {
+                $('#table-students-free').html('');
+                $('#alert2').show();
             }
         },
         error: function(result) {

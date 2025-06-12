@@ -51,7 +51,7 @@ else
                
             <div class="seccionesEstatus">
                 <li><a href="view/validacion_proceso/validateProcess.php">Estatus de Solicitud</a></li>
-				<li><a href="view/login_prestamo/login_prestamo.php">Realizar Préstamo</a></li>
+				<li><a href="#">Realizar Préstamo</a></li>
 				<li><a href="view/consulta_folio/consulta_folio_login.php">Consulta de Folio</a></li>
             </div>
             </div>

@@ -454,6 +454,7 @@ public function freeStudent($id_student, $user)
     $type = $academicProgramRow['type'];
 
     $pdfinfo = $con->query("SELECT CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
+													 p.name AS academic_program,
                                                     a.name AS area_name,
                                                     a.key AS key, 
                                                     ta.description AS libera,
@@ -462,6 +463,7 @@ public function freeStudent($id_student, $user)
                                             FROM students s
                                             JOIN trace_student_areas ta ON s.id_student = ta.fk_student
                                             JOIN areas a ON ta.fk_area = a.id_area
+											 JOIN academic_programs p ON s.fk_academic_programs = p.id_academic_programs
                                             WHERE s.id_student = '$id_student'
                                             ORDER BY ta.id_trace_student_area ASC;");
 
@@ -474,7 +476,8 @@ public function freeStudent($id_student, $user)
             "key" => $row["key"],
             "libera" => $row["libera"],
             "firma" => $row["firma"],
-            "date" => $row["date"]
+            "date" => $row["date"],
+            "academic_program" => $row["academic_program"]
         );
         $pdfData[] = $dat;
     }
@@ -499,14 +502,31 @@ public function freeStudent($id_student, $user)
 
 
     $pdf = new TCPDF('P', PDF_UNIT, 'A4', true, 'UTF-8', false);
-    $pdf->SetCreator('FDA');
+    $pdf->SetCreator('DFA');
     $pdf->SetAuthor('YO');
     $pdf->SetTitle('Student Certificate');
     $pdf->SetSubject('Certificate for Student');
     $pdf->SetKeywords('Certificate, Student, TCPDF');
     $pdf->SetMargins(10, 7, 10);
     $pdf->SetFooterMargin(10);
+    $pdf->setPrintHeader(false);
+    $pdf->setPrintFooter(false);
     $pdf->AddPage();
+    $pdf->Image('../../res/temp/logo_inaoe.jpeg', 10, 17, 30, 30, 'JPG', '', '', false, 300);
+
+
+
+    //Se genera el pdf y se inserta en la hoja
+    $style = array(
+    'border' => 0,
+    'vpadding' => 'auto',
+    'hpadding' => 'auto',
+    'fgcolor' => array(0,0,0),
+    'bgcolor' => false, 
+    'module_width' => 1,
+    'module_height' => 1
+);
+
 
     $studentData = $pdfData[0];
 
@@ -517,17 +537,20 @@ public function freeStudent($id_student, $user)
     4 => 'Externo de Bachillerato'
     ];
 
-    $programName = isset($programNames[$type]) ? $programNames[$type] : 'Programa desconocido';
+    $programName = isset($programNames[$type]) ? strtoupper($programNames[$type]) : 'PROGRAMA DESCONOCIDO';
+    $area_program = $studentData["academic_program"];
 
 
     $html = '
         <center>
-        <img src="../../res/temp/encabezado2.png" style="width: 900px; height: 130px;">
-        <div>
-        <p style="text-align:right;"><strong>Folio: ' . $folio . '</strong></p>
-        <p>Por este medio los abajo firmantes hacemos constar que el (la) alumno(a): ' . $studentData["full_name"] . ' del Programa de: ' . $programName . ', NO TIENE ningún ADEUDO en los departamentos o laboratorios a nuestro cargo.</p>
-        </div>
         <br></br>
+        <p style="text-align: right;"><strong>Constancia de no adeudo al INAOE<br>ALUMNOS GRADUADOS</strong></p>
+        <br></br>
+        <div>
+        <br></br>
+        <p style="text-align:left;"><strong>Folio: ' . $folio . '</strong></p>
+        <p>Por este medio los abajo firmantes hacemos constar que el(la) estudiante: <strong>' . strtoupper($studentData["full_name"]) . '</strong> del Programa de: ' . $programName . ', en el área de ' . $area_program . ', <strong>NO TIENE NINGÚN ADEUDO</strong> en los departamentos o laboratorios a nuestro cargo.</p>
+        </div>
         <br></br>
         <table border="0.3" style="width: 100%;">
             <thead>
@@ -559,6 +582,10 @@ public function freeStudent($id_student, $user)
 
     $pdf->SetFont('helvetica', '', 12);
     $pdf->writeHTML($html, true, false, true, false, '');
+    //$urlToEncode = 'http://adria.inaoep.mx:11038/liberacion_maina_funcional/view/consulta_folio/consulta_folio.php?folio=' . $folio;
+    $urlToEncode = 'http://localhost/liberacion-maina/view/consulta_folio/consulta_folio.php?folio=' . $folio;
+
+    $pdf->write2DBarcode($urlToEncode, 'QRCODE,H', 170, 246, 30, 30, $style, 'N');
 
     $pdfContent = $pdf->Output('student_certificate.pdf', 'S');
     $pdfPath = '../../res/temp/' . $folio . '.pdf';
