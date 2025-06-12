@@ -61,14 +61,13 @@ $(document).ready(function() {
         });
     }
 
-    // El submit del formulario sigue igual...
+    // El submit del formulario 
     $('#validationForm').on('submit', function(e) {
-        // tu código submit aquí...
     });
 });
 
 
-
+// Funcion para buscar el folio en sessionStorage o en la URL
 function getFolio() {
     let folio = sessionStorage.getItem("folio");
     if (!folio) {
@@ -79,6 +78,7 @@ function getFolio() {
     return folio;
 }
 
+// Función para listar al estudiante liberado
 function listStudentFree(){
     let folio = getFolio();
     let i2 = 0;
@@ -127,7 +127,7 @@ function listStudentFree(){
 }
 
 
-
+// Función para mostrar los detalles del estudiante liberado
 function showDetails(id_student){
     console.log("Mostrando detalles del alumno con ID:", id_student);
     $('#modalStudentDetails').modal();

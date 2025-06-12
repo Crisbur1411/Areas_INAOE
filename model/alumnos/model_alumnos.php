@@ -585,7 +585,10 @@ public function freeStudent($id_student, $user)
     //$urlToEncode = 'http://adria.inaoep.mx:11038/liberacion_maina_funcional/view/consulta_folio/consulta_folio.php?folio=' . $folio;
     $urlToEncode = 'http://localhost/liberacion-maina/view/consulta_folio/consulta_folio.php?folio=' . $folio;
 
-    $pdf->write2DBarcode($urlToEncode, 'QRCODE,H', 170, 246, 30, 30, $style, 'N');
+    $pdf->write2DBarcode($urlToEncode, 'QRCODE,H', 170, 240, 30, 30, $style, 'N');
+    $pdf->SetFont('helvetica', '', 10); // Fuente para el texto
+    $pdf->SetXY(170, 239 + 30 + 2); // Posición: misma X, Y + alto del QR + margen
+    $pdf->Cell(30, 5, 'QR de verificación', 0, 0, 'C'); // Texto alineado centrado debajo del QR
 
     $pdfContent = $pdf->Output('student_certificate.pdf', 'S');
     $pdfPath = '../../res/temp/' . $folio . '.pdf';
