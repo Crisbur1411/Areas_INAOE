@@ -101,6 +101,43 @@ body{
   box-shadow: none;
 }
 
+/* Botón de cancelar (gris institucional) */
+.btnCancel {
+  color: #ffffff;
+  background-color: #6F7271;
+  border-color: #6F7271;
+  width: 220px;
+  height: 40px;
+  font-size: 16px;
+}
+
+.btnCancel:hover {
+  background-color: #98989A;
+  border-color: #98989A;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+/* Botón de confirmar (azul oscuro institucional) */
+.btnConfirm {
+  color: #fff;
+  background-color: #611232;
+  border-color: #611232;
+  width: 220px;
+  height: 40px;
+  font-size: 16px;
+}
+
+.btnConfirm:hover {
+  background-color: #9F2241;
+  border-color: #9F2241;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+
+
+
 
 
 .btn-primary {

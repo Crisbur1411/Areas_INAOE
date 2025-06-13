@@ -166,8 +166,8 @@ if (!isset($_SESSION['username'])) {
 
 				<br><br>	
 				<div class="form-group" align="center">
-					<button type="button" class="btn btn-danger w-20" id="cancel" onClick="history.go(-1);" >Cancelar</button>
-					<button type="button" class="btn btn-success-guardar w-20" id="save-exam" onclick="saveTypeUser();">Guardar</button>
+					<button class="btn btnCancel btn-lg active" type="button" onClick="history.go(-1);" >Cancelar</button>
+					<button class="btn btnConfirm btn-lg active" type="button" id="save-exam" onclick="saveTypeUser();">Guardar</button>
 				</div>				
 			</div>	
 		</div>		
