@@ -41,11 +41,11 @@ $("#btnLogout").click(function() {
         buttons: {
             cancel: {
                 label: 'Cancelar',
-                className: 'btn-danger'
+                className: 'btnCancel'
             },
             confirm: {
                 label: 'Aceptar',
-                className: 'btn-success-guardar'
+                className: 'btnConfirm'
             }
         },
         closeButton: false,
@@ -154,11 +154,11 @@ $("#btnLogoutPem").click(function() {
         buttons: {
             cancel: {
                 label: 'Cancelar',
-                className: 'btn-danger'
+                className: 'btnCancel'
             },
             confirm: {
                 label: 'Aceptar',
-                className: 'btn-success-guardar'
+                className: 'btnConfirm'
             }
         },
         closeButton: false,
