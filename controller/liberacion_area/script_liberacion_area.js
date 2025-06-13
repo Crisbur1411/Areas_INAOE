@@ -48,7 +48,7 @@ function listStudentInProgress() {
                         table += "<tr>"       
                         + "<th style='text-align:center'>"+val.id_student+"</th>"
                         + "<th style='text-align:center'>"+val.control_number+"</a></th>"
-                        + "<th style='text-align:center'>"+val.full_name+"</th>" 
+                        + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
                         + "<th style='text-align:center'><button type='button' class='btn btn-primary btn-sm' title='Click para finalizar el trámite' onClick='signStudent("+val.id_student+", \""+val.full_name.replace(/"/g, '&quot;')+"\");'><i class='fa-solid fa-file-import'></i></button></a></th>"
                         + "<th style='text-align:center'><button type='button' class='btn btn-secondary btn-sm' title='Click para ver las notas' data-toggle='modal' onClick='notesStudent("+val.id_student+");'><i class='fa-solid fa-eye'></i></button></a></th>"
                         + "</tr>";
@@ -56,7 +56,7 @@ function listStudentInProgress() {
                         table += "<tr>"       
                         + "<th style='text-align:center'>"+val.id_student+"</th>"
                         + "<th style='text-align:center'>"+val.control_number+"</a></th>"
-                        + "<th style='text-align:center'>"+val.full_name+"</th>" 
+                        + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
                         + "<th style='text-align:center'><button type='button' class='btn btn-primary btn-sm' title='Click para finalizar el trámite' onClick='signStudent("+val.id_student+", \""+val.full_name.replace(/"/g, '&quot;')+"\");'><i class='fa-solid fa-file-import'></i></button></a></th>"
                         + "<th style='text-align:center'><button type='button' class='btn btn-info btn-sm' title='Click para agregar una nota en el trámite' onClick='noteStudent("+val.id_student+");'><i class='fa-solid fa-file-lines'></i></button></a></th>"
                         + "</tr>";
@@ -175,7 +175,7 @@ function listStudentFree() {
                     table += "<tr>"       
                     + "<th style='text-align:center'>"+val.id_student+"</th>"
                     + "<th style='text-align:center'>"+val.control_number+"</a></th>"
-                    + "<th style='text-align:center'>"+val.full_name+"</th>" 
+                    + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
                     + "</tr>";
                 }
             });
@@ -307,7 +307,7 @@ function listStudentCancel() {
                     table += "<tr>"       
                     + "<th style='text-align:center'>"+val.id_student+"</th>"
                     + "<th style='text-align:center'>"+val.control_number+"</a></th>"
-                    + "<th style='text-align:center'>"+val.full_name+"</th>" 
+                    + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
                     + "<th style='text-align:center'><p>"+val.date+"</p></th>"
                     + "</tr>";
                 }
@@ -321,6 +321,44 @@ function listStudentCancel() {
             console.log(result); 
         }
     }); 
+}
+
+
+
+
+function showStudentDetails(id_student) {
+  $('#modalStudentDetails').modal();
+
+  // Limpiar antes de cargar
+  $('#student-fullname').text('');
+  $('#student-control-number').text('');
+  $('#student-email').text('');
+  $('#student-institucion').text('');
+  $('#student-fecha-conclusion').text('');
+  $('#student-programa-academico').text('');
+
+  $.ajax({
+    url: "../../controller/liberacion_area/controller_liberacion_area.php",
+    type: "POST",
+    dataType: "JSON",
+    data: { action: 8, id_student: id_student },
+    success: function(result) {
+      if (result.status == 200 && result.data) {
+        const alumno = result.data;
+        $('#student-fullname').text(alumno.full_name);
+        $('#student-control-number').text(alumno.control_number);
+        $('#student-email').text(alumno.email);
+        $('#student-institucion').text(alumno.institucion);
+        $('#student-fecha-conclusion').text(alumno.fecha_conclusion);
+        $('#student-programa-academico').text(alumno.programa_academico);
+      } else {
+        console.warn("No se encontraron datos del alumno.");
+      }
+    },
+    error: function(err) {
+      console.error("Error al obtener los datos del alumno", err);
+    }
+  });
 }
 
 

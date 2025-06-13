@@ -309,6 +309,7 @@ public function freeStudent($id_student, $user)
                                     COUNT(trace_student_areas.fk_area) AS areas_count,  
                                     DATE(trace_student_areas.date) AS date,
 									 students.date_register,
+									 students.folio,
                                     students.status
                                     FROM 
                                         students
@@ -335,6 +336,7 @@ public function freeStudent($id_student, $user)
                 "control_number" => $row["control_number"],
                 "date" => $row["date"],
                 "status" => $row["status"],
+                "folio" => $row["folio"],
                 "date_register" => $row["date_register"]
             );
             $data[] = $dat;

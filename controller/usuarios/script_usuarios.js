@@ -494,6 +494,7 @@ function saveUser() {
                 console.log("el resultado es" + result);
                 var $id_user = result;
                 userArea($id_user, area);
+                window.location.href = "../usuarios/usuarios.php";
             }, error: function (result) {
                 console.log(result);
                 bootbox.confirm({

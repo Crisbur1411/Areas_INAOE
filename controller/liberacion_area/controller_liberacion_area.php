@@ -57,6 +57,15 @@
 		echo json_encode($data);
 		}
 
+
+		public function getDetailsStudent()
+	{
+		$this->liberacionArea = new liberacionArea();
+
+		$data = $this->liberacionArea->getDetailsStudent($_POST["id_student"]);
+		echo json_encode($data);
+	}
+
     }
 
     $obj = new liberacionAreaController();
@@ -76,6 +85,8 @@
 			$obj->passwordOk();
 		}if ($_POST["action"]==7){
 			$obj->listStudentCancel();
+		} if ($_POST["action"]==8){
+			$obj->getDetailsStudent();
 		}
 	}
  ?>

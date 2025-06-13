@@ -229,7 +229,8 @@ if (!isset($_SESSION['username'])) {
                             <th scope="col" style="text-align:center"># REGISTRO</th>
 							<th scope="col" style="text-align:center">MATRÍCULA</th>
                             <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>                            
-                            <th scope="col" style="text-align:center">FECHA DE LIBERACiÓN</th>
+                            <th scope="col" style="text-align:center">FECHA DE LIBERACIÓN</th>
+                            <th scope="col" style="text-align:center">FOLIO DE LIBERACIÓN</th>
                             <th scope="col" style="text-align:center">IMPRIMIR CONSTANCIA</th>
                         </tr>
                     </thead>
@@ -352,6 +353,7 @@ if (!isset($_SESSION['username'])) {
 </div>
 </div>
 
+<!-- Modal de detalles de estudiantes -->
 <div class="modal fade" id="modalStudentDetails" tabindex="-1" role="dialog" aria-labelledby="modalStudentDetailsTitle" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="dialog">
     <div class="modal-content">

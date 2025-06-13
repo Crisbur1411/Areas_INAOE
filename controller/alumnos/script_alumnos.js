@@ -336,43 +336,48 @@ function freeStudent(id_student) {
 
 
 function listStudentFree() {
-    let i3 = 0; // Inicializamos i1 con 0
+    let i3 = 0; 
     $.ajax({
         url: "../../controller/alumnos/controller_alumnos.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
         data: { action: 8 },
-        success: function(result) {      
+        success: function(result) {
             var table = "";
             $.each(result, function(index, val) {
-                if (val.status == 3)
-                {
-                    i3++; // Incrementamos i1 solo si el estudiante cumple con la condición
-                    table += "<tr>"       
-                    + "<th style='text-align:center'>"+val.id_student+"</th>"
-                    + "<th style='text-align:center'>"+val.control_number+"</th>"
-                    + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
-                    + "<th style='text-align:center'><a href='#' data-toggle='modal' onClick='showRegisterAreas("+val.id_student+");'>"+val.date+"</a></th>"
-                    + "<th style='text-align:center'>"
-                    + "<button type='button' class='btn btn-primary btn-sm' title='Click para imprimir la constancia' "
-                    + "onClick='printPDF("+val.id_student+", \""+val.full_name.replace(/"/g, '&quot;')+"\", \""+val.control_number+"\", \""+val.date_register+"\");'>"
-                    + "<i class='fa-solid fa-print'></i></button>"
-                    + "</th>"
-                    + "</tr>";
+                if (val.status == 3) {
+                    i3++; 
 
+                    // se verifica si el folio está vacío o nulo
+                    let folioText = (val.folio && val.folio.trim() !== "") ? val.folio : "Sin folio generado";
+
+                    table += "<tr>"
+                        + "<th style='text-align:center'>" + val.id_student + "</th>"
+                        + "<th style='text-align:center'>" + val.control_number + "</th>"
+                        + "<th style='text-align:center'><a href='#' data-toggle='modal' onClick='showStudentDetails(" + val.id_student + ");'>" + val.full_name + "</a></th>"
+                        + "<th style='text-align:center'><a href='#' data-toggle='modal' onClick='showRegisterAreas(" + val.id_student + ");'>" + val.date + "</a></th>"
+                        + "<th style='text-align:center'>" + folioText + "</th>"
+                        + "<th style='text-align:center'>"
+                        + "<button type='button' class='btn btn-primary btn-sm' title='Click para imprimir la constancia' "
+                        + "onClick='printPDF(" + val.id_student + ", \"" + val.full_name.replace(/"/g, '&quot;') + "\", \"" + val.control_number + "\", \"" + val.date_register + "\");'>"
+                        + "<i class='fa-solid fa-print'></i></button>"
+                        + "</th>"
+                        + "</tr>";
                 }
             });
-            $('#pf3').text(i3); // Actualizamos el valor en el elemento con id 'pf'
-            if(i3 != 0){
+            $('#pf3').text(i3); 
+            if (i3 != 0) {
                 $('#table-students-free').html(table);
                 $('#alert3').hide();
             }
-        }, error: function (result){
-            console.log(result); 
+        },
+        error: function(result) {
+            console.log(result);
         }
-    }); 
+    });
 }
+
 
 
 function cancelStudent(id_student) {

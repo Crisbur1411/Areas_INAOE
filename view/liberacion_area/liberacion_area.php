@@ -243,6 +243,61 @@ if (!isset($_SESSION['username'])) {
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/all.min.js" integrity="sha512-6PM0qYu5KExuNcKt5bURAoT6KCThUmHRewN3zUFNaoI6Di7XJPTMoT6K0nsagZKk2OB4L7E3q1uQKHNHd4stIQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	<script src="../../controller/signin/script_login.js"></script>
 	<script src="../../controller/liberacion_area/script_liberacion_area.js"></script>
+
+
+
+
+
+    <!-- Modal de detalles de estudiantes -->
+<div class="modal fade" id="modalStudentDetails" tabindex="-1" role="dialog" aria-labelledby="modalStudentDetailsTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="background: #691C32; color: white;">
+        <h5 class="modal-title">Detalles del Alumno</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar" style="color: white;">
+            <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <table class="table table-bordered">
+          <tbody>
+            <tr>
+              <th class="text-center" >Nombre Completo</th>
+              <td id="student-fullname" class="text-center"></td>
+            </tr>
+            <tr>
+              <th class="text-center">Número de Control</th>
+              <td id="student-control-number" class="text-center"></td>
+            </tr>
+            <tr>
+              <th class="text-center">Correo</th>
+              <td id="student-email" class="text-center"></td>
+            </tr>
+            <tr>
+              <th class="text-center">Institución</th>
+              <td id="student-institucion" class="text-center"></td>
+            </tr>
+            <tr>
+              <th class="text-center">Fecha de Conclusión</th>
+              <td id="student-fecha-conclusion" class="text-center"></td>
+            </tr>
+            <tr>
+              <th class="text-center">Programa Académico</th>
+              <td id="student-programa-academico" class="text-center"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 </body>
 </html>
 <?php
