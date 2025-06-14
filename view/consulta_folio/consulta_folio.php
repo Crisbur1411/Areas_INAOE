@@ -136,6 +136,10 @@
                 <th class="text-center">Folio</th>
                 <td id="student-folio" class="text-center"></td>
             </tr>
+            <tr>
+                <th class="text-center">Imprimir Constancia</th>
+                <td class="text-center"><button class="btn btnConfirm btn-lg active" type="button" id="save-exam" onclick="openConstanciaPDF()">Generar Constancia</button></td>
+            </tr>
             </tbody>
         </table>
       </div>
