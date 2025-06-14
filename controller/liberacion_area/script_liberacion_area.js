@@ -275,6 +275,7 @@ function notesStudent(id_student) {
                         table += "<tr>"    
                         + "<th style='text-align:center'>"+val.description+"</th>"
                         + "<th style='text-align:center'>"+val.formatted_date+"</th>"
+                        + "<th style='text-align:center'><button type='button' class='btn btn-secondary btn-sm' id='btn-edit' title='Click para editar nota' onclick='noteStudentEdit(" + val.id_note +")'>"+'<i class="fas fa-edit"></i>'+"</button></th>"
                         + "</tr>";
                     }
                 });
@@ -322,6 +323,63 @@ function listStudentCancel() {
         }
     }); 
 }
+
+
+
+
+function noteStudentEdit(id_note) {
+    $u = document.getElementById("user");
+    $user = $u.innerHTML;
+
+    $('#exampleModalCenter').modal('hide');
+
+    swal({
+        title: "EDITAR LA NOTA EN EL TRÁMITE",
+        text: "Escribe el motivo de la nota:",
+        content: {
+            element: "input",
+            attributes: {
+                placeholder: "Motivo de la nota",
+                type: "text",
+            },
+        },
+        icon: "info",
+        buttons: {
+            cancel: "Cancelar",
+            confirm: "Enviar",
+        },
+    })
+    .then((motivo) => {
+        if (motivo) {
+            $.ajax({
+                url: "../../controller/liberacion_area/controller_liberacion_area.php",
+                cache: false,
+                dataType: 'JSON',
+                type: 'POST',
+                data: { action: 9, user: $user, motivo: motivo, id_note: id_note },
+                success: function(result) {
+                    if (result.status === "success") {
+                        swal(result.message, { icon: "success" });
+                    } else {
+                        swal(result.message, { icon: "error" });
+                    }
+                },
+                error: function (result){
+                    swal("Error al actualizar la nota", { icon: "error" });
+                },
+                complete: function () {
+                    $(".loader").fadeOut("slow");
+                    $("#info").removeClass("d-none");
+                    listStudentInProgress();
+                    listStudentFree();
+                }
+            });
+        }
+    });
+}
+
+
+
 
 
 

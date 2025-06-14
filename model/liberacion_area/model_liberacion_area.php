@@ -274,5 +274,66 @@ public function listStudentCancel()
     }
 
 
+    public function studentNoteEdit($id_note, $user, $motivo){
+    $con = new DBconnection();
+    $con->openDB();
+    $descrip = 'Nota por el usuario: '.$user.' por el motivo: '.$motivo;
+
+    $updateNoteUser = $con->query("UPDATE notes SET description = '".$descrip."' 
+                                        WHERE id_note = ".$id_note." ");
+
+    // Verificar cuántas filas fueron afectadas
+    $rowsAffected = pg_affected_rows($updateNoteUser);
+
+    if ($rowsAffected > 0) {
+        $con->closeDB();
+        return "success";
+    } else {
+        $con->closeDB();
+        return "error";
+    }
+}
+
+
+
+
+public function getDetailsStudent($id_student)
+{
+    $con = new DBconnection();
+    $con->openDB();
+
+    $dataR = $con->query("SELECT s.id_student,
+        CONCAT(s.name, ' ', s.surname, ' ', s.second_surname, ' ') AS full_name,
+        s.control_number,
+        s.email,
+        s.institucion,
+        s.fecha_conclusion,
+        p.name AS programa_academico
+        FROM students AS s
+        JOIN academic_programs AS p
+        ON s.fk_academic_programs = p.id_academic_programs
+        WHERE s.id_student = " . $id_student . ";");
+
+    $data = null;
+
+    if ($row = pg_fetch_array($dataR)) {
+        $data = array(
+            "id_student" => $row["id_student"],
+            "full_name" => $row["full_name"],
+            "control_number" => $row["control_number"],
+            "email" => $row["email"],
+            "institucion" => $row["institucion"],
+            "fecha_conclusion" => $row["fecha_conclusion"],
+            "programa_academico" => $row["programa_academico"]
+        );
+    }
+
+    $con->closeDB();
+
+    return array("status" => 200, "data" => $data);
+}
+
+
+
 }
 ?>

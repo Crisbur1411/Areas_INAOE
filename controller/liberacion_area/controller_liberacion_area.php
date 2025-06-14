@@ -66,6 +66,17 @@
 		echo json_encode($data);
 	}
 
+	public function studentNoteEdit(){
+    $this->liberacionArea = new liberacionArea();
+
+    $data = $this->liberacionArea->studentNoteEdit($_POST["id_note"], $_POST["user"], $_POST["motivo"]);
+    if ($data === "success") {
+        echo json_encode(["status" => "success", "message" => "Nota actualizada en el trámite!"]);
+    } else {
+        echo json_encode(["status" => "error", "message" => "Error al actualizar la nota"]);
+    }
+}
+
     }
 
     $obj = new liberacionAreaController();
@@ -87,6 +98,8 @@
 			$obj->listStudentCancel();
 		} if ($_POST["action"]==8){
 			$obj->getDetailsStudent();
+		} if ($_POST["action"]==9){
+			$obj->studentNoteEdit();
 		}
 	}
  ?>

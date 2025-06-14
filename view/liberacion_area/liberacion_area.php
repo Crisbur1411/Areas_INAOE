@@ -329,6 +329,7 @@ if (!isset($_SESSION['username'])) {
 				<tr>
 					<th scope="col" style="text-align:center">DESCRIPCIÓN</th>
 					<th scope="col" style="text-align:center">FECHA DE ANOTACIÓN</th>
+                    <th scope="col" style="text-align:center">EDITAR NOTA</th>
 				</tr>
 			</thead>
 			<tbody class="bg-gray" id="table-modal-info-notas">
