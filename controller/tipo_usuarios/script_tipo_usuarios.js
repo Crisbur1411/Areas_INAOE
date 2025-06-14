@@ -184,7 +184,7 @@ function deleteTypeUser(id_type_users) {
                             icon: 'success',
                             title: 'Éxito',
                             text: 'Tipo de usuario eliminado correctamente',
-                            timer: 1000,
+                            timer: 500,
                             timerProgressBar: true,
                         }).then((result) => {
                             if (result.dismiss === Swal.DismissReason.timer) {
@@ -318,7 +318,7 @@ function saveTypeUserEdit() {
                     icon: 'success',
                     title: 'Éxito',
                     text: 'Tipo de Usuario Actualizado correctamente',
-                    timer: 1000,
+                    timer: 500,
                     timerProgressBar: true,
                 }).then((result) => {
                     if (result.dismiss === Swal.DismissReason.timer) {

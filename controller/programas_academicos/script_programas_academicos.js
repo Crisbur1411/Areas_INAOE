@@ -238,7 +238,7 @@ function saveProgramEdit() {
                     icon: 'success',
                     title: 'Éxito',
                     text: 'Programa académico Actualizado correctamente',
-                    timer: 1000,
+                    timer: 500,
                     timerProgressBar: true,
                 }).then((result) => {
                     if (result.dismiss === Swal.DismissReason.timer) {
@@ -258,7 +258,7 @@ function saveProgramEdit() {
         title: 'Error al actualizar el programa académico',
         html: `<b>Estado:</b> ${textStatus}<br><b>Error:</b> ${errorThrown}`,
         footer: 'Revisa consola para más detalles',
-        timer: 10000,
+        timer: 5000,
         timerProgressBar: true,
     });
             }
@@ -300,7 +300,7 @@ function deleteProgram(id_academic_programs) {
                             icon: 'success',
                             title: 'Éxito',
                             text: 'Programa académico eliminado correctamente',
-                            timer: 1000,
+                            timer: 500,
                             timerProgressBar: true,
                         }).then((result) => {
                             if (result.dismiss === Swal.DismissReason.timer) {

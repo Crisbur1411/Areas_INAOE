@@ -384,7 +384,7 @@ function savePrestamoEdit() {
                     icon: 'success',
                     title: 'Éxito',
                     text: 'Préstamo Actualizado correctamente',
-                    timer: 1000,
+                    timer: 500,
                     timerProgressBar: true,
                 }).then((result) => {
                     if (result.dismiss === Swal.DismissReason.timer) {
@@ -446,7 +446,7 @@ function deletePrestamo(id_prestamo) {
                             icon: 'success',
                             title: 'Éxito',
                             text: 'Préstamo eliminado correctamente',
-                            timer: 1000,
+                            timer: 500,
                             timerProgressBar: true,
                         }).then((result) => {
                             if (result.dismiss === Swal.DismissReason.timer) {

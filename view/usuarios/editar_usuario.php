@@ -178,7 +178,14 @@ if (!isset($_SESSION['username'])) {
 					</div>	
 					<div class="form-group">
 						<div class="row">							
-						
+							<div class="col-sm-4">
+								<label for="category"><span class="text-danger">* </span>Categoria</label>
+								<select name="category" id="category" class="form-control">
+									<option value="null" selected disabled>Seleccione una categoría</option>
+									<option value="PRINCIPAL">PRINCIPAL</option>
+									<option value="SECUNDARIO">SECUNDARIO</option>
+								</select>	
+							</div>
 							<div class="col-sm-4">
 								<label for="areas"><span class="text-danger">* </span>Área</label>
 								<select name="areas" id="areas" class="form-control">

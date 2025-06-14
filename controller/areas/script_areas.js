@@ -275,7 +275,7 @@ function editArea() {
                     icon: 'success',
                     title: 'Éxito',
                     text: 'Área Actualizada correctamente',
-                    timer: 1000,
+                    timer: 500,
                     timerProgressBar: true,
                 }).then((result) => {
                     if (result.dismiss === Swal.DismissReason.timer) {

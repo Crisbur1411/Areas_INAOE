@@ -87,13 +87,13 @@ public function getAreas(){
 		public function saveUser(){
     		$this->usuarios= new usuarios();
 
-	      	$data = $this->usuarios->saveUser($_POST["name"], $_POST["surname"], $_POST["secondsurname"], $_POST["email"], $_POST["type_user"], $_POST["password"]);
+	      	$data = $this->usuarios->saveUser($_POST["name"], $_POST["surname"], $_POST["secondsurname"], $_POST["email"], $_POST["type_user"], $_POST["password"], $_POST["category"]);
 	      	echo ($data);
 		}
 		public function saveUserEdit(){
     		$this->usuarios= new usuarios();
 			
-	      	$data = $this->usuarios->updateUserEdit($_POST["user_id"],$_POST["area"],$_POST["name"], $_POST["surname"], $_POST["secondsurname"], $_POST["email"], $_POST["type_user"]);
+	      	$data = $this->usuarios->updateUserEdit($_POST["user_id"],$_POST["area"],$_POST["name"], $_POST["surname"], $_POST["secondsurname"], $_POST["email"], $_POST["type_user"], $_POST["category"]);
 	      	echo json_encode($data);
 		}
 

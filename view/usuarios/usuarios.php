@@ -164,7 +164,8 @@ if (!isset($_SESSION['username'])) {
 								<th scope="col" style="text-align:center">NOMBRE DEL USUARIO</th>
 								<th scope="col" style="text-align:center">ÁREA</th>
 								<th scope="col" style="text-align:center">TIPO DE USUARIO</th>
-								<th scope="col" style="text-align:center">FECHA DE REGISTRO</th>
+								<th scope="col" style="text-align:center">CATEGORIA DE USUARIO</th>
+                                <th scope="col" style="text-align:center">FECHA DE REGISTRO</th>
 								<th scope="col" style="text-align:center">ACTUALIZAR USUARIO</th>
 								<th scope="col" style="text-align:center">ELIMINAR USUARIO</th>
 							</tr>

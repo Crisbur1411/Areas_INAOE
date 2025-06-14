@@ -23,6 +23,7 @@ class usuarios
                                     WHEN users.fk_type = type_users.id_type_users THEN areas.name
                                     ELSE 'Sin área asignada'
                                 END AS area_name,
+								users.user_category,
                                 type_users.name AS type_name, DATE(users.date_register)  AS date, users.status
                                 FROM users
                                 INNER JOIN type_users ON users.fk_type = type_users.id_type_users
@@ -38,6 +39,7 @@ class usuarios
                 "id_user" => $row["id_user"],
                 "full_name" => $row["full_name"],
                 "area_name" => $row["area_name"],
+                "user_category" => $row["user_category"],
                 "type_name" => $row["type_name"],
                 "date" => $row["date"],
                 "status" => $row["status"]
@@ -109,13 +111,19 @@ class usuarios
         $con = new DBconnection();
         $con->openDB();
 
-        $dataUser = $con->query("SELECT users.id_user,users.name, users.surname, users.second_surname,users.username, users.fk_type,user_area.fk_area
-    FROM users
-    INNER JOIN type_users ON users.fk_type = type_users.id_type_users
-    INNER JOIN user_area ON users.id_user = user_area.fk_user
-    INNER JOIN areas ON user_area.fk_area = areas.id_area
-    WHERE users.id_user = $id_user;
-");
+        $dataUser = $con->query("SELECT users.id_user,
+                                        users.name, 
+                                        users.surname, 
+                                        users.second_surname,
+                                        users.username, 
+                                        users.fk_type,
+                                        users.user_category,
+                                        user_area.fk_area
+                                        FROM users
+                                        INNER JOIN type_users ON users.fk_type = type_users.id_type_users
+                                        INNER JOIN user_area ON users.id_user = user_area.fk_user
+                                        INNER JOIN areas ON user_area.fk_area = areas.id_area
+                                        WHERE users.id_user = $id_user;");
         $row = pg_fetch_array($dataUser);
 
         $dataUser = array(
@@ -125,6 +133,7 @@ class usuarios
             "second_surname" => $row["second_surname"],
             "email" => $row["username"],
             "fk_type" => $row["fk_type"],
+            "user_category" => $row["user_category"],
             "fk_area" => $row["fk_area"]
         );
 
@@ -239,13 +248,13 @@ public function getAreas(){
         return $data;
     }
    
-    public function saveUser ($name, $surname, $secondsurname, $email, $type_user, $password)
+    public function saveUser ($name, $surname, $secondsurname, $email, $type_user, $password, $category)
     {
         $con=new DBconnection();
         $con->openDB();
 
-        $userData = $con->query("INSERT INTO users (username, password, name, surname, second_surname,fk_type, date_register) 
-        VALUES ('".$email."','".$password."', '".$name."','".$surname."', '".$secondsurname."',".$type_user.",NOW()) 
+        $userData = $con->query("INSERT INTO users (username, password, name, surname, second_surname,fk_type, date_register, user_category) 
+        VALUES ('".$email."','".$password."', '".$name."','".$surname."', '".$secondsurname."',".$type_user.",NOW(), '".$category."') 
         RETURNING id_user");
 
         
@@ -262,7 +271,11 @@ public function getAreas(){
             return "error";
         }
     }
-    public function updateUserEdit($id_user, $area, $name, $surname, $second_surname, $email, $type_user)
+
+
+
+    
+    public function updateUserEdit($id_user, $area, $name, $surname, $second_surname, $email, $type_user, $category)
 {
     $con = new DBconnection();
     $con->openDB();
@@ -270,7 +283,8 @@ public function getAreas(){
     try{
 
     $updateUser = $con->query("UPDATE users SET name = '".$name."', surname = '".$surname."', 
-        second_surname = '".$second_surname."', username = '".$email."', fk_type = ".$type_user." WHERE id_user = ".$id_user);
+        second_surname = '".$second_surname."', username = '".$email."', fk_type = ".$type_user.", user_category = '".$category."'
+        WHERE id_user = ".$id_user);
 
     if ($updateUser) {
         $updateAreaUser = $con->query("UPDATE public.user_area

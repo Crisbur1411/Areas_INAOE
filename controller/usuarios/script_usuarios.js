@@ -41,11 +41,13 @@ function listUser() {
                 if (val.status == 1)
                 {
                 i1++; // Solo incrementa aquí
+                let category = (val.user_category === null || val.user_category === "" || val.user_category === undefined) ? "No Asignado" : val.user_category;
                 table += "<tr>"       
                 + "<th style='text-align:center'>"+val.id_user+"</th>"
                 + "<th style='text-align:center'>"+val.full_name+"</a></th>"
                 + "<th style='text-align:center'>"+val.area_name+"</th>" 
                 + "<th style='text-align:center'>"+val.type_name+"</th>"
+                + "<th style='text-align:center'>"+category+"</th>"
                 + "<th style='text-align:center'>"+val.date+"</th>"
                 + "<th style='text-align:center'><button type='button' class='btn btn-secondary btn-sm' id='btn-edit' title='Click para editar' onclick='vistaUpdateUsuario("+val.id_user+")'>"+'<i class="fas fa-edit"></i>'+"</button></th>"
                 + "<th style='text-align:center'><button type='button' class='btn btn-danger btn-sm' id='btn-details' id-user='"+val.id_user+"' title='Click para eliminar' onclick='deleteUser("+val.id_user+")'>"+'<i class="fas fa-trash"></i>'+"</button></th>"
@@ -165,7 +167,7 @@ function deleteUser( key) {
                             icon: 'success',
                             title: 'Éxito',
                             text: 'Área eliminada correctamente',
-                            timer: 1000,
+                            timer: 500,
                             timerProgressBar: true,
                         }).then((result) => {
                             if (result.dismiss === Swal.DismissReason.timer) {
@@ -227,6 +229,7 @@ function preCargarDatos() {
                 $('#email').val(userData.email);
                 $('#type-users').val(userData.fk_type);
                 $('#areas').val(userData.fk_area);
+                $('#category').val(userData.user_category);
             } else {
                 Swal.fire({
                     icon: 'error',
@@ -434,6 +437,7 @@ function saveUser() {
 
     var area = $("#areas").val()
     var type_user = $("#type-users").val();
+    var category = $("#category").val();
 
 
     if (name.length == 0) {
@@ -470,6 +474,12 @@ function saveUser() {
         return 0;
     }
 
+    if (category == null) {
+        alert("Tiene que elegir la categoría")
+        $("#category").focus();
+        return 0;
+    }
+
     if (area == null) {
         alert("Tiene que elegir el área")
         $("#areas").focus();
@@ -489,7 +499,7 @@ function saveUser() {
             cache: false,
             dataType: 'JSON',
             type: 'POST',
-            data: { action: 10, name: name, surname: surname, secondsurname: secondsurname, email: email, type_user: type_user, password: password },
+            data: { action: 10, name: name, surname: surname, secondsurname: secondsurname, email: email, type_user: type_user, password: password, category: category },
             success: function (result) {
                 console.log("el resultado es" + result);
                 var $id_user = result;
@@ -593,6 +603,7 @@ function saveUserEdit() {
     var surname = $("#surname").val().trim();
     var secondsurname = $("#second_surname").val().trim();
     var email = $("#email").val().trim();
+    var category = $("#category").val();
 
 
     var area = $("#areas").val()
@@ -612,6 +623,11 @@ function saveUserEdit() {
     if (email.length == 0) {
         alert("Tiene que escribir el correo electrónico")
         $("#email").focus();
+        return 0;
+    }
+    if (category.length == 0) {
+        alert("Tiene que elegir la categoría")
+        $("#category").focus();
         return 0;
     }
 
@@ -640,14 +656,14 @@ function saveUserEdit() {
             cache: false,
             dataType: 'JSON',
             type: 'POST',
-            data: { action: 12, user_id: userID, area: area, name: name, surname: surname, secondsurname: secondsurname, email: email, type_user: type_user },
+            data: { action: 12, user_id: userID, area: area, name: name, surname: surname, secondsurname: secondsurname, email: email, type_user: type_user, category: category },
             success: function (result) {
 
                 Swal.fire({
                     icon: 'success',
                     title: 'Éxito',
                     text: 'Usuario Actualizado correctamente',
-                    timer: 1000,
+                    timer: 500,
                     timerProgressBar: true,
                 }).then((result) => {
                     if (result.dismiss === Swal.DismissReason.timer) {
