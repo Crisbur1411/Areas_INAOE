@@ -75,7 +75,7 @@ if (!isset($_SESSION['username'])) {
                 <li><a class="dropdown-item" id="navbarDropdown1" href="../usuarios/cuenta.php">
                                 <span class="ctrl-control h5 text-align-right" id="username" style="font-size: 13px;">
                                     <i class="fas fa-user"></i>
-                                    <?php echo mb_strimwidth($_SESSION['name'], 0, 20, '...'); ?>
+                                    <?php echo $_SESSION['name']; ?>
                                     <i class="fa-solid fa-caret-down"></i>
                                 </span>
                                 </a>
