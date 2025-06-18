@@ -1,9 +1,9 @@
 <?php date_default_timezone_set("America/Mexico_City"); ?>
 <?php session_start();
 // Validar sesión activa
-if (!isset($_SESSION['username'])) {
+if (!isset($_SESSION['email'])) {
     // Si no hay sesión iniciada, redirigir al index (login)
-    header("Location: ../../index.php");
+    header("Location: ../../view/login_prestamo/login_prestamo.php");
     exit();
 }
 ?>

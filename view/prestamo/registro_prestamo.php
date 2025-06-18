@@ -2,9 +2,9 @@
 <?php session_start();
 
 // Validar sesión activa
-if (!isset($_SESSION['username'])) {
+if (!isset($_SESSION['email'])) {
     // Si no hay sesión iniciada, redirigir al index (login)
-    header("Location: ../../index.php");
+    header("Location: ../../view/login_prestamo/login_prestamo.php");
     exit();
 }
 ?>
@@ -141,40 +141,48 @@ if (!isset($_SESSION['username'])) {
 
 
 	<div class="container mt-5">
-		<div id="new" style="text-align: center;"><br><br>
-			<div style="text-align: center; border-bottom: 3px solid #cecece; margin-bottom: 30px;">
-				<h3>Registro de Nuevo Préstamo</h3>				
-			</div>	
-			<br>
-			<div class="form-group">
-				<div class="row">
-					<div class="col-sm-4">
-							<label for="student"><span class="text-danger">* </span>Estudiante</label>
-							<select name="student" id="student" class="form-control">
-								<option value="null" selected disabled>Seleccione al Estudiante</option>
-							</select>
-						</div>
-						<div class="col-sm-4">
-							<label for="description"><span class="text-danger">* </span>Descripción de Préstamo</label>
-							<input type="text" class="form-control"  id="description" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">
-						</div>
-                        <div class="col-sm-4">
+    <div id="new" style="text-align: center;"><br><br>
+        <div style="text-align: center; border-bottom: 3px solid #cecece; margin-bottom: 30px;">
+            <h3>Registro de Nuevo Préstamo</h3>				
+        </div>	
+        <br>
+        <div class="form-group">
+            <div class="row">
+                <!-- Columna 1: Buscador + Select estudiante -->
+                <div class="col-sm-4">
+                    <label for="searchStudent">Buscar Estudiante</label>
+                    <input type="text" class="form-control mb-2" id="searchStudent" placeholder="Buscar estudiante..." style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">
+
+                    <label for="student" class="mt-2"><span class="text-danger">* </span>Estudiante</label>
+                    <select name="student" id="student" class="form-control">
+                        <option value="null" selected disabled>Seleccione al Estudiante</option>
+                    </select>
+                </div>
+
+                <!-- Columna 2: Descripción -->
+                <div class="col-sm-4 d-flex flex-column justify-content-end">
+                    <label for="description"><span class="text-danger">* </span>Descripción de Préstamo</label>
+                    <input type="text" class="form-control" id="description" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">
+                </div>
+
+                <!-- Columna 3: Empleado -->
+                <div class="col-sm-4 d-flex flex-column justify-content-end">
                     <label for="employee"><span class="text-danger">* </span>Autorizo Préstamo</label>
                     <select name="employee" id="employee" class="form-control" disabled>
                         <option value="null" selected disabled>Seleccione al Empleado</option>
                     </select>
                 </div>
+            </div>
+        </div>
 
-				</div>
+        <br><br>	
+        <div class="form-group" align="center">
+            <button class="btn btnCancel btn-lg active" type="button" onClick="history.go(-1);">Cancelar</button>
+            <button class="btn btnConfirm btn-lg active" type="button" id="save-exam" onclick="savePrestamo();">Guardar</button>
+        </div>
+    </div>
+</div>
 
-				<br><br>	
-				<div class="form-group" align="center">
-					<button class="btn btnCancel btn-lg active" type="button" onClick="history.go(-1);" >Cancelar</button>
-					<button class="btn btnConfirm btn-lg active" type="button" id="save-exam" onclick="savePrestamo();">Guardar</button>
-				</div>				
-			</div>	
-		</div>		
-	</div>
 
 	<br><br>
 	<?php include '../components/footer/footer.php'; ?>

@@ -50,7 +50,7 @@ else
                 </div>
                
             <div class="seccionesEstatus">
-                <li><a href="../../index.php">INICIO</a></li>
+                <li><a href="../../index.php">Inicio</a></li>
             </div>
             </div>
         </div>

@@ -171,6 +171,35 @@ function getStudent(callback){
 }
 
 
+//Filtrar por busqueda en registro de estudiantes
+$("#searchStudent").on("keyup", function() {
+    var searchText = $(this).val().toLowerCase();
+    $("#student option").each(function() {
+        var optionText = $(this).text().toLowerCase();
+        if (optionText.includes(searchText) || $(this).val() === 'null') {
+            $(this).show();
+        } else {
+            $(this).hide();
+        }
+    });
+});
+
+//Filtrar por busqueda en editar de estudiantes
+$("#searchStudentEdit").on("keyup", function() {
+    var searchText = $(this).val().toLowerCase();
+    $("#student option").each(function() {
+        var optionText = $(this).text().toLowerCase();
+        if (optionText.includes(searchText) || $(this).val() === 'null') {
+            $(this).show();
+        } else {
+            $(this).hide();
+        }
+    });
+});
+
+
+
+
 
 function getEmployee(){  
     var email_employee = sessionStorage.getItem("email_employee");
