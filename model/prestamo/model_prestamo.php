@@ -220,12 +220,12 @@ public function savePrestamo($student, $description, $employee){
 
 
 
-    public function savePrestamoEdit($id_prestamo, $fk_student, $description){
+    public function savePrestamoEdit($id_prestamo, $fk_student, $description, $employee){
 
         $con=new DBconnection();
         $con->openDB();
 
-        $prestamoDataEdit = $con->query("UPDATE prestamo SET fk_student = '".$fk_student."', description = '".$description."' WHERE id_prestamo = ".$id_prestamo." RETURNING id_prestamo;");
+        $prestamoDataEdit = $con->query("UPDATE prestamo SET fk_student = '".$fk_student."', description = '".$description."', fk_employee = '".$employee."' WHERE id_prestamo = ".$id_prestamo." RETURNING id_prestamo;");
 
         $validatePrestamoDataEdit = pg_fetch_row($prestamoDataEdit);
 

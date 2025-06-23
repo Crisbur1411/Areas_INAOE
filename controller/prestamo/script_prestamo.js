@@ -384,6 +384,7 @@ function savePrestamoEdit() {
     var prestamoID = sessionStorage.getItem('id_prestamo');
     var student = $("#student").val().trim();
     var description = $("#description").val().trim();
+    var employee = $("#employee").val().trim();
 
 
     if (student.length == 0) {
@@ -406,7 +407,7 @@ function savePrestamoEdit() {
             cache: false,
             dataType: 'JSON',
             type: 'POST',
-            data: { action: 6, id_prestamo: prestamoID, fk_student: student, description: description},
+            data: { action: 6, id_prestamo: prestamoID, fk_student: student, description: description,employee: employee },
             success: function (result) {
 
                 Swal.fire({

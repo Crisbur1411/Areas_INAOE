@@ -69,7 +69,7 @@ public function getPrestamoInfo(){
 
 		public function savePrestamoEdit(){
 			$this->prestamo= new prestamo();
-			$data = $this->prestamo->savePrestamoEdit($_POST['id_prestamo'], $_POST['fk_student'], $_POST['description']);
+			$data = $this->prestamo->savePrestamoEdit($_POST['id_prestamo'], $_POST['fk_student'], $_POST['description'], $_POST['employee']);
 			echo($data);
 		}
 
