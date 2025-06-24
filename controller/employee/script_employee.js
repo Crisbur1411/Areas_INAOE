@@ -24,10 +24,7 @@ $(function() {
     $(".loader").fadeOut("slow");
     $("#info").removeClass("d-none");
     listEmployee();
-    preCargarDatos();
 });
-
-
 
 function listEmployee() {
   $.ajax({
@@ -50,7 +47,7 @@ function listEmployee() {
                 + "<th style='text-align:center'>"+val.type_name+"</th>"
                 + "<th style='text-align:center'>"+val.email+"</th>"
                 + "<th style='text-align:center'><button type='button' class='btn btn-secondary btn-sm' id='btn-edit' title='Click para editar' onclick='vistaUpdateEmployee("+val.id_employee+")'>"+'<i class="fas fa-edit"></i>'+"</button></th>"
-                + "<th style='text-align:center'><button type='button' class='btn btn-danger btn-sm' id='btn-details' id-user='"+val.id_employee+"' title='Click para eliminar' onclick='deleteEmployee("+val.id_employee+")'>"+'<i class="fas fa-trash"></i>'+"</button></th>"
+                + "<th style='text-align:center'><button type='button' class='btn btn-danger btn-sm' id='btn-details' id-employee='"+val.id_employee+"' title='Click para eliminar' onclick='deleteEmployee("+val.id_employee+")'>"+'<i class="fas fa-trash"></i>'+"</button></th>"
                 + "</tr>";
                 }
             });
@@ -354,6 +351,75 @@ function saveEmployeeEdit() {
 
 
 
+function deleteEmployee(id_employee) {
+    console.log(id_employee)
+    
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esta acción eliminará el empleado. ¿Estás seguro de continuar?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "../../controller/employee/controller_employee.php",
+                cache: false,
+                dataType: 'JSON',
+                type: 'POST',
+                data: { action: 5, id_employee: id_employee},
+                success: function(result) {
+                    console.log(result)
+                    if (result.status == "success") {
+
+                        
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: 'Empleado eliminado correctamente',
+                            timer: 500,
+                            timerProgressBar: true,
+                        }).then((result) => {
+                            if (result.dismiss === Swal.DismissReason.timer) {
+                                location.reload();
+
+                            }
+                          });
+                        
+
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Ocurrió un error al eliminar el Empleado'
+                        });
+                    }
+
+                },
+                error: function (result) {
+                    console.log(result); 
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ocurrió un error al realizar la solicitud'
+                    });
+                }
+            });
+        }
+    });
+}
+
+
+
+
+document.addEventListener('DOMContentLoaded', function () {
+    let id = new URLSearchParams(window.location.search).get('dc');
+    if(id){ // Solo si existe el id en la URL
+    preCargarDatos();    }
+});
 
 
 

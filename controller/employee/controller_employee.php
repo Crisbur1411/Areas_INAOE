@@ -38,6 +38,15 @@ class employeeController{
 	      	echo json_encode($data);
 		}
 
+
+    public function deleteEmployee()
+	{
+		$this->employees = new employees();
+
+		$data = $this->employees->deleteEmployee($_POST['id_employee']);
+		echo json_encode($data);
+	}
+
 }
 
 $obj = new employeeController();
@@ -51,5 +60,7 @@ if (isset ($_POST['action'])){
         $obj->getEmployeeInfoById();
     } if ($_POST['action'] == 4) {
         $obj->saveEmployeeEdit();
+    } if ($_POST['action'] == 5) {
+        $obj->deleteEmployee();
     }
 }

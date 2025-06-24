@@ -166,7 +166,7 @@ function deleteUser( key) {
                         Swal.fire({
                             icon: 'success',
                             title: 'Éxito',
-                            text: 'Área eliminada correctamente',
+                            text: 'Usuario eliminado correctamente',
                             timer: 500,
                             timerProgressBar: true,
                         }).then((result) => {
@@ -181,7 +181,7 @@ function deleteUser( key) {
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: 'Ocurrió un error al eliminar el área'
+                            text: 'Ocurrió un error al eliminar al Usuario'
                         });
                     }
 

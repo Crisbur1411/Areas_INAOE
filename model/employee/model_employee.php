@@ -129,5 +129,30 @@ public function listEmployee()
 
 
 
+    public function deleteEmployee($id_employee)
+{
+    try {
+        $con = new DBconnection();
+        $con->openDB();
+
+        $updateQuery = "UPDATE employee SET status = 0 WHERE id_employee = '$id_employee'";
+        $updateResult = $con->query($updateQuery);
+
+        $con->closeDB();
+
+        if ($updateResult) {
+            $response = ['status' => 'success', 'message' => 'Empleado eliminado correctamente.'];
+        } else {
+            $response = ['status' => 'error', 'message' => 'Error al eliminar empleado.'];
+        }
+    } catch (Exception $e) {
+        $response = ['status' => 'error', 'message' => 'Error: ' . $e->getMessage()];
+    }
+
+    return $response;
+}
+
+
+
 
 }
