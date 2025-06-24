@@ -23,6 +23,21 @@ class employeeController{
 	      	echo ($data);
 		}
 
+    public function getEmployeeInfoById()
+	{
+		$this->employees = new employees();
+		$data = $this->employees->getEmployeeInfoById($_POST['id_employee']);
+		echo json_encode($data);
+	}
+
+
+    public function saveEmployeeEdit(){
+    		$this->employees= new employees();
+			
+	      	$data = $this->employees->saveEmployeeEdit($_POST["employee_id"],$_POST["area"],$_POST["name"], $_POST["surname"], $_POST["secondsurname"], $_POST["email"]);
+	      	echo json_encode($data);
+		}
+
 }
 
 $obj = new employeeController();
@@ -32,5 +47,9 @@ if (isset ($_POST['action'])){
         $obj->listEmployee();
     } if ($_POST['action'] == 2) {
         $obj->saveEmployee();
+    } if ($_POST['action'] == 3) {
+        $obj->getEmployeeInfoById();
+    } if ($_POST['action'] == 4) {
+        $obj->saveEmployeeEdit();
     }
 }

@@ -24,6 +24,7 @@ $(function() {
     $(".loader").fadeOut("slow");
     $("#info").removeClass("d-none");
     listEmployee();
+    preCargarDatos();
 });
 
 
@@ -182,12 +183,184 @@ function saveEmployee() {
 
 
 
+function preCargarDatos() {
+    var employeeID = sessionStorage.getItem('id_employee');
+
+    var formData = new FormData();
+    formData.append('action', 3);
+    formData.append('id_employee', employeeID);
+    $.ajax({
+        url: "../../controller/employee/controller_employee.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        processData: false,
+        contentType: false,
+        data: formData,
+        success: function (result) {
+            if (result.status == 200) {
+                var employeeData = result.data;
+                $('#name').val(employeeData.name);
+                $('#surname').val(employeeData.surname);
+                $('#second_surname').val(employeeData.second_surname);
+                $('#email').val(employeeData.email);
+                $('#areas').val(employeeData.area);
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ocurrió un error al editar el área'
+                });
+            }
+        },
+        error: function (xhr, status, error) {
+    console.error("❌ Error al realizar la solicitud:");
+    console.error("📄 Estado de la petición: " + status);
+    console.error("⚠️ Error devuelto por el servidor: " + error);
+
+    let mensajeError = "";
+
+    if (xhr.status === 0) {
+        mensajeError = "No se pudo conectar con el servidor. Verifica tu conexión de red.";
+    } else if (xhr.status >= 400 && xhr.status < 500) {
+        mensajeError = "Error en la solicitud (Código " + xhr.status + "). Verifica los datos enviados.";
+    } else if (xhr.status >= 500) {
+        mensajeError = "Error en el servidor (Código " + xhr.status + "). Intenta más tarde o contacta al administrador.";
+    } else {
+        mensajeError = "Error desconocido (Código " + xhr.status + ").";
+    }
+
+    // Mostrar respuesta devuelta por el servidor si existe
+    if (xhr.responseText) {
+        console.log("📨 Respuesta recibida del servidor:", xhr.responseText);
+    }
+
+    // Mostrar alerta bonita con SweetAlert
+    Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        html: mensajeError,
+        footer: (xhr.responseText) ? "<pre style='text-align:left; max-height:150px; overflow:auto;'>" + xhr.responseText + "</pre>" : null
+    });
+}
+    });
+}
+
+
+
+
+
+function saveEmployeeEdit() {
+
+    var employeeID = sessionStorage.getItem('id_employee');
+    var name = $("#name").val().trim();
+    var surname = $("#surname").val().trim();
+    var secondsurname = $("#second_surname").val().trim();
+    var email = $("#email").val().trim();
+    var area = $("#areas").val().trim();
+
+    if (name.length == 0) {
+        alert("Tiene que escribir el nombre")
+        $("#name").focus();
+        return 0;
+    }
+    if (surname.length == 0) {
+        alert("Tiene que escribir el apellido")
+        $("#surname").focus();
+        return 0;
+    }
+
+    if (email.length == 0) {
+        alert("Tiene que escribir el correo electrónico")
+        $("#email").focus();
+        return 0;
+    }
+
+
+    if (area.length == 0) {
+        alert("Tiene que elegir el área")
+        $("#areas").focus();
+        return 0;
+    }
+
+
+
+
+    var expEmail = /^[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
+    var validEmail = expEmail.test(email);
+
+
+    if (validEmail == true) {
+        $.ajax({
+            url: "../../controller/employee/controller_employee.php",
+            cache: false,
+            dataType: 'JSON',
+            type: 'POST',
+            data: { action: 4, employee_id: employeeID, area: area, name: name, surname: surname, secondsurname: secondsurname, email: email},
+            success: function (result) {
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: 'Empleado Actualizado correctamente',
+                    timer: 500,
+                    timerProgressBar: true,
+                }).then((result) => {
+                    if (result.dismiss === Swal.DismissReason.timer) {
+                        window.location.href = "../employee/employee.php";
+
+                    }
+                });
+
+            }, error: function (jqXHR, textStatus, errorThrown) {
+    console.log("Error en Ajax:");
+    console.log("Estado: " + textStatus);
+    console.log("Error: " + errorThrown);
+    console.log("Respuesta completa: ", jqXHR);
+
+    Swal.fire({
+        icon: 'error',
+        title: 'Error al actualizar empleado',
+        text: 'No se pudo actualizar el empleado. Verifica que el correo ingresado no esté ya registrado y vuelve a intentarlo.',
+        footer: 'Si el error persiste, contacta al administrador.',
+        timer: 10000,
+        timerProgressBar: true,
+    });
+}
+        });
+    } else
+        bootbox.confirm({
+            title: "<h4>Error al editar empleado</h4>",
+            message: "<h5>Favor de verificar que el correo sea válido.</h5>",
+            buttons: {
+                cancel: {
+                    label: 'Cancelar',
+                    className: 'btn-secondary'
+                },
+                confirm: {
+                    label: 'Aceptar',
+                    className: 'btn-success'
+                }
+            },
+            closeButton: false,
+            callback: function (result) {
+                if (result == false) {
+                    history.go(-1);
+                }
+            }
+        });
+}
 
 
 
 
 
 
+
+function vistaUpdateEmployee(id_employee) {
+    sessionStorage.setItem("id_employee", id_employee)
+    location.href = "../employee/editar_employee.php?dc=" + id_employee;
+}
 
 
 

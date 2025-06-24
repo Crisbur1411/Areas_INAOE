@@ -48,7 +48,7 @@ if (!isset($_SESSION['username'])) {
                     <ul class="nav sidebar-nav">
                         <div class="sidebar-header">
                             <div class="sidebar-brand">
-                                <span class="align:left" style="color: white; font-weight: bold; font-size: 20px;">Editar usuarios</span>
+                                <span class="align:left" style="color: white; font-weight: bold; font-size: 20px;">Editar empleado</span>
                             </div>
                         </div>
                         <?php if ($_SESSION['type'] == 0 ): ?>	
@@ -133,7 +133,7 @@ if (!isset($_SESSION['username'])) {
                 </div>
                
             <div class="seccionesEstatus">
-                <li><a>Actualizar usuario</a></li>
+                <li><a>Actualizar empleado</a></li>
             </div>
             </div>
         </div>
@@ -143,7 +143,7 @@ if (!isset($_SESSION['username'])) {
 		<div class="container mt-5">
 			<div id="new" style="text-align: center;"><br><br>
 				<div style="text-align: center; border-bottom: 3px solid #cecece; margin-bottom: 30px;">
-					<h3>Actualizar usuario</h3>				
+					<h3>Actualizar empleado</h3>				
 				</div>	
 				<br>
 				<div class="form-group">
@@ -164,44 +164,21 @@ if (!isset($_SESSION['username'])) {
 					</div>
 					<div class="form-group">
 						<div class="row">
-							<div class="col-sm-8">
+							<div class="col-sm-4">
 								<label for="email"><span class="text-danger">* </span>Correo electrónico personal</label>
 								<input type="text" class="form-control" id="email">
-							</div>		
-							<div class="col-sm-4">
-								<label for="type-users"><span class="text-danger">* </span>Tipo de usuario</label>
-								<select name="type-users" id="type-users" class="form-control" >
-									<option value="null" selected disabled>Seleccione un tipo</option>
-								</select>
-							</div>															
-						</div>
-					</div>	
-					<div class="form-group">
-						<div class="row">							
-							<div class="col-sm-4">
-								<label for="category"><span class="text-danger">* </span>Categoria</label>
-								<select name="category" id="category" class="form-control">
-									<option value="null" selected disabled>Seleccione una categoría</option>
-									<option value="PRINCIPAL">PRINCIPAL</option>
-									<option value="SECUNDARIO">SECUNDARIO</option>
-								</select>	
-							</div>
-							<div class="col-sm-4">
+							</div>	
+                            <div class="col-sm-4">
 								<label for="areas"><span class="text-danger">* </span>Área</label>
-								<select name="areas" id="areas" class="form-control">
-									<option value="null" selected disabled>Seleccione una área</option>
-								</select>
-							</div>															
+								<input type="text" class="form-control" id="areas" >
+							</div>																
 						</div>
-					</div>	
-					<div class="col-sm-12">
-						<label for="text"><span class="text-danger">* </span>El usuario y contraseña lo prodra modificar la persona correspondiente una vez que inicie sesión. </label>
-					</div>
+					</div>		
 					<br><br>	
 					<div class="form-group" align="center">
 						<button type="button" class="btn btn-primary w-20" id="changePassword" onClick="changePassword();" >Cambiar Contraseña</button>
 						<button class="btn btnCancel btn-lg active" type="button" onClick="history.go(-1);" >Cancelar</button>
-						<button class="btn btnConfirm btn-lg active" type="button" id="save-exam" onclick="saveUserEdit();">Guardar</button>
+						<button class="btn btnConfirm btn-lg active" type="button" id="save-exam" onclick="saveEmployeeEdit();">Guardar</button>
 					</div>				
 				</div>	
 			</div>		
@@ -225,7 +202,7 @@ if (!isset($_SESSION['username'])) {
 
 		
 		<script src="../../controller/signin/script_login.js"></script>
-		<script src="../../controller/usuarios/script_usuarios.js"></script>
+		<script src="../../controller/employee/script_employee.js"></script>
 
 
 	
