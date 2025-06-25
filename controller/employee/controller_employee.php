@@ -47,6 +47,15 @@ class employeeController{
 		echo json_encode($data);
 	}
 
+
+    public function updatePasswordWithoutCheck()
+	{
+		$this->employees = new employees();
+
+		$data = $this->employees->updatePasswordWithoutCheck($_POST['id_employee'], $_POST['new_passsword']);
+		echo json_encode($data);
+	}
+
 }
 
 $obj = new employeeController();
@@ -62,5 +71,7 @@ if (isset ($_POST['action'])){
         $obj->saveEmployeeEdit();
     } if ($_POST['action'] == 5) {
         $obj->deleteEmployee();
+    } if ($_POST['action'] == 6) {
+        $obj->updatePasswordWithoutCheck();
     }
 }

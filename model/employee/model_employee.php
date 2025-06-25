@@ -154,5 +154,27 @@ public function listEmployee()
 
 
 
+public function updatePasswordWithoutCheck($id_employee, $newPassword)
+    {
+        $con = new DBconnection();
+        $con->openDB();
+
+        try {
+            $updateQuery = "UPDATE employee SET password = '$newPassword' WHERE id_employee = $id_employee";
+            $updateResult = $con->query($updateQuery);
+
+            $con->closeDB();
+
+            return array('status' => 200, 'error' => null);
+        } catch (Exception $e) {
+            $errorMessage = $e->getMessage();
+            $con->closeDB();
+
+            return array('status' => 500, 'error' => $errorMessage);
+        }
+    }
+
+
+
 
 }

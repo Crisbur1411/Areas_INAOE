@@ -415,6 +415,108 @@ function deleteEmployee(id_employee) {
 
 
 
+
+
+function changePassword() {
+    var employeeID = sessionStorage.getItem('id_employee');
+
+    var formHtml = `
+        <form id="newAreaForm">
+            <div class="form-group">
+                <label for="nombreArea">Nueva Contraseña:</label>
+                <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+            </div>
+            <div class="form-group">
+                <label for="detalles">Confirmar Nueva Contraseña</label>
+                <input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword" required>
+            </div>
+            <div class="form-group">
+      
+        </form>
+    `;
+
+    bootbox.dialog({
+        title: "<h4>Cambiar Contraseña</h4>",
+        message: formHtml,
+        closeButton: true,
+        buttons: {
+            cancel: {
+                label: 'Cancelar',
+                className: 'btnCancel'
+            },
+            confirm: {
+                label: 'Guardar',
+                className: 'btnConfirm',
+                callback: function () {
+                    var newPassword = $('#newPassword').val().trim();
+                    var confirmNewPassword = $('#confirmNewPassword').val().trim();
+                    var formData = new FormData();
+                    formData.append('action', 6);
+                    formData.append('id_employee', employeeID);
+                    formData.append('new_passsword', newPassword);
+
+                    if (newPassword.length === 0 || confirmNewPassword.length === 0) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Ambos campos de contraseña son obligatorios'
+                        });
+                        return false;
+                    }
+
+                    if (!(newPassword == confirmNewPassword)) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Las contraseñas no coinciden, favor de verificar'
+                        });
+                        return false;
+                    }
+
+                    $.ajax({
+                        url: "../../controller/employee/controller_employee.php",
+                        cache: false,
+                        dataType: 'JSON',
+                        type: 'POST',
+                        processData: false,
+                        contentType: false,
+                        data: formData,
+                        success: function (result) {
+                            console.log(result);
+                            if (result.status === 200) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Éxito',
+                                    text: 'La solicitud se ha completado correctamente'
+                                });
+                            } else {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Ocurrió un error al realizar la solicitud'
+                                });
+                            }
+                        },
+                        error: function (result) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Error',
+                                text: 'Ocurrió un error al realizar la solicitud'
+                            });
+                        }
+                    });
+
+                }
+            }
+        }
+    });
+
+
+}
+
+
+
+
 document.addEventListener('DOMContentLoaded', function () {
     let id = new URLSearchParams(window.location.search).get('dc');
     if(id){ // Solo si existe el id en la URL
