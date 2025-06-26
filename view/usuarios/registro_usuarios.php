@@ -69,6 +69,9 @@ if (!isset($_SESSION['username'])) {
                             <?php if ($_SESSION['type'] == 1 || $_SESSION['type'] == 2): ?>
 							<li><a class="dropdown-item" href="../usuarios/usuarios.php">Usuarios</a> </li>							
 							<?php endif; ?>
+							<?php if ($_SESSION['type'] == 1 || $_SESSION['type'] == 2): ?>
+							<li><a class="dropdown-item" href="../employee/employee.php">Empleados</a> </li>							
+							<?php endif; ?>
 							<?php if ($_SESSION['type'] == 3): ?>
 							<li><a class="dropdown-item" href="../liberacion_area/liberacion_area.php">Liberación del área</a></li>
 							<?php endif; ?>

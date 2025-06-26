@@ -17,6 +17,9 @@ public function listPrestamos(){
         $con=new DBconnection(); 
         $con->openDB();
 
+        session_start();
+        $id_user  = $_SESSION["id_user"];
+
         $dataTitle = $con->query("SELECT 
     prestamo.id_prestamo, 
     prestamo.description, 
@@ -29,7 +32,8 @@ FROM
 INNER JOIN 
     students ON prestamo.fk_student = students.id_student
 WHERE 
-    prestamo.status = 1 ORDER BY id_prestamo ASC;");
+    prestamo.status = 1 AND prestamo.fk_employee = $id_user  
+    ORDER BY id_prestamo ASC;");
 
         $data = array();
 
@@ -56,6 +60,9 @@ public function listPrestamosCancel(){
         $con=new DBconnection(); 
         $con->openDB();
 
+        session_start();
+        $id_user  = $_SESSION["id_user"];
+
         $dataTitle = $con->query("SELECT 
     prestamo.id_prestamo, 
     prestamo.description, 
@@ -68,7 +75,8 @@ FROM
 INNER JOIN 
     students ON prestamo.fk_student = students.id_student
 WHERE 
-    prestamo.status = 0 ORDER BY id_prestamo ASC;");
+    prestamo.status = 0 AND prestamo.fk_employee = $id_user  
+ ORDER BY id_prestamo ASC;");
 
         $data = array();
 
@@ -92,6 +100,9 @@ WHERE
         $con=new DBconnection(); 
         $con->openDB();
 
+        session_start();
+        $id_user  = $_SESSION["id_user"];
+
         $dataTitle = $con->query("SELECT 
     prestamo.id_prestamo, 
     prestamo.description, 
@@ -104,7 +115,8 @@ FROM
 INNER JOIN 
     students ON prestamo.fk_student = students.id_student
 WHERE 
-    prestamo.status = 2 ORDER BY id_prestamo ASC;");
+    prestamo.status = 2 AND prestamo.fk_employee = $id_user  
+ ORDER BY id_prestamo ASC;");
 
         $data = array();
 
