@@ -234,5 +234,33 @@ class Process {
             return "error";
         }
     }
+
+
+    public function deleteProcess($id_process_stages) {
+        try{
+
+        
+        $con=new DBconnection();
+        $con->openDB();
+
+        $processDataDelete = ("UPDATE process_stages SET status = 0 WHERE id_process_stages = '$id_process_stages'");
+        $updateResult = $con->query($processDataDelete);
+
+        $con->closeDB();
+
+
+
+        if ($updateResult )
+        {
+           $response = ['status' => 'success', 'message' => 'Paso eliminado correctamente'];
+        } else {
+            $response = ['status' => 'error', 'message' => 'Error al eliminar el paso'];
+        }
+        }
+        catch (Exception $e) {
+            $response = ['status' => 'error', 'message' => 'Error al eliminar el paso: ' . $e->getMessage()];
+        }
+        return $response;
+    }
     
 }

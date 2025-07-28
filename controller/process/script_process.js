@@ -43,57 +43,63 @@ function listProcess() {
             stepCount = 0;
             $('#steps-container').empty();
 
-            // Paso 1: contar ocurrencias de cada flujo
             const flujoCounts = {};
-            result.forEach(val => {
-                if (val.status == 1) {
-                    flujoCounts[val.flujo_ejecucion] = (flujoCounts[val.flujo_ejecucion] || 0) + 1;
-                }
+
+            // Contar cuántos pasos activos existen
+            const pasosActivos = result.filter(val => val.status == 1);
+
+            if (pasosActivos.length === 0) {
+                $('#steps-container').html(`
+                    <div class="alert alert-warning" role="alert">
+                        No existen pasos asignados aún.
+                    </div>
+                `);
+                return;
+            }
+
+            // Contar ocurrencias de cada flujo
+            pasosActivos.forEach(val => {
+                flujoCounts[val.flujo_ejecucion] = (flujoCounts[val.flujo_ejecucion] || 0) + 1;
             });
 
-            // Paso 2: renderizar cada paso con su tipo determinado por ocurrencias
-            result.forEach(val => {
-                if (val.status == 1) {
-                    stepCount++;
+            // Renderizar pasos
+            pasosActivos.forEach(val => {
+                stepCount++;
 
-                    // Determinar tipo según cantidad de registros con ese flujo
-                    const tipo = flujoCounts[val.flujo_ejecucion] > 1 ? 'Simultáneo' : 'Secuencial';
+                const tipo = flujoCounts[val.flujo_ejecucion] > 1 ? 'Simultáneo' : 'Secuencial';
 
-            const stepHTML = `
-                <div class="border rounded p-3 mb-3" style="border-left: 6px solid #691C32; background-color: #f8f9fa;">
-                    <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong>Paso ${stepCount}:</strong>
-                        <span>${val.description}</span>
-                    </div>
-                    <div class="d-flex align-items-center">
-                        <div class="form-group mb-0 mr-3">
-                        <label class="mb-0 mr-2">Tipo:</label>
-                        <select class="form-control form-control-sm d-inline-block" style="width: auto;" disabled>
-                            <option ${tipo === 'Secuencial' ? 'selected' : ''}>Secuencial</option>
-                            <option ${tipo === 'Simultáneo' ? 'selected' : ''}>Simultáneo</option>
-                        </select>
+                const stepHTML = `
+                    <div class="border rounded p-3 mb-3" style="border-left: 6px solid #691C32; background-color: #f8f9fa;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>Paso ${stepCount}:</strong>
+                                <span>${val.description}</span>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <div class="form-group mb-0 mr-3">
+                                    <label class="mb-0 mr-2">Tipo:</label>
+                                    <select class="form-control form-control-sm d-inline-block" style="width: auto;" disabled>
+                                        <option ${tipo === 'Secuencial' ? 'selected' : ''}>Secuencial</option>
+                                        <option ${tipo === 'Simultáneo' ? 'selected' : ''}>Simultáneo</option>
+                                    </select>
+                                </div>
+                                <div class="btn-group" role="group">
+                                    <button class="btn btn-sm btn-outline-primary ml-1" title="Ver detalles" onclick="DetailsProcess(${val.id_process_stages}, '${tipo}')">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-secondary ml-1" title="Editar paso" onclick="editProcess(${val.id_process_stages})">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger ml-1" title="Eliminar paso" onclick="deleteProcess(${val.id_process_stages})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="btn-group" role="group">
-                        <button class="btn btn-sm btn-outline-primary ml-1" title="Ver detalles" onclick="DetailsProcess(${val.id_process_stages}, '${tipo}' )">
-                            <i class="fas fa-eye"></i>
-                        </button>
-                        <button class="btn btn-sm btn-secondary ml-1" title="Editar paso" onclick="editProcess(${val.id_process_stages})">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger ml-1" title="Eliminar paso" onclick="deleteStep(${val.id_process_stages})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                        </div>
                     </div>
-                    </div>
-                </div>
                 `;
 
-
-
-                    $('#steps-container').append(stepHTML);
-                }
+                $('#steps-container').append(stepHTML);
             });
         },
         error: function (result) {
@@ -101,6 +107,7 @@ function listProcess() {
         }
     });
 }
+
 
 
 
@@ -390,6 +397,69 @@ function saveProcessEdit() {
         }
     });
 }
+
+
+
+
+
+function deleteProcess(id_process_stages) {
+    console.log("ID del paso a eliminar:", id_process_stages);
+
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Esta acción eliminará el paso del proceso. ¿Deseas continuar?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: "../../controller/process/controller_process.php",
+                cache: false,
+                dataType: 'JSON',
+                type: 'POST',
+                data: {
+                    action: 8,
+                    id_process_stages: id_process_stages
+                },
+                success: function (result) {
+                    console.log(result);
+                    if (result.status === "success") {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Éxito',
+                            text: 'Paso del proceso eliminado correctamente',
+                            timer: 500,
+                            timerProgressBar: true,
+                        }).then((r) => {
+                            if (r.dismiss === Swal.DismissReason.timer) {
+                                location.reload();
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Ocurrió un error al eliminar el paso del proceso'
+                        });
+                    }
+                },
+                error: function (result) {
+                    console.log(result);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Ocurrió un error al realizar la solicitud'
+                    });
+                }
+            });
+        }
+    });
+}
+
 
 
 

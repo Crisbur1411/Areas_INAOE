@@ -59,6 +59,12 @@
             $data = $this->Process->saveProcessEdit($_POST['id_process_stages'], $_POST['process_catalog'], $_POST['description'], $_POST['execution_flow'], $_POST['process_manager']);
             echo json_encode($data);
         }
+
+        public function deleteProcess(){
+            $this->Process = new Process();
+            $data = $this->Process->deleteProcess($_POST['id_process_stages']);
+            echo json_encode($data);
+        }
     }
 
 
@@ -79,6 +85,8 @@
             $obj->getProcessInfo();
         } else if ($_POST["action"]==7){
             $obj->saveProcessEdit();
+        } else if ($_POST["action"]==8){
+            $obj->deleteProcess();
         }
 	}
 
