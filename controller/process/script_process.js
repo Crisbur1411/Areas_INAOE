@@ -141,6 +141,8 @@ function DetailsProcess(id_process_stages, tipo) {
       $('#process-date').text(formattedDate);
       $('#process-description').text(general.description);
       $('#process-type').text(tipo);
+      $('#process-execution-flow').text(general.flujo_ejecucion);
+      $('#area-user').text(general.area_user);
 
       // Mostrar la modal
       $('#processDetailsModal').modal('show');

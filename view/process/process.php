@@ -200,8 +200,16 @@ if (!isset($_SESSION['username'])) {
               <td id="process-responsible" class="text-center"></td>
             </tr>
             <tr>
+              <th class="text-center">Área Asociada</th>
+              <td id="area-user" class="text-center"></td>
+            </tr>
+            <tr>
               <th class="text-center">Tipo de Paso</th>
               <td id="process-type" class="text-center"></td>
+            </tr>
+            <tr>
+              <th class="text-center">Paso en flujo de ejecucion</th>
+              <td id="process-execution-flow" class="text-center"></td>
             </tr>
             <tr>
               <th class="text-center">Fecha y Hora de Creación</th>

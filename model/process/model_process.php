@@ -55,24 +55,31 @@ class Process {
         $con->openDB();
 
         $dataTitle = $con->query("SELECT
-                                        process_stages.id_process_stages,
-                                        process_stages.stage,
-                                        process_stages.description,
-                                        process_stages.execution_flow AS flujo_ejecucion,
-                                        process_stages.status,
-                                        process_stages.status_process_stages,
-                                        process_stages.creation_date,
-                                        process_catalog.name AS name_process,
-                                        CONCAT (users.name, ' ' , users.surname, ' ' , users. second_surname) AS name_user  
-                                    FROM
-                                        process_stages
-                                    INNER JOIN
-                                        process_catalog ON process_stages.fk_process_catalog = process_catalog.id_process_catalog
-                                    INNER JOIN
-                                        users ON process_stages.fk_process_manager = users.id_user
-                                    WHERE
-                                        process_stages.status = 1 AND process_stages.id_process_stages = $id_process_stages
-                                    ORDER BY execution_flow ASC;");
+                                            process_stages.id_process_stages,
+                                            process_stages.stage,
+                                            process_stages.description,
+                                            process_stages.execution_flow AS flujo_ejecucion,
+                                            process_stages.status,
+                                            process_stages.status_process_stages,
+                                            process_stages.creation_date,
+                                            process_catalog.name AS name_process,
+                                            CONCAT(users.name, ' ', users.surname, ' ', users.second_surname) AS name_user,
+                                            areas.name AS area_user
+                                        FROM
+                                            process_stages
+                                        INNER JOIN
+                                            process_catalog ON process_stages.fk_process_catalog = process_catalog.id_process_catalog
+                                        INNER JOIN
+                                            users ON process_stages.fk_process_manager = users.id_user
+                                        INNER JOIN
+                                            user_area ON users.id_user = user_area.fk_user
+                                        INNER JOIN 
+                                            areas ON user_area.fk_area = areas.id_area
+                                        WHERE
+                                            process_stages.status = 1
+                                            AND process_stages.id_process_stages = ".$id_process_stages."
+                                        ORDER BY
+                                            execution_flow ASC;");
 
         $data = array();
 
@@ -86,7 +93,8 @@ class Process {
                 "status_process_stages" => $row["status_process_stages"],
                 "creation_date" => $row["creation_date"],
                 "name_process" => $row["name_process"],
-                "name_user" => $row["name_user"]
+                "name_user" => $row["name_user"],
+                "area_user" => $row["area_user"]
             );
             $data[] = $dat;
         }
