@@ -27,7 +27,7 @@ class Process {
                                         process_catalog ON process_stages.fk_process_catalog = process_catalog.id_process_catalog
                                     WHERE
                                         process_stages.status = 1
-                                    ORDER BY execution_flow ASC;");
+                                    ORDER BY stage ASC;");
 
         $data = array();
 
@@ -166,7 +166,13 @@ class Process {
         $con = new DBconnection(); 
         $con->openDB();
 
-        $stage = 1;
+         // Obtener el valor máximo de stage
+        $result = $con->query("SELECT MAX(stage) AS max_stage FROM process_stages WHERE status = 1;");
+        $row = pg_fetch_assoc($result);
+
+        // Si no hay ningún registro, se asigna 1 como primer valor
+        $stage = ($row && $row['max_stage'] !== null) ? ((int)$row['max_stage'] + 1) : 1;
+        
 
         $processData = $con->query ("INSERT INTO process_stages (fk_process_catalog, description, execution_flow, fk_process_manager, creation_date, stage) 
         VALUES (".$process_catalog.", '".$description."', ".$execution_flow.", ".$process_manager.", NOW(), ".$stage.") RETURNING id_process_stages;");

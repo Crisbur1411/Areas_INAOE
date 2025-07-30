@@ -128,9 +128,19 @@ class alumnos
 
     // Hash md5(id_estudiante|user|fecha)
     $hash_release = md5($id_student . '|' . $user . '|' . $date);
+    
+    $dataP = $con->query("SELECT id_process_stages, description FROM process_stages WHERE execution_flow = 2 AND status = 1 LIMIT 1;");
 
-    $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, status, hash_release) 
-                                VALUES (" . $id_student . ", '" . $descrip . "', '" . $date . "', 2, '" . $hash_release . "') 
+
+    $row = pg_fetch_assoc($dataP);
+
+    if ($row) {
+        $id_stage = $row['id_process_stages'];
+    }
+
+
+    $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, status, hash_release, fk_process_stage) 
+                                VALUES (" . $id_student . ", '" . $descrip . "', '" . $date . "', 2, '" . $hash_release . "', " . $id_stage . ") 
                                 RETURNING fk_student ");
 
     $validateUpdateTurn = pg_fetch_row($updateTurn);
