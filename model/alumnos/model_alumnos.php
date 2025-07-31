@@ -129,7 +129,7 @@ class alumnos
     // Hash md5(id_estudiante|user|fecha)
     $hash_release = md5($id_student . '|' . $user . '|' . $date);
     
-    $dataP = $con->query("SELECT id_process_stages, description FROM process_stages WHERE execution_flow = 2 AND status = 1 LIMIT 1;");
+    $dataP = $con->query("SELECT id_process_stages, description FROM process_stages WHERE execution_flow = 1 AND status = 1 LIMIT 1;");
 
 
     $row = pg_fetch_assoc($dataP);
@@ -262,11 +262,14 @@ ORDER BY
         return $data;
     }
 
-public function freeStudent($id_student, $user)
+public function freeStudent($id_student, $user, $id_user)
 {
     $con = new DBconnection();
     $con->openDB();
     $descrip = 'Trámite finalizado por ' . $user;
+
+    session_start();
+    $fk_area  = $_SESSION["id_area"];
 
     // Fecha actual desde PHP para el hash
     $date = date('Y-m-d H:i:s');
@@ -274,8 +277,33 @@ public function freeStudent($id_student, $user)
     // Hash md5(id_student|user|fecha)
     $hash_release = md5($id_student . '|' . $user . '|' . $date);
 
-    $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, status, hash_release) 
-                                VALUES (" . $id_student . ", '" . $descrip . "', '" . $date . "', 3, '" . $hash_release . "') 
+    //Se genera el fk_process_stages para agregar el registro en la tabla trace_student_areas
+    //Se obtiene mediante el id_user y el fk_area del usuario relacionados al proceso que se libero libero
+    $dataProcess = $con->query("SELECT
+                                            process_stages.id_process_stages,
+											 process_stages.fk_process_manager,
+                                            CONCAT(users.name, ' ', users.surname, ' ', users.second_surname) AS name_user,
+											 areas.id_area AS id_area_user,
+                                            areas.name AS area_user
+                                        FROM process_stages
+                                        INNER JOIN process_catalog ON process_stages.fk_process_catalog = process_catalog.id_process_catalog
+                                        INNER JOIN users ON process_stages.fk_process_manager = users.id_user
+                                        INNER JOIN user_area ON users.id_user = user_area.fk_user
+                                        INNER JOIN areas ON user_area.fk_area = areas.id_area
+                                        WHERE
+                                            process_stages.status = 1
+                                            AND process_stages.fk_process_manager = ".$id_user."
+												AND areas.id_area = ".$fk_area."");
+    $row = pg_fetch_assoc($dataProcess);
+    if($row){
+        $fk_process_stages = $row['id_process_stages'];
+    } else {
+        $con->closeDB();
+        return "error"; // No se encontró el proceso
+    }
+
+    $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, status, hash_release, fk_process_stage) 
+                                VALUES (" . $id_student . ", '" . $descrip . "', '" . $date . "', 3, '" . $hash_release . "', " . $fk_process_stages . ") 
                                 RETURNING id_trace_student_area ");
 
     $validateUpdateTurn = pg_fetch_row($updateTurn);
@@ -719,6 +747,106 @@ public function coursesAds($id_student){
 
     return array("status" => 200, "data" => $data);
 }
+
+
+    public function authorizationProcess($id_student) {
+    $con = new DBconnection();
+    $con->openDB();
+
+    // Paso 1: Obtener todos los pasos activos ordenados
+    $result = $con->query("SELECT id_process_stages, execution_flow 
+                           FROM process_stages 
+                           WHERE status = 1 
+                           ORDER BY execution_flow ASC;");
+
+    $flows = array();
+
+    // Paso 2: Agrupar por execution_flow
+    while ($row = pg_fetch_array($result)) {
+        $flow = $row["execution_flow"];
+        $stepId = $row["id_process_stages"];
+
+        if (!isset($flows[$flow])) {
+            $flows[$flow] = array();
+        }
+        $flows[$flow][] = $stepId;
+    }
+
+    $data = array();
+
+    // Paso 3: Validar cada grupo de pasos
+    foreach ($flows as $execution_flow => $stepIds) {
+        $allStepsCompleted = true;
+
+        foreach ($stepIds as $stepId) {
+            $check = $con->query("SELECT 1 AS status_paso FROM trace_student_areas 
+                                  WHERE fk_student = '$id_student' 
+                                  AND fk_process_stage = '$stepId' 
+                                  AND status = 2 
+                                  LIMIT 1;");
+
+            if (pg_num_rows($check) === 0) {
+                $allStepsCompleted = false;
+                break; // No necesitamos seguir si uno no está completo
+            }
+        }
+
+        $data[] = array(
+            "execution_flow" => $execution_flow,
+            "total_steps" => count($stepIds),
+            "completed" => $allStepsCompleted
+        );
+    }
+
+    $con->closeDB();
+
+    return array("status" => 200, "data" => $data);
+}
+
+
+
+    public function getExecutionFlow($id_user) {
+    $con = new DBconnection();
+    $con->openDB();
+
+    session_start();
+    $fk_area  = $_SESSION["id_area"];
+
+    $dataProcess = $con->query("SELECT
+        process_stages.id_process_stages,
+        process_stages.execution_flow,
+        process_stages.fk_process_manager,
+        CONCAT(users.name, ' ', users.surname, ' ', users.second_surname) AS name_user,
+        areas.id_area AS id_area_user,
+        areas.name AS area_user
+    FROM process_stages
+    INNER JOIN process_catalog ON process_stages.fk_process_catalog = process_catalog.id_process_catalog
+    INNER JOIN users ON process_stages.fk_process_manager = users.id_user
+    INNER JOIN user_area ON users.id_user = user_area.fk_user
+    INNER JOIN areas ON user_area.fk_area = areas.id_area
+    WHERE process_stages.status = 1
+    AND process_stages.fk_process_manager = $id_user
+    AND areas.id_area = $fk_area
+    LIMIT 1"); // ← importante limitar si solo esperas uno
+
+    $data = array();
+
+    if ($row = pg_fetch_array($dataProcess)) {
+        $data = array(
+            "id_process_stages" => $row["id_process_stages"],
+            "execution_flow" => $row["execution_flow"],
+            "fk_process_manager" => $row["fk_process_manager"],
+            "name_user" => $row["name_user"],
+            "id_area_user" => $row["id_area_user"],
+            "area_user" => $row["area_user"]
+        );
+    }
+
+    $con->closeDB();
+    return array("status" => 200, "data" => $data);
+}
+
+
 
 
 }

@@ -60,7 +60,7 @@ ORDER BY students.id_student;
         return $data;
     }
 
-    public function signStudent($id_student, $user, $full_name){
+    public function signStudent($id_student, $user, $full_name, $id_user){
     $con = new DBconnection();
     $con->openDB();
     $descrip = 'Autorizado por: '.$user;
@@ -75,8 +75,33 @@ ORDER BY students.id_student;
     // Hash sha256(id_student|user|fecha|clave)
     $hash_release = hash('sha256', $date . '|' . $full_name . '|' . $user . '|' . $clave);
 
-    $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, fk_area, status, hash_release) 
-                                VALUES (".$id_student.", '".$descrip."', '".$date."', ".$fk_area.", 2, '".$hash_release."') 
+    //Se genera el fk_process_stages para agregar el registro en la tabla trace_student_areas
+    //Se obtiene mediante el id_user y el fk_area del usuario relacionados al proceso que se libero libero
+    $dataProcess = $con->query("SELECT
+                                            process_stages.id_process_stages,
+											 process_stages.fk_process_manager,
+                                            CONCAT(users.name, ' ', users.surname, ' ', users.second_surname) AS name_user,
+											 areas.id_area AS id_area_user,
+                                            areas.name AS area_user
+                                        FROM process_stages
+                                        INNER JOIN process_catalog ON process_stages.fk_process_catalog = process_catalog.id_process_catalog
+                                        INNER JOIN users ON process_stages.fk_process_manager = users.id_user
+                                        INNER JOIN user_area ON users.id_user = user_area.fk_user
+                                        INNER JOIN areas ON user_area.fk_area = areas.id_area
+                                        WHERE
+                                            process_stages.status = 1
+                                            AND process_stages.fk_process_manager = ".$id_user."
+												AND areas.id_area = ".$fk_area."");
+    $row = pg_fetch_assoc($dataProcess);
+    if($row){
+        $fk_process_stages = $row['id_process_stages'];
+    } else {
+        $con->closeDB();
+        return "error"; // No se encontró el proceso
+    }
+
+    $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, fk_area, status, hash_release, fk_process_stage) 
+                                VALUES (".$id_student.", '".$descrip."', '".$date."', ".$fk_area.", 2, '".$hash_release."' , ".$fk_process_stages.") 
                                 RETURNING id_trace_student_area ");
 
     $validateUpdateTurn = pg_fetch_row($updateTurn);

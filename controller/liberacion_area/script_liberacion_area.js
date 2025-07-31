@@ -76,82 +76,136 @@ function listStudentInProgress() {
 }
 
 function signStudent(id_student, full_name) {
-    $u = document.getElementById("user");
-    $user = $u.innerHTML;
+    const $u = document.getElementById("user");
+    const $user = $u.innerHTML;
+    const $id_user = ID_USER;
 
-    swal({
-        title: "LIBERAR DEL ÁREA AL ALUMNO",
-        text: "Por favor, ingresa tu contraseña para confirmar la liberación del área al alumno:",
-        icon: "info",
-        buttons: {
-            cancel: "Cancelar",
-            Liberar: true,
-        },
-        content: {
-            element: "input",
-            attributes: {
-                placeholder: "Contraseña",
-                type: "password",
-                id: "passwordInput",
-            },
-        },
-        closeOnEsc: false,
-    }).then((value) => {
-        if (value === "Liberar") {
-            var password = $(".swal-content__input").val();
-            $.ajax({
-                url: "../../controller/liberacion_area/controller_liberacion_area.php",
-                cache: false,
-                dataType: 'JSON',
-                type: 'POST',
-                data: { action: 6, password: password },
-                success: function (result) {
-                    $.each(result, function (index, val) {
-                        if (val.success === 't') {
-                            $.ajax({
-                                url: "../../controller/liberacion_area/controller_liberacion_area.php",
-                                cache: false,
-                                dataType: 'JSON',
-                                type: 'POST',
-                                data: { action: 2, id_student: id_student, user: $user, full_name: full_name },
-                                success: function (result) {},
-                                error: function (result) {
-                                    console.log(result);
-                                },
-                                complete: function () {
-                                    $(".loader").fadeOut("slow");
-                                    $("#info").removeClass("d-none");
-                                    listStudentInProgress();
-                                    listStudentFree();
-                                }
-                            });
+    // Paso 1: Obtener el execution_flow del gestor
+    $.ajax({
+        url: "../../controller/alumnos/controller_alumnos.php",
+        type: "POST",
+        dataType: "JSON",
+        data: { action: 21, id_user: $id_user },
+        success: function (responseFlow) {
+            if (responseFlow.status === 200 && responseFlow.data) {
+                const user_execution_flow = parseInt(responseFlow.data.execution_flow);
 
-                            swal("Trámite finalizado!", {
-                                icon: "success",
-                            }).then(() => {
-                                location.reload(); // Recarga la página después de la alerta
-                            });
+                // Paso 2: Obtener el avance del estudiante
+                $.ajax({
+                    url: "../../controller/alumnos/controller_alumnos.php",
+                    type: "POST",
+                    dataType: "JSON",
+                    data: { action: 20, id_student: id_student },
+                    success: function (flowResult) {
+                        const flowData = flowResult.data;
 
-                        } else if (typeof val.message !== 'undefined') {
-                            swal("Error", val.message, "error");
+                        let valid = true;
+                        flowData.forEach(f => {
+                            if (f.execution_flow < user_execution_flow && !f.completed) {
+                                valid = false;
+                            }
+                        });
+
+                        if (!valid) {
+                            swal("Acción no permitida", "El estudiante no ha completado los pasos anteriores, por favor vuelva a intentarlo después.", "warning");
+                            return;
                         }
-                    });
-                },
-                error: function (result) {
-                    console.log(result);
-                }
-            });
-        }
-    });
 
-    // Agregamos el controlador de eventos para la tecla "Enter" en el campo de contraseña
-    $('#passwordInput').keypress(function (event) {
-        if (event.which === 13) {
-            event.preventDefault();
-            return false;
+                        // Paso 3: Mostrar el modal de contraseña
+                        swal({
+                            title: "LIBERAR DEL ÁREA AL ALUMNO",
+                            text: "Por favor, ingresa tu contraseña para confirmar la liberación del área al alumno:",
+                            icon: "info",
+                            buttons: {
+                                cancel: "Cancelar",
+                                Liberar: true,
+                            },
+                            content: {
+                                element: "input",
+                                attributes: {
+                                    placeholder: "Contraseña",
+                                    type: "password",
+                                    id: "passwordInput",
+                                },
+                            },
+                            closeOnEsc: false,
+                        }).then((value) => {
+                            if (value === "Liberar") {
+                                const password = $(".swal-content__input").val();
+
+                                // Paso 4: Validar contraseña
+                                $.ajax({
+                                    url: "../../controller/liberacion_area/controller_liberacion_area.php",
+                                    type: "POST",
+                                    dataType: "JSON",
+                                    data: { action: 6, password: password },
+                                    success: function (result) {
+                                        $.each(result, function (index, val) {
+                                            if (val.success === 't') {
+                                                // Paso 5: Liberar al estudiante
+                                                $.ajax({
+                                                    url: "../../controller/liberacion_area/controller_liberacion_area.php",
+                                                    type: "POST",
+                                                    dataType: "JSON",
+                                                    data: {
+                                                        action: 2,
+                                                        id_student: id_student,
+                                                        user: $user,
+                                                        full_name: full_name,
+                                                        id_user: $id_user
+                                                    },
+                                                    complete: function () {
+                                                        $(".loader").fadeOut("slow");
+                                                        $("#info").removeClass("d-none");
+                                                        listStudentInProgress();
+                                                        listStudentFree();
+
+                                                        swal("Trámite finalizado!", {
+                                                            icon: "success",
+                                                        }).then(() => {
+                                                            location.reload();
+                                                        });
+                                                    },
+                                                    error: function (result) {
+                                                        console.log(result);
+                                                    }
+                                                });
+                                            } else if (val.message) {
+                                                swal("Error", val.message, "error");
+                                            }
+                                        });
+                                    },
+                                    error: function () {
+                                        swal("Error", "Error al validar contraseña", "error");
+                                    }
+                                });
+                            }
+                        });
+
+                        // Enter bloqueado
+                        $(document).off('keypress', '#passwordInput').on('keypress', '#passwordInput', function (event) {
+                            if (event.which === 13) {
+                                event.preventDefault();
+                                return false;
+                            }
+                        });
+                    },
+                    error: function () {
+                        swal("Error", "No se pudo verificar el avance del estudiante.", "error");
+                    }
+                });
+
+            } else {
+                swal("Error", "No se pudo obtener el flujo del usuario.", "error");
+            }
+        },
+        error: function () {
+            swal("Error", "Fallo la consulta de flujo del usuario.", "error");
         }
     });
 }
+
+
 
 
 
