@@ -164,8 +164,10 @@ if (!isset($_SESSION['username'])) {
 						
 						<div class="col-sm-4">
 							<label for="execution_flow"><span class="text-danger">* </span>Flujo de Ejecución</label>
-							<input type="number" class="form-control" id="execution_flow">
-						</div>					
+                            <select name="execution_flow" id="execution_flow" class="form-control">
+								<option value="null" selected disabled>Seleccione un Paso</option>
+							</select>
+							</div>					
 					</div>
 				</div>
                 <div class="form-group">
@@ -175,11 +177,15 @@ if (!isset($_SESSION['username'])) {
 							<select name="process_manager" id="process_manager" class="form-control">
 								<option value="null" selected disabled>Seleccione un Encargado</option>
 							</select>
+						</div>
+						<div class="col-sm-4">
+							<label for="area_user"><span class="text-danger">* </span>Área Asociada al Encargado</label>
+							<input type="text" class="form-control"  id="area_user" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();" disabled>
 						</div>					
 					</div>
 				</div>
                 <div class="col-sm-12">
-					<label for="text"><span class="text-danger">* </span>El flujo de ejecución se coloca conforme al orden que se quiere llevar. Se puede usar el mismo número de flujo de ejecución en diferentes pasos para que se realicen de forma simultánea. </label>
+					<label for="text"><span class="text-danger">* </span>En el flujo de ejecución, se deberá seleccionar el paso con el que se desea que el nuevo paso se ejecute de forma simultánea. En caso de no requerir ejecución simultánea con ningún paso, se deberá seleccionar la opción de paso secuencial. </label>
 				</div>
 					<br><br>	
 					<div class="form-group" align="center">

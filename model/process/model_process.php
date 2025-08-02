@@ -27,7 +27,7 @@ class Process {
                                         process_catalog ON process_stages.fk_process_catalog = process_catalog.id_process_catalog
                                     WHERE
                                         process_stages.status = 1
-                                    ORDER BY stage ASC;");
+                                    ORDER BY execution_flow ASC;");
 
         $data = array();
 
@@ -160,6 +160,87 @@ class Process {
         
         return $data;
     }
+
+
+    public function getAreaUser($id_user) {
+        $con = new DBconnection(); 
+        $con->openDB();
+
+        $dataTitle = $con->query("SELECT
+                                            areas.id_area,
+                                            areas.name AS name_area,
+                                            users.id_user,
+                                            CONCAT (users.name, ' ', users.surname, ' ', users.second_surname) AS full_name
+                                        FROM
+                                            user_area
+                                        INNER JOIN
+                                            areas ON user_area.fk_area = areas.id_area
+                                        INNER JOIN
+                                            users ON user_area.fk_user = users.id_user
+                                        WHERE
+                                            user_area.fk_user = $id_user ;");
+
+        $data = array();
+
+        while($row = pg_fetch_array($dataTitle)){
+            $dat = array(
+                "id_area" => $row["id_area"],
+                "name_area" => $row["name_area"]
+            );
+            $data[] = $dat;
+        }
+        $con->closeDB();
+        
+        return $data;
+    }
+
+
+
+
+public function getExetcutionFlow(){
+    $con = new DBconnection(); 
+    $con->openDB();
+
+    $dataTitle = $con->query("SELECT 
+                                    id_process_stages,
+                                    description,
+                                    execution_flow
+                                FROM 
+                                    process_stages
+                                WHERE 
+                                    status = 1
+                                ORDER BY execution_flow ASC;");
+
+    $data = array();
+    $counter = 1; // Contador manual
+
+    while ($row = pg_fetch_array($dataTitle)) {
+        $dat = array(
+            "id_process_stages" => $row["id_process_stages"],
+            "description" => "Paso: " . $counter . " " . $row["description"],
+            "execution_flow" => $row["execution_flow"]
+        );
+        $data[] = $dat;
+        $counter++; // Incrementa contador en cada vuelta
+    }
+
+    $con->closeDB();
+    return $data;
+}
+
+
+public function getNextExecutionFlow() {
+    $con = new DBconnection();
+    $con->openDB();
+
+    $result = $con->query("SELECT MAX(execution_flow) AS max_flow FROM process_stages WHERE status = 1;");
+    $row = pg_fetch_assoc($result);
+    $next = ($row && $row["max_flow"] !== null) ? ((int)$row["max_flow"] + 1) : 1;
+
+    $con->closeDB();
+    return array("next_execution_flow" => $next);
+}
+
 
 
     public function saveProcess($process_catalog, $description, $execution_flow, $process_manager) {

@@ -41,6 +41,25 @@
             echo json_encode($data);
         }
 
+        public function getAreaUser(){
+            $this->Process = new Process();
+            $data = $this->Process->getAreaUser($_POST['id_user']);
+            echo json_encode($data);
+        }
+
+        public function getExetcutionFlow(){
+            $this->Process = new Process();
+            $data = $this->Process->getExetcutionFlow();
+            echo json_encode($data);
+        }
+
+
+        public function getNextExecutionFlow(){
+            $this->Process = new Process();
+            $data = $this->Process->getNextExecutionFlow();
+            echo json_encode($data);
+        }
+
         public function saveProcess(){
             $this->Process = new Process();
             $data = $this->Process->saveProcess($_POST['process_catalog'], $_POST['description'], $_POST['execution_flow'], $_POST['process_manager']);
@@ -87,6 +106,12 @@
             $obj->saveProcessEdit();
         } else if ($_POST["action"]==8){
             $obj->deleteProcess();
+        } else if ($_POST["action"]==9){
+            $obj->getAreaUser();
+        } else if ($_POST["action"]==10){
+            $obj->getExetcutionFlow();
+        } else if ($_POST["action"]==11){
+            $obj->getNextExecutionFlow();
         }
 	}
 

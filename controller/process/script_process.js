@@ -27,6 +27,7 @@ $(function () {
     processCatalog();
     listProcess();
     processManager();
+    loadExecutionFlow();
 });
 
 let stepCount = 0;
@@ -200,6 +201,76 @@ function processManager(selectedId = null) {
         options += `<option value='${val.id_user}' ${selected}>${val.name_user}</option>`;
       });
       $("#process_manager").html(options);
+
+      // Si ya hay un encargado seleccionado, mostrar su área
+      if (selectedId) {
+        getAreaByUser(selectedId);
+      }
+    },
+    error: function (result) {
+      console.log(result);
+    }
+  });
+}
+
+// Evento: cuando el usuario cambia el encargado
+$(document).on("change", "#process_manager", function () {
+  const id_user = $(this).val();
+  getAreaByUser(id_user);
+});
+
+// Función que obtiene el área por ID de usuario
+function getAreaByUser(id_user) {
+  $.ajax({
+    url: "../../controller/process/controller_process.php",
+    type: "POST",
+    data: { action: 9, id_user: id_user },
+    dataType: "JSON",
+    success: function (response) {
+      if (response.length > 0) {
+        $("#area_user").val(response[0].name_area);
+      } else {
+        $("#area_user").val("Sin área asignada"); // Limpia si no hay área
+      }
+    },
+    error: function (error) {
+      console.error("Error al obtener el área:", error);
+    }
+  });
+}
+
+
+
+
+
+function loadExecutionFlow(selectedId = null) {
+  $(".loader").fadeOut("slow");
+  $.ajax({
+    url: "../../controller/process/controller_process.php",
+    cache: false,
+    dataType: 'JSON',
+    type: 'POST',
+    data: { action: 10 },
+    success: function (result) {
+      let options = `<option value="null" disabled ${selectedId === null ? "selected" : ""}>Seleccione un Paso</option>`;
+      
+      $.each(result, function(index, val) {
+        const selected = (val.id_process_stages == selectedId) ? "selected" : "";
+        options += `<option value='${val.id_process_stages}' data-execution='${val.execution_flow}' ${selected}>${val.description}</option>`;
+      });
+
+      // Opción secuencial
+      const isSequentialSelected = selectedId === 'sequential';
+      options += `<option value="sequential" ${isSequentialSelected ? "selected" : ""}>PASO SECUENCIAL</option>`;
+
+      $("#execution_flow").html(options);
+
+      // Si se desea ver en consola en precarga
+      if (selectedId && selectedId !== "sequential") {
+        const selectedOption = $("#execution_flow option:selected");
+        const execFlow = selectedOption.data("execution");
+        console.log("Execution flow preseleccionado:", execFlow);
+      }
     },
     error: function (result) {
       console.log(result);
@@ -209,6 +280,12 @@ function processManager(selectedId = null) {
 
 
 
+$("#execution_flow").on("change", function() {
+  const selectedOption = $(this).find("option:selected");
+  const execFlow = selectedOption.data("execution") || null;
+  console.log("Execution flow seleccionado:", execFlow);
+});
+
 
 
 
@@ -216,73 +293,97 @@ function processManager(selectedId = null) {
 
 
 function saveProcess() {
-    var process_catalog = $("#process_catalog").val();
-    var description = $("#description").val().trim();
-    var execution_flow = $("#execution_flow").val().trim();
-    var process_manager = $("#process_manager").val();
+  const process_catalog = $("#process_catalog").val();
+  const description = $("#description").val().trim();
+  const selectedOption = $("#execution_flow option:selected");
+  const selectedValue = selectedOption.val();
+  const process_manager = $("#process_manager").val();
 
-    // Validación individual con mensajes específicos
-    if (process_catalog == null) {
-        alert("Tiene que seleccionar un proceso");
-        $("#process_catalog").focus();
-        return 0;
-    }
+  // Validaciones
+  if (!process_catalog) {
+    alert("Tiene que seleccionar un proceso");
+    $("#process_catalog").focus();
+    return;
+  }
 
-    if (description.length == 0) {
-        alert("El campo descripción no puede estar vacío");
-        $("#description").focus();
-        return 0;
-    }
+  if (description.length === 0) {
+    alert("El campo descripción no puede estar vacío");
+    $("#description").focus();
+    return;
+  }
 
-    if (execution_flow.length == 0) {
-        alert("El campo de flujo de ejecución no puede estar vacío");
-        $("#execution_flow").focus();
-        return 0;
-    }
+  if (!selectedValue) {
+    alert("Tiene que seleccionar un paso");
+    $("#execution_flow").focus();
+    return;
+  }
 
-    if (process_manager == null) {
-        alert("Tiene que seleccionar un encargado de liberar");
-        $("#process_manager").focus();
-        return 0;
-    }
+  if (!process_manager) {
+    alert("Tiene que seleccionar un encargado de liberar");
+    $("#process_manager").focus();
+    return;
+  }
 
-    // Si todos están llenos, puedes hacer una validación final así:
-    if (description.length > 0 && execution_flow.length > 0) {
-       
-        $.ajax({
-            url: "../../controller/process/controller_process.php",
-            cache: false,
-            dataType: 'JSON',
-            type: 'POST',
-            data: { action: 5, process_catalog: process_catalog, description: description, execution_flow: execution_flow, process_manager: process_manager },
-            success: function (result) {
-            location.href = "../process/process.php";         
-            }, error: function (result) {
-                console.log(result);
-                bootbox.confirm({
-                    title: "<h4>Error al registrar paso para el proceso</h4>",
-                    message: "<h5>Ocurrio un error al hacer el registro del paso para el proceso.</h5>",
-                    buttons: {
-                        cancel: {
-                            label: 'Cancelar',
-                            className: 'btn-secondary'
-                        },
-                        confirm: {
-                            label: 'Aceptar',
-                            className: 'btn-success'
-                        }
-                    },
-                    closeButton: false,
-                    callback: function (result) {
-                        if (result == false) {
-                            history.go(-1);
-                        }
-                    }
-                });
+  const enviarRegistro = (execution_flow_real) => {
+    $.ajax({
+      url: "../../controller/process/controller_process.php",
+      cache: false,
+      dataType: 'JSON',
+      type: 'POST',
+      data: {
+        action: 5,
+        process_catalog: process_catalog,
+        description: description,
+        execution_flow: execution_flow_real,
+        process_manager: process_manager
+      },
+      success: function () {
+        location.href = "../process/process.php";
+      },
+      error: function () {
+        bootbox.confirm({
+          title: "<h4>Error al registrar paso para el proceso</h4>",
+          message: "<h5>Ocurrió un error al hacer el registro.</h5>",
+          buttons: {
+            cancel: {
+              label: 'Cancelar',
+              className: 'btn-secondary'
+            },
+            confirm: {
+              label: 'Aceptar',
+              className: 'btn-success'
             }
+          },
+          closeButton: false,
+          callback: function (result) {
+            if (!result) history.go(-1);
+          }
         });
-    }
+      }
+    });
+  };
+
+  // Evaluar si se seleccionó PASO SECUENCIAL
+  if (selectedValue === "sequential") {
+    $.ajax({
+      url: "../../controller/process/controller_process.php",
+      type: "POST",
+      dataType: "JSON",
+      data: { action: 11 },
+      success: function (resp) {
+        const nextFlow = resp.next_execution_flow;
+        enviarRegistro(nextFlow);
+      },
+      error: function () {
+        alert("Error al obtener el siguiente flujo de ejecución.");
+      }
+    });
+  } else {
+    const execution_flow = selectedOption.data("execution");
+    enviarRegistro(execution_flow);
+  }
 }
+
 
 
 function preCargarDatosProcess() {
@@ -303,13 +404,17 @@ function preCargarDatosProcess() {
       if (result.status == 200) {
         const processData = result.data;
 
-        // Llenar los selectores y seleccionar el valor correspondiente
+        // Llenar los selectores y campos
         processCatalog(processData.fk_process_catalog);
-        processManager(processData.fk_process_manager);
+        processManager(processData.fk_process_manager); // carga encargados
+        loadExecutionFlow(processData.id_process_stages);
         $('#process_catalog').val(processData.fk_process_catalog);
         $('#process_manager').val(processData.fk_process_manager);
         $('#description').val(processData.description);
-        $('#execution_flow').val(processData.execution_flow);
+
+        
+        getAreaByUser(processData.fk_process_manager);
+
       } else {
         Swal.fire({
           icon: 'error',
@@ -325,13 +430,16 @@ function preCargarDatosProcess() {
 }
 
 
+
 function saveProcessEdit() {
     const id_process_stages = sessionStorage.getItem('id_process_stages');
     const process_catalog = $("#process_catalog").val();
     const description = $("#description").val().trim();
-    const execution_flow = $("#execution_flow").val().trim();
+    const selectedOption = $("#execution_flow option:selected");
+    const selectedValue = selectedOption.val();
     const process_manager = $("#process_manager").val();
 
+    // Validaciones
     if (!process_catalog || process_catalog === "null") {
         alert("Debe seleccionar un proceso");
         $("#process_catalog").focus();
@@ -344,8 +452,8 @@ function saveProcessEdit() {
         return;
     }
 
-    if (execution_flow.length === 0) {
-        alert("Debe escribir un flujo de ejecución");
+    if (!selectedValue || selectedValue === "null") {
+        alert("Debe seleccionar un flujo de ejecución");
         $("#execution_flow").focus();
         return;
     }
@@ -356,49 +464,72 @@ function saveProcessEdit() {
         return;
     }
 
-    $.ajax({
-        url: "../../controller/process/controller_process.php",
-        cache: false,
-        dataType: 'JSON',
-        type: 'POST',
-        data: {
-            action: 7,
-            id_process_stages: id_process_stages,
-            process_catalog: process_catalog,
-            description: description,
-            execution_flow: execution_flow,
-            process_manager: process_manager
-        },
-        success: function (result) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Éxito',
-                text: 'Paso del proceso actualizado correctamente',
-                timer: 500,
-                timerProgressBar: true
-            }).then((r) => {
-                if (r.dismiss === Swal.DismissReason.timer) {
-                    window.location.href = "../process/process.php";
-                }
-            });
-        },
-        error: function (jqXHR, textStatus, errorThrown) {
-            console.log("Error en Ajax:");
-            console.log("Estado: " + textStatus);
-            console.log("Error: " + errorThrown);
-            console.log("Respuesta completa: ", jqXHR);
+    const enviarEdicion = (execution_flow_real) => {
+        $.ajax({
+            url: "../../controller/process/controller_process.php",
+            cache: false,
+            dataType: 'JSON',
+            type: 'POST',
+            data: {
+                action: 7,
+                id_process_stages: id_process_stages,
+                process_catalog: process_catalog,
+                description: description,
+                execution_flow: execution_flow_real,
+                process_manager: process_manager
+            },
+            success: function (result) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: 'Paso del proceso actualizado correctamente',
+                    timer: 500,
+                    timerProgressBar: true
+                }).then((r) => {
+                    if (r.dismiss === Swal.DismissReason.timer) {
+                        window.location.href = "../process/process.php";
+                    }
+                });
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log("Error en Ajax:");
+                console.log("Estado: " + textStatus);
+                console.log("Error: " + errorThrown);
+                console.log("Respuesta completa: ", jqXHR);
 
-            Swal.fire({
-                icon: 'error',
-                title: 'Error al actualizar el paso',
-                html: `<b>Estado:</b> ${textStatus}<br><b>Error:</b> ${errorThrown}`,
-                footer: 'Revisa consola para más detalles',
-                timer: 10000,
-                timerProgressBar: true,
-            });
-        }
-    });
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al actualizar el paso',
+                    html: `<b>Estado:</b> ${textStatus}<br><b>Error:</b> ${errorThrown}`,
+                    footer: 'Revisa consola para más detalles',
+                    timer: 10000,
+                    timerProgressBar: true,
+                });
+            }
+        });
+    };
+
+    // Si es secuencial, obtener el máximo y sumarle 1
+    if (selectedValue === "sequential") {
+        $.ajax({
+            url: "../../controller/process/controller_process.php",
+            type: "POST",
+            dataType: "JSON",
+            data: { action: 11 },
+            success: function (resp) {
+                const nextFlow = resp.next_execution_flow;
+                enviarEdicion(nextFlow);
+            },
+            error: function () {
+                alert("Error al obtener el siguiente flujo de ejecución.");
+            }
+        });
+    } else {
+        const execution_flow_real = selectedOption.data("execution");
+        enviarEdicion(execution_flow_real);
+    }
 }
+
 
 
 
@@ -476,6 +607,7 @@ document.addEventListener('DOMContentLoaded', function () {
         preCargarDatosProcess(id);
         processCatalog();
         processManager();
+        loadExecutionFlow();
     }
 });
 
