@@ -117,7 +117,7 @@ class alumnos
         }
     }
 
-    public function turnSingAreas($id_student, $user)
+    public function turnSingAreas($id_student, $user, $execution_flow)
 {
     $con = new DBconnection();
     $con->openDB();
@@ -129,7 +129,7 @@ class alumnos
     // Hash md5(id_estudiante|user|fecha)
     $hash_release = md5($id_student . '|' . $user . '|' . $date);
     
-    $dataP = $con->query("SELECT id_process_stages, description FROM process_stages WHERE execution_flow = 1 AND status = 1 LIMIT 1;");
+    $dataP = $con->query("SELECT id_process_stages, description FROM process_stages WHERE execution_flow = $execution_flow AND status = 1 LIMIT 1;");
 
 
     $row = pg_fetch_assoc($dataP);
@@ -749,6 +749,7 @@ public function coursesAds($id_student){
 }
 
 
+    // Funcion que obtniene todos los flujos de ejecucion y los agrupa para realizan la validacion de si se cumplen o no
     public function authorizationProcess($id_student) {
     $con = new DBconnection();
     $con->openDB();
@@ -787,7 +788,7 @@ public function coursesAds($id_student){
 
             if (pg_num_rows($check) === 0) {
                 $allStepsCompleted = false;
-                break; // No necesitamos seguir si uno no está completo
+                break;
             }
         }
 
@@ -804,47 +805,59 @@ public function coursesAds($id_student){
 }
 
 
-
-    public function getExecutionFlow($id_user) {
+// Funcion para obtener el flujo de ejecucion al que pertenece cada accion que se esta realizando
+    public function getExecutionFlow($id_user, $id_student) {
     $con = new DBconnection();
     $con->openDB();
 
     session_start();
     $fk_area  = $_SESSION["id_area"];
 
-    $dataProcess = $con->query("SELECT
-        process_stages.id_process_stages,
-        process_stages.execution_flow,
-        process_stages.fk_process_manager,
-        CONCAT(users.name, ' ', users.surname, ' ', users.second_surname) AS name_user,
-        areas.id_area AS id_area_user,
-        areas.name AS area_user
-    FROM process_stages
-    INNER JOIN process_catalog ON process_stages.fk_process_catalog = process_catalog.id_process_catalog
-    INNER JOIN users ON process_stages.fk_process_manager = users.id_user
-    INNER JOIN user_area ON users.id_user = user_area.fk_user
-    INNER JOIN areas ON user_area.fk_area = areas.id_area
-    WHERE process_stages.status = 1
-    AND process_stages.fk_process_manager = $id_user
-    AND areas.id_area = $fk_area
-    LIMIT 1"); // ← importante limitar si solo esperas uno
+    // Paso 1: Obtener todos los process_stages asignados al usuario
+    $query = "SELECT ps.id_process_stages, ps.execution_flow
+              FROM process_stages ps
+              INNER JOIN users u ON ps.fk_process_manager = u.id_user
+              INNER JOIN user_area ua ON u.id_user = ua.fk_user
+              INNER JOIN areas a ON ua.fk_area = a.id_area
+              WHERE ps.status = 1 
+              AND ps.fk_process_manager = $id_user 
+              AND a.id_area = $fk_area
+              ORDER BY ps.execution_flow ASC";
 
-    $data = array();
+    $result = $con->query($query);
 
-    if ($row = pg_fetch_array($dataProcess)) {
-        $data = array(
-            "id_process_stages" => $row["id_process_stages"],
-            "execution_flow" => $row["execution_flow"],
-            "fk_process_manager" => $row["fk_process_manager"],
-            "name_user" => $row["name_user"],
-            "id_area_user" => $row["id_area_user"],
-            "area_user" => $row["area_user"]
-        );
+    $pendingFlows = [];
+
+    // Paso 2: Verificar cuáles no han sido completados por el estudiante
+    while ($row = pg_fetch_array($result)) {
+        $stageId = $row["id_process_stages"];
+        $flow = $row["execution_flow"];
+
+        // Verificamos si ese paso ya está completado por el estudiante
+        $check = $con->query("SELECT 1 FROM trace_student_areas 
+                              WHERE fk_student = '$id_student' 
+                              AND fk_process_stage = '$stageId' 
+                              AND status = 2 LIMIT 1");
+
+        if (pg_num_rows($check) === 0) {
+            // Si no está completado, lo agregamos como pendiente
+            $pendingFlows[] = $flow;
+        }
     }
 
     $con->closeDB();
-    return array("status" => 200, "data" => $data);
+
+    $nextFlow = !empty($pendingFlows) ? min($pendingFlows) : null;
+
+    return array(
+        "status" => 200,
+        "data" => array(
+            "execution_flow" => $nextFlow,
+            "all_pending_flows" => $pendingFlows
+        )
+    );
 }
+
 
 
 

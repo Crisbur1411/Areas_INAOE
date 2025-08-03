@@ -44,7 +44,7 @@ class alumnosController
 	{
 		$this->alumnos = new alumnos();
 
-		$data = $this->alumnos->turnSingAreas($_POST["id_student"], $_POST["user"]);
+		$data = $this->alumnos->turnSingAreas($_POST["id_student"], $_POST["user"], $_POST["execution_flow"]);
 		echo json_encode($data);
 	}
 
@@ -170,7 +170,7 @@ class alumnosController
 
 	public function getExecutionFlow() {
 		$this->alumnos = new alumnos();
-		$data = $this->alumnos->getExecutionFlow($_POST["id_user"]);
+		$data = $this->alumnos->getExecutionFlow($_POST["id_user"], $_POST["id_student"]);
 		echo json_encode($data);
 	}
 	

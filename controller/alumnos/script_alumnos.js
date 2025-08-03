@@ -110,8 +110,10 @@ function newStudent() {
 }
 
 function turnSingAreas(id_student) {
-    $u = document.getElementById("user");
-    $user = $u.innerHTML;
+    const $u = document.getElementById("user");
+    const $user = $u.innerHTML;
+    const $id_user = ID_USER;
+    console.log("ID_USER:", $id_user);
 
     swal({
         title: "TURNAR A LIBERACIÓN DE ÁREAS",
@@ -122,64 +124,92 @@ function turnSingAreas(id_student) {
             Enviar: true,
         },
     }).then((sendDoc) => {
-        if (sendDoc) {
-            $.ajax({
-                url: "../../controller/alumnos/controller_alumnos.php",
-                cache: false,
-                dataType: 'JSON',
-                type: 'POST',
-                data: { action: 3, id_student: id_student, user: $user },
-                success: function (result) {
-                    console.log(result);
+        if (!sendDoc) return;
 
-                    // Aquí se envia la llamada para enviar el correo
-                    $.ajax({
-                        url: "../../services/send_email.php",
-                        type: 'GET',
-                        dataType: 'JSON',
-                        data: { id_student: id_student },
-                        success: function(response) {
-                            console.log(response);
-                        },
-                        error: function(error) {
-                            console.error(error);
-                        }
-                    });
+        // Paso 1: Obtener el execution_flow del usuario
+        $.ajax({
+            url: "../../controller/alumnos/controller_alumnos.php",
+            type: "POST",
+            dataType: "JSON",
+            data: { action: 21, id_user: $id_user, id_student: id_student },
+            success: function (responseFlow) {
+                if (responseFlow.status === 200 && responseFlow.data) {
+                    const execution_flow = responseFlow.data.execution_flow;
 
+                    // ✅ Mostrar en consola
+                    console.log("Execution Flow obtenido:", execution_flow);
 
+                    // Paso 2: Turnar al alumno con el flujo
                     $.ajax({
                         url: "../../controller/alumnos/controller_alumnos.php",
                         cache: false,
                         dataType: 'JSON',
                         type: 'POST',
-                        data: { action: 9, id_student: result },
-                        success: function (result) { },
+                        data: {
+                            action: 3,
+                            id_student: id_student,
+                            user: $user,
+                            execution_flow: execution_flow
+                        },
+                        success: function (result) {
+                            console.log(result);
+
+                            // Enviar el correo
+                            $.ajax({
+                                url: "../../services/send_email.php",
+                                type: 'GET',
+                                dataType: 'JSON',
+                                data: { id_student: id_student },
+                                success: function (response) {
+                                    console.log(response);
+                                },
+                                error: function (error) {
+                                    console.error(error);
+                                }
+                            });
+
+                            // Marcar como turnado
+                            $.ajax({
+                                url: "../../controller/alumnos/controller_alumnos.php",
+                                cache: false,
+                                dataType: 'JSON',
+                                type: 'POST',
+                                data: { action: 9, id_student: result },
+                                success: function (result) { },
+                                error: function (result) {
+                                    console.log(result);
+                                }
+                            });
+                        },
                         error: function (result) {
                             console.log(result);
+                        },
+                        complete: function () {
+                            $(".loader").fadeOut("slow");
+                            $("#info").removeClass("d-none");
+                            listStudent();
+                            listStudentInProgress();
+                            listStudentFree();
+                            listStudentCancel();
                         }
                     });
-                },
-                error: function (result) {
-                    console.log(result);
-                },
-                complete: function () {
-                    $(".loader").fadeOut("slow");
-                    $("#info").removeClass("d-none");
-                    listStudent();
-                    listStudentInProgress();
-                    listStudentFree();
-                    listStudentCancel();
-                }
-            });
 
-            swal("Turnado a firma!", {
-                icon: "success",
-            }).then(() => {
-                location.reload(); // Recarga la página después de la alerta
-            });
-        }
+                    swal("Turnado a firma!", {
+                        icon: "success",
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    swal("Error", "No se pudo obtener el flujo del usuario.", "error");
+                }
+            },
+            error: function () {
+                swal("Error", "Fallo la consulta de flujo del usuario.", "error");
+            }
+        });
     });
 }
+
 
 
 
@@ -276,7 +306,7 @@ function freeStudent(id_student) {
         url: "../../controller/alumnos/controller_alumnos.php",
         type: "POST",
         dataType: "JSON",
-        data: { action: 21, id_user: $id_user },
+        data: { action: 21, id_user: $id_user, id_student: id_student },
         success: function (responseFlow) {
             if (responseFlow.status === 200 && responseFlow.data) {
                 const user_execution_flow = responseFlow.data.execution_flow;
@@ -320,7 +350,7 @@ function freeStudent(id_student) {
                                         url: "../../controller/alumnos/controller_alumnos.php",
                                         type: 'POST',
                                         dataType: 'JSON',
-                                        data: { action: 6, id_student: id_student, user: $user, id_user: $id_user },
+                                        data: { action: 6, id_student: id_student, user: $user, id_user: $id_user},
                                         success: function () {
                                             // Marcar al estudiante como finalizado
                                             $.ajax({

@@ -79,16 +79,18 @@ function signStudent(id_student, full_name) {
     const $u = document.getElementById("user");
     const $user = $u.innerHTML;
     const $id_user = ID_USER;
+    console.log("ID del usuario:", $id_user);
 
     // Paso 1: Obtener el execution_flow del gestor
     $.ajax({
         url: "../../controller/alumnos/controller_alumnos.php",
         type: "POST",
         dataType: "JSON",
-        data: { action: 21, id_user: $id_user },
+        data: { action: 21, id_user: $id_user, id_student: id_student },
         success: function (responseFlow) {
             if (responseFlow.status === 200 && responseFlow.data) {
                 const user_execution_flow = parseInt(responseFlow.data.execution_flow);
+                console.log("Execution flow del usuario:", user_execution_flow);
 
                 // Paso 2: Obtener el avance del estudiante
                 $.ajax({
