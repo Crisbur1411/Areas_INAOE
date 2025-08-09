@@ -210,6 +210,16 @@ if (!isset($_SESSION['username'])) {
 							<input type="date" class="form-control" id="date_conclusion">
 						</div>																					
 					</div>
+				</div>
+				<div class="form-group">
+					<div class="row">
+						<div class="col-sm-8">
+							<label for="process_catalog"><span class="text-danger">* </span>Proceso</label>
+							<select name="process_catalog" id="process_catalog" class="form-control">
+								<option value="null" selected disabled>Seleccione un Proceso</option>
+							</select>
+						</div>																					
+					</div>
 				</div>	
 				<br><br>	
 				<div class="form-group" align="center">

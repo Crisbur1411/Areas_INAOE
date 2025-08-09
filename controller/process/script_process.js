@@ -95,7 +95,6 @@ function listProcess() {
 
   if ($("#process_catalog_filter").length === 0) return; // No existe, no hacer nada
   const id_process_catalog = $("#process_catalog_filter").val();
-  console.log("ID del proceso seleccionado:", id_process_catalog);
 
   $.ajax({
     url: "../../controller/process/controller_process.php",
@@ -299,8 +298,7 @@ $(document).ready(function () {
 
 
 function loadExecutionFlow(idCatalog = null, idStepSelected = null) {
-  console.log("id del catálogo:", idCatalog);
-  console.log("id del paso seleccionado:", idStepSelected);
+
 
   $(".loader").fadeOut("slow");
   $.ajax({

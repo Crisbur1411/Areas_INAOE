@@ -75,13 +75,13 @@ class alumnos
         return $data;
     }
 
-    public function saveStudent ($name, $surname, $secondsurname, $email, $controlnumber, $course, $institucion, $date_conclusion)
+    public function saveStudent ($name, $surname, $secondsurname, $email, $controlnumber, $course, $institucion, $date_conclusion, $process_catalog)
     {
         $con=new DBconnection();
         $con->openDB();
 
-        $studentData = $con->query("INSERT INTO students (name, surname, second_surname, control_number, email, fk_academic_programs, institucion, fecha_conclusion, date_register) 
-        VALUES ('".$name."','".$surname."', '".$secondsurname."','".$controlnumber."','".$email."',".$course.", '".$institucion."', '".$date_conclusion."', NOW()) 
+        $studentData = $con->query("INSERT INTO students (name, surname, second_surname, control_number, email, fk_academic_programs, institucion, fecha_conclusion, date_register, fk_process_catalog) 
+        VALUES ('".$name."','".$surname."', '".$secondsurname."','".$controlnumber."','".$email."',".$course.", '".$institucion."', '".$date_conclusion."', NOW(), ".$process_catalog.") 
         RETURNING id_student");
 
         
@@ -117,7 +117,7 @@ class alumnos
         }
     }
 
-    public function turnSingAreas($id_student, $user, $execution_flow)
+    public function turnSingAreas($id_student, $user)
 {
     $con = new DBconnection();
     $con->openDB();
@@ -128,19 +128,9 @@ class alumnos
 
     // Hash md5(id_estudiante|user|fecha)
     $hash_release = md5($id_student . '|' . $user . '|' . $date);
-    
-    $dataP = $con->query("SELECT id_process_stages, description FROM process_stages WHERE execution_flow = $execution_flow AND status = 1 LIMIT 1;");
 
-
-    $row = pg_fetch_assoc($dataP);
-
-    if ($row) {
-        $id_stage = $row['id_process_stages'];
-    }
-
-
-    $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, status, hash_release, fk_process_stage) 
-                                VALUES (" . $id_student . ", '" . $descrip . "', '" . $date . "', 2, '" . $hash_release . "', " . $id_stage . ") 
+    $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, status, hash_release) 
+                                VALUES (" . $id_student . ", '" . $descrip . "', '" . $date . "', 2, '" . $hash_release . "') 
                                 RETURNING fk_student ");
 
     $validateUpdateTurn = pg_fetch_row($updateTurn);
@@ -669,7 +659,18 @@ public function coursesAds($id_student){
         $con=new DBconnection();
         $con->openDB();
 
-        $dataR = $con->query("SELECT students.id_student, students.name, students.surname, students.second_surname, students.control_number, students.email, students.status, students.institucion,students.fecha_conclusion FROM students WHERE id_student=". $id_student);
+        $dataR = $con->query("SELECT students.id_student, 
+        students.name, 
+        students.surname, 
+        students.second_surname, 
+        students.control_number, 
+        students.email, 
+        students.status, 
+        students.institucion,
+        students.fecha_conclusion,
+        students.fk_process_catalog 
+        FROM students 
+        WHERE id_student=". $id_student);
 
         $row = pg_fetch_array($dataR);
         
@@ -682,7 +683,8 @@ public function coursesAds($id_student){
             "email" =>$row["email"],
             "status" =>$row["status"],
             "institucion" =>$row["institucion"],
-            "date_conclusion" =>$row["fecha_conclusion"]
+            "date_conclusion" =>$row["fecha_conclusion"],
+            "fk_process_catalog" =>$row["fk_process_catalog"]
         );
 
         $con->closeDB();
@@ -691,11 +693,11 @@ public function coursesAds($id_student){
     }
 
 
-    public function updateStudent ($id_student, $name, $surname, $secondsurname, $email, $controlnumber, $course, $institucion, $date_conclusion)    {
+    public function updateStudent ($id_student, $name, $surname, $secondsurname, $email, $controlnumber, $course, $institucion, $date_conclusion, $process_catalog)    {
         $con=new DBconnection();
         $con->openDB();
 
-        $updateData = $con->query("UPDATE students SET name = '".$name."', surname = '" .$surname."', second_surname = '" .$secondsurname."', email = '" .$email."', control_number = '" .$controlnumber."', fk_academic_programs = " .$course.", institucion = '" .$institucion."', fecha_conclusion = '" .$date_conclusion."'
+        $updateData = $con->query("UPDATE students SET name = '".$name."', surname = '" .$surname."', second_surname = '" .$secondsurname."', email = '" .$email."', control_number = '" .$controlnumber."', fk_academic_programs = " .$course.", institucion = '" .$institucion."', fecha_conclusion = '" .$date_conclusion."', fk_process_catalog = " .$process_catalog."
          WHERE id_student= ". $id_student ." RETURNING id_student ");
 
         $validateupdateData = pg_fetch_row($updateData);
@@ -747,6 +749,37 @@ public function coursesAds($id_student){
 
     return array("status" => 200, "data" => $data);
 }
+
+
+
+public function getProcessCatalog() {
+        $con = new DBconnection(); 
+        $con->openDB();
+
+        $dataTitle = $con->query("SELECT
+                                        id_process_catalog,
+                                        name,
+                                        description
+                                    FROM
+                                        process_catalog
+                                    WHERE
+                                        status = 1
+                                    ORDER BY id_process_catalog ASC;");
+
+        $data = array();
+
+        while($row = pg_fetch_array($dataTitle)){
+            $dat = array(
+                "id_process_catalog" => $row["id_process_catalog"],
+                "name" => $row["name"],
+                "description" => $row["description"]
+            );
+            $data[] = $dat;
+        }
+        $con->closeDB();
+        
+        return $data;
+    }
 
 
     // Funcion que obtniene todos los flujos de ejecucion y los agrupa para realizan la validacion de si se cumplen o no

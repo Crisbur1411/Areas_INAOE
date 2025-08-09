@@ -28,7 +28,7 @@ class alumnosController
 		public function saveStudent(){
     		$this->alumnos= new alumnos();
 
-	      	$data = $this->alumnos->saveStudent($_POST["name"], $_POST["surname"], $_POST["secondsurname"], $_POST["email"], $_POST["controlnumber"], $_POST["course"], $_POST["institucion"], $_POST["date_conclusion"]);
+	      	$data = $this->alumnos->saveStudent($_POST["name"], $_POST["surname"], $_POST["secondsurname"], $_POST["email"], $_POST["controlnumber"], $_POST["course"], $_POST["institucion"], $_POST["date_conclusion"], $_POST["process_catalog"]);
 	      	echo ($data);
 		}
 
@@ -44,7 +44,7 @@ class alumnosController
 	{
 		$this->alumnos = new alumnos();
 
-		$data = $this->alumnos->turnSingAreas($_POST["id_student"], $_POST["user"], $_POST["execution_flow"]);
+		$data = $this->alumnos->turnSingAreas($_POST["id_student"], $_POST["user"]);
 		echo json_encode($data);
 	}
 
@@ -149,7 +149,7 @@ class alumnosController
 		public function updateStudent(){
     		$this->alumnos= new alumnos();
 
-	      	$data = $this->alumnos->updateStudent($_POST["id_student"], $_POST["name"], $_POST["surname"], $_POST["secondsurname"], $_POST["email"], $_POST["controlnumber"], $_POST["course"], $_POST["institucion"], $_POST["date_conclusion"]);
+	      	$data = $this->alumnos->updateStudent($_POST["id_student"], $_POST["name"], $_POST["surname"], $_POST["secondsurname"], $_POST["email"], $_POST["controlnumber"], $_POST["course"], $_POST["institucion"], $_POST["date_conclusion"], $_POST["process_catalog"]);
 	      	echo ($data);
 		}
 
@@ -173,6 +173,12 @@ class alumnosController
 		$data = $this->alumnos->getExecutionFlow($_POST["id_user"], $_POST["id_student"]);
 		echo json_encode($data);
 	}
+
+	public function getProcessCatalog(){
+            $this->alumnos = new alumnos();
+            $data = $this->alumnos->getProcessCatalog();
+            echo json_encode($data);
+        }
 	
 
 
@@ -240,6 +246,8 @@ if (isset($_POST["action"])) {
 		$obj->authorizationProcess();
 	} if ($_POST["action"] == 21) {
 		$obj->getExecutionFlow();
+	} if ($_POST["action"] == 22) {
+		$obj->getProcessCatalog();
 	}
 	
 }
