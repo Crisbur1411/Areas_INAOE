@@ -204,7 +204,7 @@ class Process {
 
 
 
-public function getExetcutionFlow(){
+public function getExetcutionFlow($id_process_catalog){
     $con = new DBconnection(); 
     $con->openDB();
 
@@ -216,6 +216,7 @@ public function getExetcutionFlow(){
                                     process_stages
                                 WHERE 
                                     status = 1
+                                    AND fk_process_catalog = $id_process_catalog
                                 ORDER BY execution_flow ASC;");
 
     $data = array();

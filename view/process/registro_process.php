@@ -151,12 +151,6 @@ if (!isset($_SESSION['username'])) {
 			<br>
 			<div class="form-group">
 				<div class="row">
-                    <div class="col-sm-4">
-							<label for="process_catalog"><span class="text-danger">* </span>Proceso</label>
-							<select name="process_catalog" id="process_catalog" class="form-control">
-								<option value="null" selected disabled>Seleccione un Proceso</option>
-							</select>
-						</div>
 						<div class="col-sm-4">
 							<label for="description"><span class="text-danger">* </span>Descripción</label>
 							<input type="text" class="form-control"  id="description" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">
@@ -166,17 +160,17 @@ if (!isset($_SESSION['username'])) {
                             <select name="execution_flow" id="execution_flow" class="form-control">
 								<option value="null" selected disabled>Seleccione un Paso</option>
 							</select>
-                        </div>					
-					</div>
-				</div>
-                <div class="form-group">
-				<div class="row">
-                    <div class="col-sm-4">
+                        </div>	
+                        <div class="col-sm-4">
 							<label for="process_manager"><span class="text-danger">* </span>Encargado de Liberar</label>
 							<select name="process_manager" id="process_manager" class="form-control">
 								<option value="null" selected disabled>Seleccione un Encargado</option>
 							</select>
-						</div>
+						</div>				
+					</div>
+				</div>
+                <div class="form-group">
+				<div class="row">
                         <div class="col-sm-4">
 							<label for="area_user"><span class="text-danger">* </span>Área Asociada al Encargado</label>
 							<input type="text" class="form-control"  id="area_user" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();" disabled>

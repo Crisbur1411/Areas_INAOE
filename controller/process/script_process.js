@@ -25,7 +25,6 @@ $(function () {
     $(".loader").fadeOut("slow");
     $("#info").removeClass("d-none");
     processCatalogFilter();
-    listProcess();
     processManager();
     loadExecutionFlow();
 });
@@ -70,6 +69,8 @@ function processCatalogFilter(selectedId = null) {
 
       // Ejecutar la lista de procesos inmediatamente después de llenar el select
       listProcess();
+      // Guardar selección en sessionStorage para acceder desde otra página
+      sessionStorage.setItem('selectedProcessCatalogId', selectedId);
     },
     error: function (result) {
       console.log("Error al cargar procesos:", result);
@@ -77,16 +78,18 @@ function processCatalogFilter(selectedId = null) {
   });
 }
 
-
+// También guardar la selección si el usuario cambia el filtro manualmente
 $(document).on("change", "#process_catalog_filter", function() {
-  let selectedText = $(this).find("option:selected").text();
-  $("#processSelectedTitle").text(selectedText);
+  const selectedId = $(this).val();
+  sessionStorage.setItem('selectedProcessCatalogId', selectedId);
   listProcess();
 });
 
 
 
 function listProcess() {
+
+  if ($("#process_catalog_filter").length === 0) return; // No existe, no hacer nada
   const id_process_catalog = $("#process_catalog_filter").val();
   console.log("ID del proceso seleccionado:", id_process_catalog);
 
@@ -97,7 +100,7 @@ function listProcess() {
     type: 'POST',
     data: { 
       action: 1,
-      id_process_catalog: id_process_catalog // se envía al backend
+      id_process_catalog: id_process_catalog
     },
     success: function (result) {
       stepCount = 0;
@@ -171,7 +174,6 @@ function listProcess() {
 $(document).on("change", "#process_catalog_filter", function () {
   listProcess();
 });
-
 
 
 
@@ -264,7 +266,7 @@ function getAreaByUser(id_user) {
       if (response.length > 0) {
         $("#area_user").val(response[0].name_area);
       } else {
-        $("#area_user").val("Sin área asignada"); // Limpia si no hay área
+        $("#area_user").val("Sin área asignada");
       }
     },
     error: function (error) {
@@ -277,14 +279,24 @@ function getAreaByUser(id_user) {
 
 
 
+$(document).ready(function() {
+  // Obtener el parámetro 'id' de la URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const selectedIdFromUrl = urlParams.get('process_catalog'); 
+
+  // Llamar a loadExecutionFlow con ese valor
+  loadExecutionFlow(selectedIdFromUrl);
+});
+
 function loadExecutionFlow(selectedId = null) {
+  console.log("id de proceso:", selectedId);
   $(".loader").fadeOut("slow");
   $.ajax({
     url: "../../controller/process/controller_process.php",
     cache: false,
     dataType: 'JSON',
     type: 'POST',
-    data: { action: 10 },
+    data: { action: 10, id_process_catalog: selectedId },
     success: function (result) {
       let options = `<option value="null" disabled ${selectedId === null ? "selected" : ""}>Seleccione un Paso</option>`;
       
@@ -299,7 +311,6 @@ function loadExecutionFlow(selectedId = null) {
 
       $("#execution_flow").html(options);
 
-      // Si se desea ver en consola en precarga
       if (selectedId && selectedId !== "sequential") {
         const selectedOption = $("#execution_flow option:selected");
         const execFlow = selectedOption.data("execution");
@@ -311,6 +322,7 @@ function loadExecutionFlow(selectedId = null) {
     }
   });
 }
+
 
 
 
@@ -326,17 +338,22 @@ $("#execution_flow").on("change", function() {
 
 
 
+function getQueryParam(param) {
+  const urlParams = new URLSearchParams(window.location.search);
+  return urlParams.get(param);
+}
+
 function saveProcess() {
-  const process_catalog = $("#process_catalog").val();
+  // Tomar process_catalog solo desde la URL
+  const process_catalog = getQueryParam('process_catalog');
+
   const description = $("#description").val().trim();
   const selectedOption = $("#execution_flow option:selected");
   const selectedValue = selectedOption.val();
   const process_manager = $("#process_manager").val();
 
-  // Validaciones
   if (!process_catalog) {
-    alert("Tiene que seleccionar un proceso");
-    $("#process_catalog").focus();
+    alert("El proceso no está definido en la URL");
     return;
   }
 
@@ -397,7 +414,6 @@ function saveProcess() {
     });
   };
 
-  // Evaluar si se seleccionó PASO SECUENCIAL
   if (selectedValue === "sequential") {
     $.ajax({
       url: "../../controller/process/controller_process.php",
@@ -420,6 +436,7 @@ function saveProcess() {
 
 
 
+
 function preCargarDatosProcess() {
   const processID = sessionStorage.getItem('id_process_stages');
   const formData = new FormData();
@@ -439,7 +456,6 @@ function preCargarDatosProcess() {
         const processData = result.data;
 
         // Llenar los selectores y campos
-        processCatalog(processData.fk_process_catalog);
         processManager(processData.fk_process_manager); // carga encargados
         loadExecutionFlow(processData.id_process_stages);
         $('#process_catalog').val(processData.fk_process_catalog);
@@ -639,7 +655,6 @@ document.addEventListener('DOMContentLoaded', function () {
     let id = new URLSearchParams(window.location.search).get('dc');
     if(id){ // Solo si existe el id en la URL
         preCargarDatosProcess(id);
-        processCatalog();
         processManager();
         loadExecutionFlow();
     }
@@ -651,8 +666,26 @@ function editProcess(id_process_stages){
 }
 
 function NewProcess() {
-    location.href = "../process/registro_process.php";  
+  const selectedProcessId = $("#process_catalog_filter").val();
+  if (!selectedProcessId) {
+    alert("Por favor, selecciona un proceso en el filtro antes de añadir un nuevo paso.");
+    return;
+  }
+  // Redirigir pasando el id del proceso seleccionado
+  location.href = `../process/registro_process.php?process_catalog=${selectedProcessId}`;
 }
+
+// Al cargar el documento, verificar si hay un parámetro en la URL y asignarlo a la variable `processCatalogId`
+$(document).ready(function() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const processCatalogId = urlParams.get('process_catalog');
+  
+  if (processCatalogId) {
+    $("#process_catalog").val(processCatalogId);
+    console.log("processCatalogId:", processCatalogId);
+  }
+});
+
 
 
 function cancel() {

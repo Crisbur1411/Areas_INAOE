@@ -49,7 +49,7 @@
 
         public function getExetcutionFlow(){
             $this->Process = new Process();
-            $data = $this->Process->getExetcutionFlow();
+            $data = $this->Process->getExetcutionFlow($_POST['id_process_catalog']);
             echo json_encode($data);
         }
 
