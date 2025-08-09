@@ -156,10 +156,19 @@ if (!isset($_SESSION['username'])) {
 
     <br><br>
     <div id="info" class="d-none" style="text-align: center;">
-        <span style="color: black; font-weight: bold; font-size: 16px; align:left; ">GESTIÓN DE PROCESOS</span><br>
-        <div class="card mt-5">
+        <span style="color: black; font-weight: bold; font-size: 16px; align:left;">GESTIÓN DE PROCESOS</span><br>
+
+        <!-- Filtro de Procesos -->
+        <div class="form-group mt-3 mb-3 text-left" style="width: 300px;">
+            <label for="process_catalog_filter" style="font-weight: bold;">Filtrar por Proceso:</label>
+            <select id="process_catalog_filter" class="form-control"></select>
+        </div>
+
+
+        <div class="card mt-3">
             <div class="card-header text-white" style="background-color: #691C32;">
                 <h5>Configuración y Parametrización de Procesos</h5>
+                <h5 id="processSelectedTitle"></h5>
             </div>
             <div class="card-body" id="steps-container">
                 <!--Los Pasos generados dinámicamente se colocarán aquí -->
@@ -171,62 +180,64 @@ if (!isset($_SESSION['username'])) {
     </div>
 
 
-<div class="modal fade" id="processDetailsModal" tabindex="-1" role="dialog" aria-labelledby="processDetailsTitle" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
 
-      <!-- Header -->
-      <div class="modal-header" style="background: #691C32; color: white;">
-        <h5 class="modal-title w-100 text-center">Detalles del Proceso</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar" style="color: white;">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
+    <div class="modal fade" id="processDetailsModal" tabindex="-1" role="dialog" aria-labelledby="processDetailsTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
 
-      <!-- Body -->
-      <div class="modal-body">
-        <table class="table table-bordered">
-          <tbody>
-            <tr>
-              <th class="text-center">Nombre del Proceso</th>
-              <td id="process-name" class="text-center"></td>
-            </tr>
-            <tr>
-              <th class="text-center">Detalles</th>
-              <td id="process-description" class="text-center"></td>
-            </tr>
-            <tr>
-              <th class="text-center">Responsable</th>
-              <td id="process-responsible" class="text-center"></td>
-            </tr>
-            <tr>
-              <th class="text-center">Área Asociada</th>
-              <td id="area-user" class="text-center"></td>
-            </tr>
-            <tr>
-              <th class="text-center">Tipo de Paso</th>
-              <td id="process-type" class="text-center"></td>
-            </tr>
-            <tr>
-              <th class="text-center">Paso en flujo de ejecucion</th>
-              <td id="process-execution-flow" class="text-center"></td>
-            </tr>
-            <tr>
-              <th class="text-center">Fecha y Hora de Creación</th>
-              <td id="process-date" class="text-center"></td>
-            </tr>
-          </tbody>
-        </table>
+                <!-- Header -->
+                <div class="modal-header" style="background: #691C32; color: white;">
+                    <h5 class="modal-title w-100 text-center">Detalles del Proceso</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar" style="color: white;">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
 
-      <!-- Footer -->
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
-      </div>
+                <!-- Body -->
+                <div class="modal-body">
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <th class="text-center">Nombre del Proceso</th>
+                                <td id="process-name" class="text-center"></td>
+                            </tr>
+                            <tr>
+                                <th class="text-center">Detalles</th>
+                                <td id="process-description" class="text-center"></td>
+                            </tr>
+                            <tr>
+                                <th class="text-center">Responsable</th>
+                                <td id="process-responsible" class="text-center"></td>
+                            </tr>
+                            <tr>
+                                <th class="text-center">Área Asociada</th>
+                                <td id="area-user" class="text-center"></td>
+                            </tr>
+                            <tr>
+                                <th class="text-center">Tipo de Paso</th>
+                                <td id="process-type" class="text-center"></td>
+                            </tr>
+                            <tr>
+                                <th class="text-center">Paso en flujo de ejecucion</th>
+                                <td id="process-execution-flow" class="text-center"></td>
+                            </tr>
+                            <tr>
+                                <th class="text-center">Fecha y Hora de Creación</th>
+                                <td id="process-date" class="text-center"></td>
+                            </tr>
+                        </tbody>
+                    </table>
 
+                    <!-- Footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
-</div>
 
 
 

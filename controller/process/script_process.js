@@ -24,7 +24,7 @@ var document_id;
 $(function () {
     $(".loader").fadeOut("slow");
     $("#info").removeClass("d-none");
-    processCatalog();
+    processCatalogFilter();
     listProcess();
     processManager();
     loadExecutionFlow();
@@ -33,81 +33,144 @@ $(function () {
 let stepCount = 0;
 
 
-function listProcess() {
-    $.ajax({
-        url: "../../controller/process/controller_process.php",
-        cache: false,
-        dataType: 'JSON',
-        type: 'POST',
-        data: { action: 1 },
-        success: function (result) {
-            stepCount = 0;
-            $('#steps-container').empty();
 
-            const flujoCounts = {};
 
-            // Contar cuántos pasos activos existen
-            const pasosActivos = result.filter(val => val.status == 1);
+function processCatalogFilter(selectedId = null) {
+  $(".loader").fadeOut("slow");
+  $.ajax({
+    url: "../../controller/process/controller_process.php",
+    cache: false,
+    dataType: 'JSON',
+    type: 'POST',
+    data: { action: 3 },
+    success: function (result) {
+      let options = "";
+      let selectedText = "";
 
-            if (pasosActivos.length === 0) {
-                $('#steps-container').html(`
-                    <div class="alert alert-warning" role="alert">
-                        No existen pasos asignados aún.
-                    </div>
-                `);
-                return;
-            }
+      $.each(result, function (index, val) {
+        let selected = "";
 
-            // Contar ocurrencias de cada flujo
-            pasosActivos.forEach(val => {
-                flujoCounts[val.flujo_ejecucion] = (flujoCounts[val.flujo_ejecucion] || 0) + 1;
-            });
-
-            // Renderizar pasos
-            pasosActivos.forEach(val => {
-                stepCount++;
-
-                const tipo = flujoCounts[val.flujo_ejecucion] > 1 ? 'Simultáneo' : 'Secuencial';
-
-                const stepHTML = `
-                    <div class="border rounded p-3 mb-3" style="border-left: 6px solid #691C32; background-color: #f8f9fa;">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div>
-                                <strong>Paso ${stepCount}:</strong>
-                                <span>${val.description}</span>
-                            </div>
-                            <div class="d-flex align-items-center">
-                                <div class="form-group mb-0 mr-3">
-                                    <label class="mb-0 mr-2">Tipo:</label>
-                                    <select class="form-control form-control-sm d-inline-block" style="width: auto;" disabled>
-                                        <option ${tipo === 'Secuencial' ? 'selected' : ''}>Secuencial</option>
-                                        <option ${tipo === 'Simultáneo' ? 'selected' : ''}>Simultáneo</option>
-                                    </select>
-                                </div>
-                                <div class="btn-group" role="group">
-                                    <button class="btn btn-sm btn-outline-primary ml-1" title="Ver detalles" onclick="DetailsProcess(${val.id_process_stages}, '${tipo}')">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-secondary ml-1" title="Editar paso" onclick="editProcess(${val.id_process_stages})">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="btn btn-sm btn-danger ml-1" title="Eliminar paso" onclick="deleteProcess(${val.id_process_stages})">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                $('#steps-container').append(stepHTML);
-            });
-        },
-        error: function (result) {
-            console.error("Error al cargar procesos:", result);
+        // Si no hay selectedId y es el primer registro, seleccionarlo
+        if (selectedId === null && index === 0) {
+          selected = "selected";
+          selectedId = val.id_process_catalog;
+          selectedText = val.description; // Guardar texto
+        } else if (val.id_process_catalog == selectedId) {
+          selected = "selected";
+          selectedText = val.description; // Guardar texto
         }
-    });
+
+        options += `<option value='${val.id_process_catalog}' ${selected}>${val.description}</option>`;
+      });
+
+      $("#process_catalog_filter").html(options);
+
+      // Poner texto en el segundo h5
+      $("#processSelectedTitle").text(selectedText);
+
+      // Ejecutar la lista de procesos inmediatamente después de llenar el select
+      listProcess();
+    },
+    error: function (result) {
+      console.log("Error al cargar procesos:", result);
+    }
+  });
 }
+
+
+$(document).on("change", "#process_catalog_filter", function() {
+  let selectedText = $(this).find("option:selected").text();
+  $("#processSelectedTitle").text(selectedText);
+  listProcess();
+});
+
+
+
+function listProcess() {
+  const id_process_catalog = $("#process_catalog_filter").val();
+  console.log("ID del proceso seleccionado:", id_process_catalog);
+
+  $.ajax({
+    url: "../../controller/process/controller_process.php",
+    cache: false,
+    dataType: 'JSON',
+    type: 'POST',
+    data: { 
+      action: 1,
+      id_process_catalog: id_process_catalog // se envía al backend
+    },
+    success: function (result) {
+      stepCount = 0;
+      $('#steps-container').empty();
+
+      const flujoCounts = {};
+      const pasosActivos = result.filter(val => val.status == 1);
+
+      if (pasosActivos.length === 0) {
+        $('#steps-container').html(`
+          <div class="alert alert-warning" role="alert">
+            No existen pasos asignados aún para este proceso.
+          </div>
+        `);
+        return;
+      }
+
+      // Contar ocurrencias de cada flujo
+      pasosActivos.forEach(val => {
+        flujoCounts[val.flujo_ejecucion] = (flujoCounts[val.flujo_ejecucion] || 0) + 1;
+      });
+
+      // Renderizar pasos
+      pasosActivos.forEach(val => {
+        stepCount++;
+        const tipo = flujoCounts[val.flujo_ejecucion] > 1 ? 'Simultáneo' : 'Secuencial';
+
+        const stepHTML = `
+          <div class="border rounded p-3 mb-3" style="border-left: 6px solid #691C32; background-color: #f8f9fa;">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <strong>Paso ${stepCount}:</strong>
+                <span>${val.description}</span>
+                <div><small><strong>Responsable:</strong> ${val.name_user}</small></div>
+              </div>
+              <div class="d-flex align-items-center">
+                <div class="form-group mb-0 mr-3">
+                  <label class="mb-0 mr-2">Tipo:</label>
+                  <select class="form-control form-control-sm d-inline-block" style="width: auto;" disabled>
+                    <option ${tipo === 'Secuencial' ? 'selected' : ''}>Secuencial</option>
+                    <option ${tipo === 'Simultáneo' ? 'selected' : ''}>Simultáneo</option>
+                  </select>
+                </div>
+                <div class="btn-group" role="group">
+                  <button class="btn btn-sm btn-outline-primary ml-1" title="Ver detalles" onclick="DetailsProcess(${val.id_process_stages}, '${tipo}')">
+                    <i class="fas fa-eye"></i>
+                  </button>
+                  <button class="btn btn-sm btn-secondary ml-1" title="Editar paso" onclick="editProcess(${val.id_process_stages})">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="btn btn-sm btn-danger ml-1" title="Eliminar paso" onclick="deleteProcess(${val.id_process_stages})">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        $('#steps-container').append(stepHTML);
+      });
+    },
+    error: function (result) {
+      console.error("Error al cargar procesos:", result);
+    }
+  });
+}
+
+
+// Detectar cambio en el select y recargar la lista
+$(document).on("change", "#process_catalog_filter", function () {
+  listProcess();
+});
 
 
 
@@ -150,35 +213,6 @@ function DetailsProcess(id_process_stages, tipo) {
     },
     error: function (result) {
       console.error("Error al cargar procesos:", result);
-    }
-  });
-}
-
-
-
-
-
-
-
-
-function processCatalog(selectedId = null) {
-  $(".loader").fadeOut("slow");
-  $.ajax({
-    url: "../../controller/process/controller_process.php",
-    cache: false,
-    dataType: 'JSON',
-    type: 'POST',
-    data: { action: 3 },
-    success: function (result) {
-      let options = `<option value="null" disabled ${selectedId === null ? "selected" : ""}>Seleccione un Proceso</option>`;
-      $.each(result, function (index, val) {
-        const selected = (val.id_process_catalog == selectedId) ? "selected" : "";
-        options += `<option value='${val.id_process_catalog}' ${selected}>${val.name}</option>`;
-      });
-      $("#process_catalog").html(options);
-    },
-    error: function (result) {
-      console.log(result);
     }
   });
 }

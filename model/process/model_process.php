@@ -11,7 +11,7 @@ if(file_exists('./model/db_connection.php')){
 
 class Process {
 
-    public function listProcess() {
+    public function listProcess($id_process_catalog) {
         $con = new DBconnection(); 
         $con->openDB();
 
@@ -20,13 +20,17 @@ class Process {
                                         process_stages.description,
                                         process_stages.execution_flow AS flujo_ejecucion,
                                         process_stages.status,
-                                        process_catalog.name AS name_process
+                                        process_catalog.name AS name_process,
+                                        CONCAT(users.name, ' ', users.surname, ' ', users.second_surname) AS name_user
                                     FROM
                                         process_stages
                                     INNER JOIN
                                         process_catalog ON process_stages.fk_process_catalog = process_catalog.id_process_catalog
+                                    INNER JOIN
+                                            users ON process_stages.fk_process_manager = users.id_user
                                     WHERE
                                         process_stages.status = 1
+                                        AND process_stages.fk_process_catalog = $id_process_catalog
                                     ORDER BY execution_flow ASC;");
 
         $data = array();
@@ -37,7 +41,8 @@ class Process {
                 "description" => $row["description"],
                 "flujo_ejecucion" => $row["flujo_ejecucion"],
                 "status" => $row["status"],
-                "name_process" => $row["name_process"]
+                "name_process" => $row["name_process"], 
+                "name_user" => $row["name_user"],
             );
             $data[] = $dat;
         }
@@ -111,7 +116,8 @@ class Process {
 
         $dataTitle = $con->query("SELECT
                                         id_process_catalog,
-                                        name
+                                        name, 
+                                        description
                                     FROM
                                         process_catalog
                                     WHERE
@@ -123,7 +129,8 @@ class Process {
         while($row = pg_fetch_array($dataTitle)){
             $dat = array(
                 "id_process_catalog" => $row["id_process_catalog"],
-                "name" => $row["name"]
+                "name" => $row["name"],
+                "description" => $row["description"]
             );
             $data[] = $dat;
         }

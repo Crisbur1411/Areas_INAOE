@@ -16,7 +16,7 @@
         public function listProcess(){
     		$this->Process= new Process();
 
-	      	$data = $this->Process->listProcess();
+	      	$data = $this->Process->listProcess($_POST['id_process_catalog']);
 	      	echo json_encode($data);
 		}
 
