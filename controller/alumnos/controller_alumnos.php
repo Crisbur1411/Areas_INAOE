@@ -76,7 +76,7 @@ class alumnosController
 	{
 		$this->alumnos = new alumnos();
 
-		$data = $this->alumnos->freeStudent($_POST["id_student"], $_POST["user"], $_POST["id_user"]);
+		$data = $this->alumnos->freeStudent($_POST["id_student"], $_POST["user"]);
 		echo json_encode($data);
 	}
 
@@ -164,13 +164,13 @@ class alumnosController
 
     public function authorizationProcess() {
 		$this->alumnos = new alumnos();
-		$data = $this->alumnos->authorizationProcess($_POST["id_student"]);
+		$data = $this->alumnos->authorizationProcess($_POST["id_student"], $_POST["fk_process_catalog"]);
 		echo json_encode($data);
 	}
 
 	public function getExecutionFlow() {
 		$this->alumnos = new alumnos();
-		$data = $this->alumnos->getExecutionFlow($_POST["id_user"], $_POST["id_student"]);
+		$data = $this->alumnos->getExecutionFlow($_POST["id_user"], $_POST["id_student"], $_POST["fk_process_catalog"]);
 		echo json_encode($data);
 	}
 

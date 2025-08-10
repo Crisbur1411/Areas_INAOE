@@ -22,6 +22,7 @@ class liberacionArea{
     CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
     students.control_number,                                    
     students.status,
+    students.fk_process_catalog,
     SUM(CASE WHEN notes.fk_area = ".$fk_area." THEN 1 ELSE 0 END) AS note_count
 FROM students
 LEFT JOIN trace_student_areas 
@@ -39,7 +40,8 @@ GROUP BY
     students.id_student, 
     CONCAT(students.name, ' ', students.surname, ' ', students.second_surname),
     students.control_number,
-    students.status
+    students.status,
+    students.fk_process_catalog
 ORDER BY students.id_student;
                                     ");
 
@@ -51,7 +53,8 @@ ORDER BY students.id_student;
                 "full_name"=>$row["full_name"],
                 "control_number"=>$row["control_number"],
                 "note_count"=>$row["note_count"],
-                "status" => $row["status"]
+                "status" => $row["status"],
+                "fk_process_catalog" => $row["fk_process_catalog"]
             );
             $data[] = $dat;
         }
@@ -60,7 +63,7 @@ ORDER BY students.id_student;
         return $data;
     }
 
-    public function signStudent($id_student, $user, $full_name, $id_user){
+    public function signStudent($id_student, $user, $full_name, $id_user, $fk_process_catalog){
     $con = new DBconnection();
     $con->openDB();
     $descrip = 'Autorizado por: '.$user;
@@ -91,7 +94,8 @@ ORDER BY students.id_student;
                                         WHERE
                                             process_stages.status = 1
                                             AND process_stages.fk_process_manager = ".$id_user."
-												AND areas.id_area = ".$fk_area."");
+												AND areas.id_area = ".$fk_area."
+                                                    AND process_stages.fk_process_catalog = ".$fk_process_catalog."");
     $row = pg_fetch_assoc($dataProcess);
     if($row){
         $fk_process_stages = $row['id_process_stages'];

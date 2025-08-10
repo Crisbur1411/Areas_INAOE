@@ -49,7 +49,7 @@ function listStudentInProgress() {
                         + "<th style='text-align:center'>"+val.id_student+"</th>"
                         + "<th style='text-align:center'>"+val.control_number+"</a></th>"
                         + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
-                        + "<th style='text-align:center'><button type='button' class='btn btn-primary btn-sm' title='Click para finalizar el trámite' onClick='signStudent("+val.id_student+", \""+val.full_name.replace(/"/g, '&quot;')+"\");'><i class='fa-solid fa-file-import'></i></button></a></th>"
+                        + "<th style='text-align:center'><button type='button' class='btn btn-primary btn-sm' title='Click para finalizar el trámite' onClick='signStudent("+val.id_student+", \""+val.full_name.replace(/"/g, '&quot;')+"\", "+val.fk_process_catalog+");'><i class='fa-solid fa-file-import'></i></button></a></th>"
                         + "<th style='text-align:center'><button type='button' class='btn btn-secondary btn-sm' title='Click para ver las notas' data-toggle='modal' onClick='notesStudent("+val.id_student+");'><i class='fa-solid fa-eye'></i></button></a></th>"
                         + "</tr>";
                     } else {
@@ -57,7 +57,7 @@ function listStudentInProgress() {
                         + "<th style='text-align:center'>"+val.id_student+"</th>"
                         + "<th style='text-align:center'>"+val.control_number+"</a></th>"
                         + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
-                        + "<th style='text-align:center'><button type='button' class='btn btn-primary btn-sm' title='Click para finalizar el trámite' onClick='signStudent("+val.id_student+", \""+val.full_name.replace(/"/g, '&quot;')+"\");'><i class='fa-solid fa-file-import'></i></button></a></th>"
+                        + "<th style='text-align:center'><button type='button' class='btn btn-primary btn-sm' title='Click para finalizar el trámite' onClick='signStudent("+val.id_student+", \""+val.full_name.replace(/"/g, '&quot;')+"\", "+val.fk_process_catalog+");'><i class='fa-solid fa-file-import'></i></button></a></th>"
                         + "<th style='text-align:center'><button type='button' class='btn btn-info btn-sm' title='Click para agregar una nota en el trámite' onClick='noteStudent("+val.id_student+");'><i class='fa-solid fa-file-lines'></i></button></a></th>"
                         + "</tr>";
                     }
@@ -75,18 +75,19 @@ function listStudentInProgress() {
     }); 
 }
 
-function signStudent(id_student, full_name) {
+function signStudent(id_student, full_name, fk_process_catalog) {
     const $u = document.getElementById("user");
     const $user = $u.innerHTML;
     const $id_user = ID_USER;
     console.log("ID del usuario:", $id_user);
+    console.log("ID proceso catalog del estudiante:", fk_process_catalog);
 
     // Paso 1: Obtener el execution_flow del gestor
     $.ajax({
         url: "../../controller/alumnos/controller_alumnos.php",
         type: "POST",
         dataType: "JSON",
-        data: { action: 21, id_user: $id_user, id_student: id_student },
+        data: { action: 21, id_user: $id_user, id_student: id_student, fk_process_catalog: fk_process_catalog },
         success: function (responseFlow) {
             if (responseFlow.status === 200 && responseFlow.data) {
                 const user_execution_flow = parseInt(responseFlow.data.execution_flow);
@@ -97,7 +98,7 @@ function signStudent(id_student, full_name) {
                     url: "../../controller/alumnos/controller_alumnos.php",
                     type: "POST",
                     dataType: "JSON",
-                    data: { action: 20, id_student: id_student },
+                    data: { action: 20, id_student: id_student, fk_process_catalog: fk_process_catalog },
                     success: function (flowResult) {
                         const flowData = flowResult.data;
 
@@ -154,7 +155,8 @@ function signStudent(id_student, full_name) {
                                                         id_student: id_student,
                                                         user: $user,
                                                         full_name: full_name,
-                                                        id_user: $id_user
+                                                        id_user: $id_user, 
+                                                        fk_process_catalog: fk_process_catalog
                                                     },
                                                     complete: function () {
                                                         $(".loader").fadeOut("slow");

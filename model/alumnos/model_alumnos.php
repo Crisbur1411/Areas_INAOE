@@ -173,7 +173,8 @@ class alumnos
                                     CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
                                     students.control_number, 
                                     COUNT(trace_student_areas.fk_area) AS areas_count,                                      
-                                    students.status
+                                    students.status,
+                                    students.fk_process_catalog
                                     FROM 
                                         students
                                     LEFT JOIN 
@@ -184,7 +185,8 @@ class alumnos
                                         students.id_student, 
                                         CONCAT(students.name, ' ', students.surname, ' ', students.second_surname),
                                         students.control_number,
-                                        students.status
+                                        students.status,
+                                        students.fk_process_catalog
                                     ORDER BY 
                                         students.id_student;
                                     ");
@@ -197,7 +199,8 @@ class alumnos
                 "full_name" => $row["full_name"],
                 "control_number" => $row["control_number"],
                 "areas_count" => $row["areas_count"],
-                "status" => $row["status"]
+                "status" => $row["status"],
+                "fk_process_catalog" => $row["fk_process_catalog"]
             );
             $data[] = $dat;
         }
@@ -252,14 +255,11 @@ ORDER BY
         return $data;
     }
 
-public function freeStudent($id_student, $user, $id_user)
+public function freeStudent($id_student, $user)
 {
     $con = new DBconnection();
     $con->openDB();
     $descrip = 'Trámite finalizado por ' . $user;
-
-    session_start();
-    $fk_area  = $_SESSION["id_area"];
 
     // Fecha actual desde PHP para el hash
     $date = date('Y-m-d H:i:s');
@@ -267,33 +267,8 @@ public function freeStudent($id_student, $user, $id_user)
     // Hash md5(id_student|user|fecha)
     $hash_release = md5($id_student . '|' . $user . '|' . $date);
 
-    //Se genera el fk_process_stages para agregar el registro en la tabla trace_student_areas
-    //Se obtiene mediante el id_user y el fk_area del usuario relacionados al proceso que se libero libero
-    $dataProcess = $con->query("SELECT
-                                            process_stages.id_process_stages,
-											 process_stages.fk_process_manager,
-                                            CONCAT(users.name, ' ', users.surname, ' ', users.second_surname) AS name_user,
-											 areas.id_area AS id_area_user,
-                                            areas.name AS area_user
-                                        FROM process_stages
-                                        INNER JOIN process_catalog ON process_stages.fk_process_catalog = process_catalog.id_process_catalog
-                                        INNER JOIN users ON process_stages.fk_process_manager = users.id_user
-                                        INNER JOIN user_area ON users.id_user = user_area.fk_user
-                                        INNER JOIN areas ON user_area.fk_area = areas.id_area
-                                        WHERE
-                                            process_stages.status = 1
-                                            AND process_stages.fk_process_manager = ".$id_user."
-												AND areas.id_area = ".$fk_area."");
-    $row = pg_fetch_assoc($dataProcess);
-    if($row){
-        $fk_process_stages = $row['id_process_stages'];
-    } else {
-        $con->closeDB();
-        return "error"; // No se encontró el proceso
-    }
-
-    $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, status, hash_release, fk_process_stage) 
-                                VALUES (" . $id_student . ", '" . $descrip . "', '" . $date . "', 3, '" . $hash_release . "', " . $fk_process_stages . ") 
+    $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, status, hash_release) 
+                                VALUES (" . $id_student . ", '" . $descrip . "', '" . $date . "', 3, '" . $hash_release . "') 
                                 RETURNING id_trace_student_area ");
 
     $validateUpdateTurn = pg_fetch_row($updateTurn);
@@ -783,7 +758,7 @@ public function getProcessCatalog() {
 
 
     // Funcion que obtniene todos los flujos de ejecucion y los agrupa para realizan la validacion de si se cumplen o no
-    public function authorizationProcess($id_student) {
+    public function authorizationProcess($id_student, $fk_process_catalog) {
     $con = new DBconnection();
     $con->openDB();
 
@@ -791,6 +766,7 @@ public function getProcessCatalog() {
     $result = $con->query("SELECT id_process_stages, execution_flow 
                            FROM process_stages 
                            WHERE status = 1 
+                           AND fk_process_catalog = $fk_process_catalog
                            ORDER BY execution_flow ASC;");
 
     $flows = array();
@@ -839,7 +815,7 @@ public function getProcessCatalog() {
 
 
 // Funcion para obtener el flujo de ejecucion al que pertenece cada accion que se esta realizando
-    public function getExecutionFlow($id_user, $id_student) {
+    public function getExecutionFlow($id_user, $id_student, $fk_process_catalog) {
     $con = new DBconnection();
     $con->openDB();
 
@@ -854,7 +830,7 @@ public function getProcessCatalog() {
               INNER JOIN areas a ON ua.fk_area = a.id_area
               WHERE ps.status = 1 
               AND ps.fk_process_manager = $id_user 
-              AND a.id_area = $fk_area
+              AND a.id_area = $fk_area AND ps.fk_process_catalog = $fk_process_catalog
               ORDER BY ps.execution_flow ASC";
 
     $result = $con->query($query);
