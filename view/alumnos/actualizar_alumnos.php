@@ -93,6 +93,9 @@ if (!isset($_SESSION['username'])) {
 							<?php if ($_SESSION['type'] == 1 || $_SESSION['type'] == 2): ?>
 							<li><a class="dropdown-item" href="../employee/employee.php">Empleados</a> </li>							
 							<?php endif; ?>
+							<?php if ($_SESSION['type'] == 1 || $_SESSION['type'] == 2): ?>
+							<li><a class="dropdown-item" href="../process/process.php">Gestión de Procesos</a> </li>							
+							<?php endif; ?>
 							<?php if ($_SESSION['type'] == 3): ?>
 							<li><a class="dropdown-item" href="../liberacion_area/liberacion_area.php">Liberación del área</a></li>
 							<?php endif; ?>
@@ -227,6 +230,16 @@ if (!isset($_SESSION['username'])) {
 						<div class="col-sm-4">
 							<label for="date_conclusion"><span class="text-danger">* </span>Fecha de conclusión</label>
 							<input type="date" class="form-control" id="date_conclusion">
+						</div>																					
+					</div>
+				</div>
+				<div class="form-group">
+					<div class="row">
+						<div class="col-sm-8">
+							<label for="process_catalog"><span class="text-danger">* </span>Proceso</label>
+							<select name="process_catalog" id="process_catalog" class="form-control">
+								<option value="null" selected disabled>Seleccione un Proceso</option>
+							</select>
 						</div>																					
 					</div>
 				</div>	

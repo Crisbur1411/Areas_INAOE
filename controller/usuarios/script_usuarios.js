@@ -234,7 +234,7 @@ function preCargarDatos() {
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Ocurrió un error al editar el área'
+                    text: 'Ocurrió un error al editar el usuario'
                 });
             }
         },

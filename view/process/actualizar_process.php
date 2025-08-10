@@ -1,31 +1,32 @@
-<?php date_default_timezone_set("America/Mexico_City"); ?>
-<?php session_start();
-// Evita caché
-header("Cache-Control: no-cache, must-revalidate");
-header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
-// Validar sesión activa
+	<?php date_default_timezone_set("America/Mexico_City"); ?>
+	<?php session_start();
+
+	// Validar sesión activa
 if (!isset($_SESSION['username'])) {
     // Si no hay sesión iniciada, redirigir al index (login)
     header("Location: ../../index.php");
     exit();
 }
-?>
-<!DOCTYPE html> 
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Usuarios</title>
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-	<link rel="stylesheet" href="../../assets/css/bootstrap-select.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
-	<link rel="stylesheet" href="../../assets/css/estilos.css">
-	<link rel="stylesheet" href="../../assets/css/sidebar.css">
-	<link rel="stylesheet" href="../../assets/css/navInaoe.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
-<body>
+	?>
+	<!DOCTYPE html> 
+	<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>actualizar pasos de proceso</title>
+		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+		<link rel="stylesheet" href="../../assets/css/bootstrap-select.min.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css">
+		<link rel="stylesheet" href="../../assets/css/estilos.css">
+		<link rel="stylesheet" href="../../assets/css/sidebar.css">
+		<link rel="stylesheet" href="../../assets/css/navInaoe.css">
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+	</head>
+	<body>
+		<!-- <div class="loader">
+			<img src="../../assets/loading.gif" alt="Cargando...">
+		</div> --> 
 
-<nav class="navbar navbar-expand-lg navbar-light bg-nav">
+		<nav class="navbar navbar-expand-lg navbar-light bg-nav">
 
         <div class="row mx-md-n5">
             <div class="col px-md-5">
@@ -47,13 +48,13 @@ if (!isset($_SESSION['username'])) {
                     <ul class="nav sidebar-nav">
                         <div class="sidebar-header">
                             <div class="sidebar-brand">
-                                <span class="align:left" style="color: white; font-weight: bold; font-size: 20px;">Usuarios</span>
+                                <span class="align:left" style="color: white; font-weight: bold; font-size: 20px;">Gestión de Procesos</span>
                             </div>
                         </div>
                         <?php if ($_SESSION['type'] == 0 ): ?>	
 							<li><a class="dropdown-item" href="../administracion/administracion.php">Administración</a></li>
 							<?php endif; ?>
-                            <?php if ($_SESSION['type'] == 1 || $_SESSION['type'] == 2): ?>
+							<?php if ($_SESSION['type'] == 1 || $_SESSION['type'] == 2): ?>
 							<li><a class="dropdown-item" href="../programas_academicos/programas_academicos.php">Programas académicos</a> </li>							
 							<?php endif; ?>
                             <?php if ($_SESSION['type'] == 1 || $_SESSION['type'] == 2): ?>
@@ -68,10 +69,10 @@ if (!isset($_SESSION['username'])) {
                             <?php if ($_SESSION['type'] == 1 || $_SESSION['type'] == 2): ?>
 							<li><a class="dropdown-item" href="../usuarios/usuarios.php">Usuarios</a> </li>							
 							<?php endif; ?>
-                            <?php if ($_SESSION['type'] == 1 || $_SESSION['type'] == 2): ?>
+							<?php if ($_SESSION['type'] == 1 || $_SESSION['type'] == 2): ?>
 							<li><a class="dropdown-item" href="../employee/employee.php">Empleados</a> </li>							
 							<?php endif; ?>
-                            <?php if ($_SESSION['type'] == 1 || $_SESSION['type'] == 2): ?>
+							<?php if ($_SESSION['type'] == 1 || $_SESSION['type'] == 2): ?>
 							<li><a class="dropdown-item" href="../process/process.php">Gestión de Procesos</a> </li>							
 							<?php endif; ?>
 							<?php if ($_SESSION['type'] == 3): ?>
@@ -138,75 +139,78 @@ if (!isset($_SESSION['username'])) {
                 </div>
                
             <div class="seccionesEstatus">
-                <li><a>Usuarios registrados</a></li>
+                <li><a>Actualizar paso de proceso</a></li>
             </div>
             </div>
         </div>
     </nav>
 
-	<div class="container mt-5">
-		<div id="info"  class="d-none" style="text-align: center;" >  
-		<span style="color: black; font-weight: bold; font-size: 16px; align:left; ">RESPONSABLES DE ÁREAS</span><br>
-		<br><br>
-  			<div style="text-align: center; border-bottom: 3px solid #cecece; margin-bottom: 30px; margin-top: 30px">
-				<nav class="navbar navbar-light ">
-  				<div class="nav nav-tabs" id="nav-tab" role="tablist">
-    				<a class="nav-item nav-link active" id="nav-users-tab" data-toggle="tab" href="#nav-users" role="tab" aria-controls="nav-toSign" aria-selected="true">
-						Registros en sistema <span id="pf" class="badge badge-info">0</span>
-  						<span class="sr-only">unread messages</span>
-					</a>									
-  				</div> 
-				  <button type='button' class='btn btn-outline-success'  id='btn-new-user' onClick='newUser()'>NUEVO USUARIO</button>
-				</nav>
-		    </div>
 
-			<div class="tab-content" id="nav-tabContent">
-  				<div class="tab-pane fade show active" id="nav-users" role="tabpanel" aria-labelledby="nav-users-tab">
-				  <div class="tab-pane fade show active" id="nav-users" role="tabpanel" aria-labelledby="nav-users-tab">
-					<table class="table table-striped table-bordered">
-						<thead style="background: #691C32; color: white;">
-							<tr>
-								<th scope="col" style="text-align:center"># REGISTRO</th>
-								<th scope="col" style="text-align:center">NOMBRE DEL USUARIO</th>
-								<th scope="col" style="text-align:center">ÁREA</th>
-								<th scope="col" style="text-align:center">TIPO DE USUARIO</th>
-								<th scope="col" style="text-align:center">CATEGORIA DE USUARIO</th>
-                                <th scope="col" style="text-align:center">FECHA DE REGISTRO</th>
-								<th scope="col" style="text-align:center">ACTUALIZAR USUARIO</th>
-								<th scope="col" style="text-align:center">ELIMINAR USUARIO</th>
-							</tr>
-						</thead>
-						<tbody class="bg-white" id="table-users"></tbody>
-					</table>
-	              </div>  
-                  
+		<div class="container mt-5">
+			<div id="new" style="text-align: center;"><br><br>
+				<div style="text-align: center; border-bottom: 3px solid #cecece; margin-bottom: 30px;">
+					<h3>Actualizar Paso en Proceso</h3>				
+				</div>	
+				<br>
+				<div class="form-group">
+				<div class="row">
+						<div class="col-sm-4">
+							<label for="description"><span class="text-danger">* </span>Descripción</label>
+							<input type="text" class="form-control"  id="description" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">
+						</div>
+						
+						<div class="col-sm-4">
+							<label for="execution_flow"><span class="text-danger">* </span>Flujo de Ejecución</label>
+                            <select name="execution_flow" id="execution_flow" class="form-control">
+								<option value="null" selected disabled>Seleccione un Paso</option>
+							</select>
+							</div>
+						<div class="col-sm-4">
+							<label for="process_manager"><span class="text-danger">* </span>Encargado de Liberar</label>
+							<select name="process_manager" id="process_manager" class="form-control">
+								<option value="null" selected disabled>Seleccione un Encargado</option>
+							</select>
+						</div>					
+					</div>
+				</div>
+                <div class="form-group">
+				<div class="row">
+						<div class="col-sm-4">
+							<label for="area_user"><span class="text-danger">* </span>Área Asociada al Encargado</label>
+							<input type="text" class="form-control"  id="area_user" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();" disabled>
+						</div>					
+					</div>
+				</div>
+                <div class="col-sm-12">
+					<label for="text"><span class="text-danger">* </span>En el flujo de ejecución, se deberá seleccionar el paso con el que se desea que el nuevo paso se ejecute de forma simultánea. En caso de no requerir ejecución simultánea con ningún paso, se deberá seleccionar la opción de paso secuencial. </label>
+				</div>
+					<br><br>	
+					<div class="form-group" align="center">
+						<button class="btn btnCancel btn-lg active" type="button" onClick="history.go(-1);" >Cancelar</button>
+						<button class="btn btnConfirm btn-lg active" type="button" id="save-exam" onclick="saveProcessEdit();">Guardar</button>
+					</div>				
+				</div>	
+			</div>		
 		</div>
-	</div>
-	</div>
-	</div>
 
-
-	
 	<br><br>
 	<?php include '../components/footer/footer.php'; ?>
 
 
-	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-	<script src="../../assets/js/bootstrap-select.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.3.2/bootbox.min.js"></script>
-	<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-	<script src="../../assets/js/sidebar.js"></script>
-   
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/all.min.js" integrity="sha512-6PM0qYu5KExuNcKt5bURAoT6KCThUmHRewN3zUFNaoI6Di7XJPTMoT6K0nsagZKk2OB4L7E3q1uQKHNHd4stIQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-	<script src="../../controller/signin/script_login.js"></script>
-		<script src="../../controller/usuarios/script_usuarios.js"></script>
+		<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+		<script src="../../assets/js/bootstrap-select.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.3.2/bootbox.min.js"></script>
+		<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+		<script src="../../assets/js/sidebar.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/all.min.js" integrity="sha512-6PM0qYu5KExuNcKt5bURAoT6KCThUmHRewN3zUFNaoI6Di7XJPTMoT6K0nsagZKk2OB4L7E3q1uQKHNHd4stIQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+		
+		<script src="../../controller/signin/script_login.js"></script>
+		<script src="../../controller/process/script_process.js"></script>
 
-
-</body>
-</html>
-<?php
- ?>
+	
+	</body>
+	</html>

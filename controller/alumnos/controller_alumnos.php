@@ -28,7 +28,7 @@ class alumnosController
 		public function saveStudent(){
     		$this->alumnos= new alumnos();
 
-	      	$data = $this->alumnos->saveStudent($_POST["name"], $_POST["surname"], $_POST["secondsurname"], $_POST["email"], $_POST["controlnumber"], $_POST["course"], $_POST["institucion"], $_POST["date_conclusion"]);
+	      	$data = $this->alumnos->saveStudent($_POST["name"], $_POST["surname"], $_POST["secondsurname"], $_POST["email"], $_POST["controlnumber"], $_POST["course"], $_POST["institucion"], $_POST["date_conclusion"], $_POST["process_catalog"]);
 	      	echo ($data);
 		}
 
@@ -149,7 +149,7 @@ class alumnosController
 		public function updateStudent(){
     		$this->alumnos= new alumnos();
 
-	      	$data = $this->alumnos->updateStudent($_POST["id_student"], $_POST["name"], $_POST["surname"], $_POST["secondsurname"], $_POST["email"], $_POST["controlnumber"], $_POST["course"], $_POST["institucion"], $_POST["date_conclusion"]);
+	      	$data = $this->alumnos->updateStudent($_POST["id_student"], $_POST["name"], $_POST["surname"], $_POST["secondsurname"], $_POST["email"], $_POST["controlnumber"], $_POST["course"], $_POST["institucion"], $_POST["date_conclusion"], $_POST["process_catalog"]);
 	      	echo ($data);
 		}
 
@@ -160,6 +160,28 @@ class alumnosController
 		$data = $this->alumnos->getDetailsStudent($_POST["id_student"]);
 		echo json_encode($data);
 	}
+
+
+    public function authorizationProcess() {
+		$this->alumnos = new alumnos();
+		$data = $this->alumnos->authorizationProcess($_POST["id_student"], $_POST["fk_process_catalog"]);
+		echo json_encode($data);
+	}
+
+	public function getExecutionFlow() {
+		$this->alumnos = new alumnos();
+		$data = $this->alumnos->getExecutionFlow($_POST["id_user"], $_POST["id_student"], $_POST["fk_process_catalog"]);
+		echo json_encode($data);
+	}
+
+	public function getProcessCatalog(){
+            $this->alumnos = new alumnos();
+            $data = $this->alumnos->getProcessCatalog();
+            echo json_encode($data);
+        }
+	
+
+
 }
 
 $obj = new alumnosController();
@@ -220,6 +242,12 @@ if (isset($_POST["action"])) {
 		$obj->updateStudent();
 	}if ($_POST["action"] == 19) {
 		$obj->getDetailsStudent();
+	} if ($_POST["action"] == 20) {
+		$obj->authorizationProcess();
+	} if ($_POST["action"] == 21) {
+		$obj->getExecutionFlow();
+	} if ($_POST["action"] == 22) {
+		$obj->getProcessCatalog();
 	}
 	
 }

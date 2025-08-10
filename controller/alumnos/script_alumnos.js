@@ -28,6 +28,7 @@ $(function(){
     listStudentInProgress();
     listStudentFree();
     listStudentCancel();
+    processCatalog();
             
 });
 
@@ -183,6 +184,7 @@ function turnSingAreas(id_student) {
 
 
 
+
 function listStudentInProgress() {
     let i2 = 0; // Inicializamos i1 con 0
     $.ajax({
@@ -202,7 +204,7 @@ function listStudentInProgress() {
                     + "<th style='text-align:center'>"+val.control_number+"</a></th>"
                     + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
                     + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showRegisterAreas("+val.id_student+");'>"+val.areas_count+"</a></th>"
-                    + "<th style='text-align:center'><button type='button' class='btn btn-primary btn-sm' title='Click para finalizar el trámite' onClick='freeStudent("+val.id_student+");'><i class='fa-solid fa-file-import'></i></button></a></th>"
+                    + "<th style='text-align:center'><button type='button' class='btn btn-primary btn-sm' title='Click para finalizar el trámite' onClick='freeStudent("+val.id_student+", "+val.fk_process_catalog+");'><i class='fa-solid fa-file-import'></i></button></a></th>"
                     + "<th style='text-align:center'><button type='button' class='btn btn-danger btn-sm' title='Click para cancelar el trámite' onClick='cancelStudent("+val.id_student+");'><i class='fa-solid fa-file-excel'></i></button></a></th>"
                     + "</tr>";
                 } else {
@@ -211,7 +213,7 @@ function listStudentInProgress() {
                     + "<th style='text-align:center'>"+val.control_number+"</a></th>"
                     + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
                     + "<th style='text-align:center'>"+val.areas_count+"</th>"
-                    + "<th style='text-align:center'><button type='button' class='btn btn-primary btn-sm' title='Click para finalizar el trámite' onClick='freeStudent("+val.id_student+");'><i class='fa-solid fa-file-import'></i></button></a></th>"
+                    + "<th style='text-align:center'><button type='button' class='btn btn-primary btn-sm' title='Click para finalizar el trámite' onClick='freeStudent("+val.id_student+", "+val.fk_process_catalog+");'><i class='fa-solid fa-file-import'></i></button></a></th>"
                     + "<th style='text-align:center'><button type='button' class='btn btn-danger btn-sm' title='Click para cancelar el trámite' onClick='cancelStudent("+val.id_student+");'><i class='fa-solid fa-file-excel'></i></button></a></th>"
                     + "</tr>";
                 }
@@ -264,75 +266,101 @@ function showRegisterAreas(id_student) {
        });     
 }
 
-function freeStudent(id_student) {
-    $u = document.getElementById("user");
-    $user = $u.innerHTML;
-    
-    swal({
-        title: "FINALIZAR EL TRÁMITE DE FORMA SATISFACTORIA",
-        text: "¿Estás seguro de que deseas finalizar el trámite correspondiente a la liberación de áreas?",
-        icon: "info",
-        buttons: {
-            cancel: "Cancelar",
-            Enviar: true,
-        },
-    }).then((sendDoc) => {
-        if (sendDoc) {
-            $.ajax({
-                url: "../../controller/alumnos/controller_alumnos.php",
-                cache: false,
-                dataType: 'JSON',
-                type: 'POST',
-                data: { action: 6, id_student: id_student, user: $user },
-                success: function (result) {
-                    $.ajax({
-                        url: "../../controller/alumnos/controller_alumnos.php",
-                        cache: false,
-                        dataType: 'JSON',
-                        type: 'POST',
-                        data: { action: 7, id_student: id_student },
-                        success: function (result) { },
-                        error: function (result) {
-                            console.log(result);
-                        }
-                    });
+function freeStudent(id_student, fk_process_catalog) {
+    const $u = document.getElementById("user");
+    const $user = $u.innerHTML;
+    const $id_user = ID_USER;
 
-                    // Aquí se envia la llamada para enviar el correo
-                    $.ajax({
-                        url: "../../services/send_email_liberacion.php",
-                        type: 'GET',
-                        dataType: 'JSON',
-                        data: { id_student: id_student },
-                        success: function(response) {
-                            console.log(response);
-                        },
-                        error: function(error) {
-                            console.error(error);
-                        }
-                    });
+    console.log("ID_USER:", $id_user);
 
-                },
-                error: function (result) {
-                    console.log(result);
-                },
-                complete: function () {
-                    $(".loader").fadeOut("slow");
-                    $("#info").removeClass("d-none");
-                    listStudent();
-                    listStudentInProgress();
-                    listStudentFree();
-                    listStudentCancel();
+    // Paso 1: Obtener el avance del estudiante
+    $.ajax({
+        url: "../../controller/alumnos/controller_alumnos.php",
+        type: "POST",
+        dataType: "JSON",
+        data: { action: 20, id_student: id_student, fk_process_catalog: fk_process_catalog },
+        success: function (progressResp) {
+            if (progressResp.status === 200 && Array.isArray(progressResp.data)) {
+                const allCompleted = progressResp.data.every(flow => flow.completed);
+
+                if (!allCompleted) {
+                    swal("Proceso incompleto", "El estudiante no ha completado todos los pasos.", "warning");
+                    return;
                 }
-            });
 
-            swal("Trámite finalizado!", {
-                icon: "success",
-            }).then(() => {
-                location.reload(); // Recarga la página después de la alerta
-            });
+                // Paso 2: Confirmar liberación
+                swal({
+                    title: "FINALIZAR EL TRÁMITE",
+                    text: "¿Estás seguro de que deseas finalizar el trámite de liberación?",
+                    icon: "info",
+                    buttons: {
+                        cancel: "Cancelar",
+                        Enviar: true,
+                    },
+                }).then((confirm) => {
+                    if (confirm) {
+                        // Paso 3: Registrar finalización
+                        $.ajax({
+                            url: "../../controller/alumnos/controller_alumnos.php",
+                            type: 'POST',
+                            dataType: 'JSON',
+                            data: { action: 6, id_student: id_student, user: $user},
+                            success: function () {
+                                // Marcar como finalizado
+                                $.ajax({
+                                    url: "../../controller/alumnos/controller_alumnos.php",
+                                    type: 'POST',
+                                    dataType: 'JSON',
+                                    data: { action: 7, id_student: id_student },
+                                    error: function (err) {
+                                        console.error(err);
+                                    }
+                                });
+
+                                // Enviar correo
+                                $.ajax({
+                                    url: "../../services/send_email_liberacion.php",
+                                    type: 'GET',
+                                    dataType: 'JSON',
+                                    data: { id_student: id_student },
+                                    success: function (res) {
+                                        console.log(res);
+                                    },
+                                    error: function (err) {
+                                        console.error(err);
+                                    }
+                                });
+
+                                swal("Trámite finalizado!", { icon: "success" })
+                                    .then(() => location.reload());
+                            },
+                            error: function (err) {
+                                console.error(err);
+                                swal("Error", "Ocurrió un error al finalizar el trámite.", "error");
+                            },
+                            complete: function () {
+                                $(".loader").fadeOut("slow");
+                                $("#info").removeClass("d-none");
+                                listStudent();
+                                listStudentInProgress();
+                                listStudentFree();
+                                listStudentCancel();
+                            }
+                        });
+                    }
+                });
+
+            } else {
+                swal("Error", "No se pudo obtener el avance del estudiante.", "error");
+            }
+        },
+        error: function () {
+            swal("Error", "Error al validar avance del estudiante.", "error");
         }
     });
 }
+
+
 
 
 function listStudentFree() {
@@ -578,12 +606,37 @@ function updateInstitucion() {
   }
 }
 
+// Carga los procesos y selecciona el proceso si fk_process existe
+function processCatalog(fk_process = null) {
+    $(".loader").fadeOut("slow");
+    $.ajax({
+        url: "../../controller/alumnos/controller_alumnos.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        data: { action: 22 },
+        success: function (result) {
+            var options = `<option value="null" selected disabled>Seleccione un Proceso</option>`;
+            $.each(result, function (index, val) {
+                options += `<option value="${val.id_process_catalog}">${val.description}</option>`;
+            });
+            $("#process_catalog").html(options);
 
-
+            // Seleccionar el valor después de cargar opciones
+            if (fk_process) {
+                $("#process_catalog").val(fk_process);
+            }
+        },
+        error: function (result) {
+            console.log(result);
+        }
+    });
+}
 
 // Fucncion para registrar un nuevo alumno
 function saveStudent(){
         
+    var process_catalog = $("#process_catalog").val();
     var name = $("#name").val().trim(); 
     var surname = $("#surname").val().trim(); 
     var secondsurname = $("#second_surname").val().trim(); 
@@ -597,6 +650,12 @@ function saveStudent(){
 
     var date_conclusion = $("#date_conclusion").val().trim();
     
+    if (process_catalog == null) {
+        alert("Tiene que seleccionar un proceso");
+        $("#process_catalog").focus();
+        return 0;
+    }
+
    
     if (name.length==0){
         alert("Tiene que escribir el nombre")
@@ -608,14 +667,7 @@ function saveStudent(){
         $("#surname").focus();
         return 0;
     }
-    /*if (professional_secondsurname.length==0){
-        
-        alert("Tiene que escribir su segundo apellido")
-        $("#second_surname").focus();
-        professional_secondsurname = "";
-        return 0;
-        
-    }*/
+
     if (email.length==0){
         alert("Tiene que escribir el correo electrónico")
         $("#email").focus();
@@ -653,7 +705,7 @@ function saveStudent(){
             cache: false,
             dataType: 'JSON',
             type: 'POST',
-            data: { action: 15, name: name, surname: surname, secondsurname: secondsurname, email: email, controlnumber: controlnumber, course: course, institucion: institucion, date_conclusion: date_conclusion },
+            data: { action: 15, name: name, surname: surname, secondsurname: secondsurname, email: email, controlnumber: controlnumber, course: course, institucion: institucion, date_conclusion: date_conclusion, process_catalog: process_catalog },
             success: function(result) {
     window.location.href = "../alumnos/alumnos.php";
 }, error: function(result) {
@@ -784,6 +836,8 @@ function getStudent() {
                 $('#control-number').val(val.control_number);
                 $('#institucion').val(val.institucion);
                 $('#date_conclusion').val(val.date_conclusion);
+                $('#process_catalog').val(val.proceso_description);
+                processCatalog(val.fk_process_catalog); // Cargar el catálogo de procesos y seleccionar el actual
             });   
         }, error: function ( result) {
             console.log(result);
@@ -814,6 +868,7 @@ function updateStudent(){
     let params = new URLSearchParams(location.search);
     id_student = parseInt(params.get('dc'));
 
+    var process_catalog = $("#process_catalog").val();
     var name = $("#name").val().trim(); 
     var surname = $("#surname").val().trim(); 
     var secondsurname = $("#second-surname").val().trim(); 
@@ -825,7 +880,12 @@ function updateStudent(){
     var institucion = $("#institucion").val().trim();
     var date_conclusion = $("#date_conclusion").val().trim();
     
-   
+   if (process_catalog == null) {
+        alert("Tiene que seleccionar un proceso");
+        $("#process_catalog").focus();
+        return 0;
+    }
+
     if (name.length==0){
         alert("Tiene que escribir el nombre")
         $("#name").focus();
@@ -889,7 +949,8 @@ function updateStudent(){
             controlnumber: controlnumber, 
             course: course,
             institucion: institucion,
-            date_conclusion: date_conclusion 
+            date_conclusion: date_conclusion,
+            process_catalog: process_catalog 
         },
         success: function(result) {
     window.location.href = "../alumnos/alumnos.php";

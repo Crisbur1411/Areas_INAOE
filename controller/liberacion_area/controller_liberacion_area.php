@@ -18,7 +18,7 @@
 		public function signStudent(){
     		$this->liberacionArea= new liberacionArea();
 
-	      	$data = $this->liberacionArea->signStudent($_POST["id_student"], $_POST["user"], $_POST["full_name"]);
+	      	$data = $this->liberacionArea->signStudent($_POST["id_student"], $_POST["user"], $_POST["full_name"], $_POST["id_user"], $_POST["fk_process_catalog"]);
 	      	echo json_encode($data);
 		}
 		

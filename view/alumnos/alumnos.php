@@ -75,6 +75,9 @@ if (!isset($_SESSION['username'])) {
                             <?php if ($_SESSION['type'] == 1 || $_SESSION['type'] == 2): ?>
 							<li><a class="dropdown-item" href="../employee/employee.php">Empleados</a> </li>							
 							<?php endif; ?>
+                            <?php if ($_SESSION['type'] == 1 || $_SESSION['type'] == 2): ?>
+							<li><a class="dropdown-item" href="../process/process.php">Gestión de Procesos</a> </li>							
+							<?php endif; ?>
 							<?php if ($_SESSION['type'] == 3): ?>
 							<li><a class="dropdown-item" href="../liberacion_area/liberacion_area.php">Liberación del área</a></li>
 							<?php endif; ?>
@@ -278,7 +281,10 @@ if (!isset($_SESSION['username'])) {
 
 	<?php include '../components/footer/footer.php'; ?>
 
-	
+	<script>
+    // Variable global JS con el id_user de la sesión
+    const ID_USER = "<?php echo isset($_SESSION['id_user']) ? $_SESSION['id_user'] : ''; ?>";
+    </script>
 	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>

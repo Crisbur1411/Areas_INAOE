@@ -75,13 +75,13 @@ class alumnos
         return $data;
     }
 
-    public function saveStudent ($name, $surname, $secondsurname, $email, $controlnumber, $course, $institucion, $date_conclusion)
+    public function saveStudent ($name, $surname, $secondsurname, $email, $controlnumber, $course, $institucion, $date_conclusion, $process_catalog)
     {
         $con=new DBconnection();
         $con->openDB();
 
-        $studentData = $con->query("INSERT INTO students (name, surname, second_surname, control_number, email, fk_academic_programs, institucion, fecha_conclusion, date_register) 
-        VALUES ('".$name."','".$surname."', '".$secondsurname."','".$controlnumber."','".$email."',".$course.", '".$institucion."', '".$date_conclusion."', NOW()) 
+        $studentData = $con->query("INSERT INTO students (name, surname, second_surname, control_number, email, fk_academic_programs, institucion, fecha_conclusion, date_register, fk_process_catalog) 
+        VALUES ('".$name."','".$surname."', '".$secondsurname."','".$controlnumber."','".$email."',".$course.", '".$institucion."', '".$date_conclusion."', NOW(), ".$process_catalog.") 
         RETURNING id_student");
 
         
@@ -173,7 +173,8 @@ class alumnos
                                     CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
                                     students.control_number, 
                                     COUNT(trace_student_areas.fk_area) AS areas_count,                                      
-                                    students.status
+                                    students.status,
+                                    students.fk_process_catalog
                                     FROM 
                                         students
                                     LEFT JOIN 
@@ -184,7 +185,8 @@ class alumnos
                                         students.id_student, 
                                         CONCAT(students.name, ' ', students.surname, ' ', students.second_surname),
                                         students.control_number,
-                                        students.status
+                                        students.status,
+                                        students.fk_process_catalog
                                     ORDER BY 
                                         students.id_student;
                                     ");
@@ -197,7 +199,8 @@ class alumnos
                 "full_name" => $row["full_name"],
                 "control_number" => $row["control_number"],
                 "areas_count" => $row["areas_count"],
-                "status" => $row["status"]
+                "status" => $row["status"],
+                "fk_process_catalog" => $row["fk_process_catalog"]
             );
             $data[] = $dat;
         }
@@ -631,7 +634,18 @@ public function coursesAds($id_student){
         $con=new DBconnection();
         $con->openDB();
 
-        $dataR = $con->query("SELECT students.id_student, students.name, students.surname, students.second_surname, students.control_number, students.email, students.status, students.institucion,students.fecha_conclusion FROM students WHERE id_student=". $id_student);
+        $dataR = $con->query("SELECT students.id_student, 
+        students.name, 
+        students.surname, 
+        students.second_surname, 
+        students.control_number, 
+        students.email, 
+        students.status, 
+        students.institucion,
+        students.fecha_conclusion,
+        students.fk_process_catalog 
+        FROM students 
+        WHERE id_student=". $id_student);
 
         $row = pg_fetch_array($dataR);
         
@@ -644,7 +658,8 @@ public function coursesAds($id_student){
             "email" =>$row["email"],
             "status" =>$row["status"],
             "institucion" =>$row["institucion"],
-            "date_conclusion" =>$row["fecha_conclusion"]
+            "date_conclusion" =>$row["fecha_conclusion"],
+            "fk_process_catalog" =>$row["fk_process_catalog"]
         );
 
         $con->closeDB();
@@ -653,11 +668,11 @@ public function coursesAds($id_student){
     }
 
 
-    public function updateStudent ($id_student, $name, $surname, $secondsurname, $email, $controlnumber, $course, $institucion, $date_conclusion)    {
+    public function updateStudent ($id_student, $name, $surname, $secondsurname, $email, $controlnumber, $course, $institucion, $date_conclusion, $process_catalog)    {
         $con=new DBconnection();
         $con->openDB();
 
-        $updateData = $con->query("UPDATE students SET name = '".$name."', surname = '" .$surname."', second_surname = '" .$secondsurname."', email = '" .$email."', control_number = '" .$controlnumber."', fk_academic_programs = " .$course.", institucion = '" .$institucion."', fecha_conclusion = '" .$date_conclusion."'
+        $updateData = $con->query("UPDATE students SET name = '".$name."', surname = '" .$surname."', second_surname = '" .$secondsurname."', email = '" .$email."', control_number = '" .$controlnumber."', fk_academic_programs = " .$course.", institucion = '" .$institucion."', fecha_conclusion = '" .$date_conclusion."', fk_process_catalog = " .$process_catalog."
          WHERE id_student= ". $id_student ." RETURNING id_student ");
 
         $validateupdateData = pg_fetch_row($updateData);
@@ -709,6 +724,151 @@ public function coursesAds($id_student){
 
     return array("status" => 200, "data" => $data);
 }
+
+
+
+public function getProcessCatalog() {
+        $con = new DBconnection(); 
+        $con->openDB();
+
+        $dataTitle = $con->query("SELECT
+                                        id_process_catalog,
+                                        name,
+                                        description
+                                    FROM
+                                        process_catalog
+                                    WHERE
+                                        status = 1
+                                    ORDER BY id_process_catalog ASC;");
+
+        $data = array();
+
+        while($row = pg_fetch_array($dataTitle)){
+            $dat = array(
+                "id_process_catalog" => $row["id_process_catalog"],
+                "name" => $row["name"],
+                "description" => $row["description"]
+            );
+            $data[] = $dat;
+        }
+        $con->closeDB();
+        
+        return $data;
+    }
+
+
+    // Funcion que obtniene todos los flujos de ejecucion y los agrupa para realizan la validacion de si se cumplen o no
+    public function authorizationProcess($id_student, $fk_process_catalog) {
+    $con = new DBconnection();
+    $con->openDB();
+
+    // Paso 1: Obtener todos los pasos activos ordenados
+    $result = $con->query("SELECT id_process_stages, execution_flow 
+                           FROM process_stages 
+                           WHERE status = 1 
+                           AND fk_process_catalog = $fk_process_catalog
+                           ORDER BY execution_flow ASC;");
+
+    $flows = array();
+
+    // Paso 2: Agrupar por execution_flow
+    while ($row = pg_fetch_array($result)) {
+        $flow = $row["execution_flow"];
+        $stepId = $row["id_process_stages"];
+
+        if (!isset($flows[$flow])) {
+            $flows[$flow] = array();
+        }
+        $flows[$flow][] = $stepId;
+    }
+
+    $data = array();
+
+    // Paso 3: Validar cada grupo de pasos
+    foreach ($flows as $execution_flow => $stepIds) {
+        $allStepsCompleted = true;
+
+        foreach ($stepIds as $stepId) {
+            $check = $con->query("SELECT 1 AS status_paso FROM trace_student_areas 
+                                  WHERE fk_student = '$id_student' 
+                                  AND fk_process_stage = '$stepId' 
+                                  AND status = 2 
+                                  LIMIT 1;");
+
+            if (pg_num_rows($check) === 0) {
+                $allStepsCompleted = false;
+                break;
+            }
+        }
+
+        $data[] = array(
+            "execution_flow" => $execution_flow,
+            "total_steps" => count($stepIds),
+            "completed" => $allStepsCompleted
+        );
+    }
+
+    $con->closeDB();
+
+    return array("status" => 200, "data" => $data);
+}
+
+
+// Funcion para obtener el flujo de ejecucion al que pertenece cada accion que se esta realizando
+    public function getExecutionFlow($id_user, $id_student, $fk_process_catalog) {
+    $con = new DBconnection();
+    $con->openDB();
+
+    session_start();
+    $fk_area  = $_SESSION["id_area"];
+
+    // Paso 1: Obtener todos los process_stages asignados al usuario
+    $query = "SELECT ps.id_process_stages, ps.execution_flow
+              FROM process_stages ps
+              INNER JOIN users u ON ps.fk_process_manager = u.id_user
+              INNER JOIN user_area ua ON u.id_user = ua.fk_user
+              INNER JOIN areas a ON ua.fk_area = a.id_area
+              WHERE ps.status = 1 
+              AND ps.fk_process_manager = $id_user 
+              AND a.id_area = $fk_area AND ps.fk_process_catalog = $fk_process_catalog
+              ORDER BY ps.execution_flow ASC";
+
+    $result = $con->query($query);
+
+    $pendingFlows = [];
+
+    // Paso 2: Verificar cuáles no han sido completados por el estudiante
+    while ($row = pg_fetch_array($result)) {
+        $stageId = $row["id_process_stages"];
+        $flow = $row["execution_flow"];
+
+        // Verificamos si ese paso ya está completado por el estudiante
+        $check = $con->query("SELECT 1 FROM trace_student_areas 
+                              WHERE fk_student = '$id_student' 
+                              AND fk_process_stage = '$stageId' 
+                              AND status = 2 LIMIT 1");
+
+        if (pg_num_rows($check) === 0) {
+            // Si no está completado, lo agregamos como pendiente
+            $pendingFlows[] = $flow;
+        }
+    }
+
+    $con->closeDB();
+
+    $nextFlow = !empty($pendingFlows) ? min($pendingFlows) : null;
+
+    return array(
+        "status" => 200,
+        "data" => array(
+            "execution_flow" => $nextFlow,
+            "all_pending_flows" => $pendingFlows
+        )
+    );
+}
+
+
+
 
 
 }
