@@ -785,7 +785,8 @@ function getCourses(){
 //Agregar cursos al select de editar alumnos
 function coursesAds(){
     let params = new URLSearchParams(location.search);
-    id_student = parseInt(params.get('dc'));
+    let id_student = parseInt(params.get('dc'));
+
     $.ajax({
         url: "../../controller/alumnos/controller_alumnos.php",
         cache: false,
@@ -794,24 +795,59 @@ function coursesAds(){
         data: { action: 16, id_student: id_student },
         success: function(result) {
             var addArea = "";
+
             $.each(result, function(index, val){
                 addArea += "<option value='"+ val.id_academic_programs +"'>"+ val.name +"</option>";
             });
-            //console.log(result[0].name);
-            var stringP = result[0].name.toString();
-            var primerCaracter = stringP.charAt(0);
-            if( primerCaracter == 'M'){
-                $("#program").val(1);
-                $("#course").html(addArea); 
-            }else{
-                $("#program").val(2); 
-                $("#course").html(addArea);
+
+            // Llenar el select de cursos
+            $("#course").html(addArea); 
+
+            // Crear opciones del select de programas
+            var programs = `
+                <option value="1">MAESTRÍA</option>
+                <option value="2">DOCTORADO</option>
+                <option value="3">EXTERNO LICENCIATURA</option>
+                <option value="4">EXTERNO BACHILLERATO</option>
+            `;
+            $("#program").html(programs);
+
+            // Mostrar en consola el valor de type_program del primer curso
+            if(result.length > 0){
+                const typeProgram = result[0].type_program;
+                console.log("Valor de type_program obtenido:", typeProgram); 
+
+                let programValue;
+
+                switch(typeProgram.toLowerCase()){
+                    case 'maestría':
+                        programValue = 1;
+                        break;
+                    case 'doctorado':
+                        programValue = 2;
+                        break;
+                    case 'externo licenciatura':
+                        programValue = 3;
+                        break;
+                    case 'externo bachillerato':
+                        programValue = 4;
+                        break;
+                    default:
+                        programValue = 0;
+                }
+
+                if(programValue !== 0){
+                    $("#program").val(programValue);
+                }
             }
-        }, error: function ( result) {
+        },
+        error: function(result) {
             console.log(result);
         } 
     });
 }
+
+
 
 // Obtener los datos del alumno a editar
 function getStudent() {

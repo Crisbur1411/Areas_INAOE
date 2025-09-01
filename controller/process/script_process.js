@@ -4,29 +4,29 @@ var document_id;
 
 
 (function ($) {
-    $.fn.inputFilter = function (inputFilter) {
-        return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function () {
-            if (inputFilter(this.value)) {
-                this.oldValue = this.value;
-                this.oldSelectionStart = this.selectionStart;
-                this.oldSelectionEnd = this.selectionEnd;
-            } else if (this.hasOwnProperty("oldValue")) {
-                this.value = this.oldValue;
-                this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
-            } else {
-                this.value = "";
-            }
-        });
-    };
+  $.fn.inputFilter = function (inputFilter) {
+    return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function () {
+      if (inputFilter(this.value)) {
+        this.oldValue = this.value;
+        this.oldSelectionStart = this.selectionStart;
+        this.oldSelectionEnd = this.selectionEnd;
+      } else if (this.hasOwnProperty("oldValue")) {
+        this.value = this.oldValue;
+        this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+      } else {
+        this.value = "";
+      }
+    });
+  };
 }(jQuery));
 
 
 $(function () {
-    $(".loader").fadeOut("slow");
-    $("#info").removeClass("d-none");
-    processCatalogFilter();
-    processManager();
-    loadExecutionFlow();
+  $(".loader").fadeOut("slow");
+  $("#info").removeClass("d-none");
+  processCatalogFilter();
+  processManager();
+  loadExecutionFlow();
 });
 
 let stepCount = 0;
@@ -78,7 +78,7 @@ function processCatalogFilter(selectedId = null) {
   });
 }
 
-$(document).on("change", "#process_catalog_filter", function() {
+$(document).on("change", "#process_catalog_filter", function () {
   const selectedId = $(this).val();
   const selectedText = $("#process_catalog_filter option:selected").text();
 
@@ -92,7 +92,6 @@ $(document).on("change", "#process_catalog_filter", function() {
 
 
 function listProcess() {
-
   if ($("#process_catalog_filter").length === 0) return; // No existe, no hacer nada
   const id_process_catalog = $("#process_catalog_filter").val();
 
@@ -101,7 +100,7 @@ function listProcess() {
     cache: false,
     dataType: 'JSON',
     type: 'POST',
-    data: { 
+    data: {
       action: 1,
       id_process_catalog: id_process_catalog
     },
@@ -126,19 +125,38 @@ function listProcess() {
         flujoCounts[val.flujo_ejecucion] = (flujoCounts[val.flujo_ejecucion] || 0) + 1;
       });
 
+      // Crear mapa ID → número de paso
+      const stepNumbers = {};
+      let tempCount = 0;
+      pasosActivos.forEach(p => {
+        tempCount++;
+        stepNumbers[p.id_process_stages] = tempCount;
+      });
+
       // Renderizar pasos
       pasosActivos.forEach(val => {
         stepCount++;
         const tipo = flujoCounts[val.flujo_ejecucion] > 1 ? 'Simultáneo' : 'Secuencial';
 
+        // Buscar otros pasos simultáneos y mostrar con número de paso
+        let simultaneos = [];
+        if (tipo === 'Simultáneo') {
+          simultaneos = pasosActivos
+            .filter(p => p.flujo_ejecucion === val.flujo_ejecucion && p.id_process_stages !== val.id_process_stages)
+            .map(p => `Paso ${stepNumbers[p.id_process_stages]} - ${p.description}`);
+        }
+
+
         const stepHTML = `
           <div class="border rounded p-3 mb-3" style="border-left: 6px solid #691C32; background-color: #f8f9fa;">
             <div class="d-flex justify-content-between align-items-center">
-              <div>
+              <div class="text-start">
                 <strong>Paso ${stepCount}:</strong>
                 <span>${val.description}</span>
                 <div><small><strong>Responsable:</strong> ${val.name_user}</small></div>
+                ${simultaneos.length > 0 ? `<div><small><strong>Simultáneo con:</strong> ${simultaneos.join(", ")}</small></div>` : ""}
               </div>
+
               <div class="d-flex align-items-center">
                 <div class="form-group mb-0 mr-3">
                   <label class="mb-0 mr-2">Tipo:</label>
@@ -171,6 +189,7 @@ function listProcess() {
     }
   });
 }
+
 
 
 // Detectar cambio en el select y recargar la lista
@@ -309,8 +328,8 @@ function loadExecutionFlow(idCatalog = null, idStepSelected = null) {
     data: { action: 10, id_process_catalog: idCatalog },
     success: function (result) {
       let options = `<option value="null" disabled ${!idStepSelected ? "selected" : ""}>Seleccione un Paso</option>`;
-      
-      $.each(result, function(index, val) {
+
+      $.each(result, function (index, val) {
         const selected = (val.id_process_stages == idStepSelected) ? "selected" : "";
         options += `<option value='${val.id_process_stages}' data-execution='${val.execution_flow}' ${selected}>${val.description}</option>`;
       });
@@ -331,7 +350,7 @@ function loadExecutionFlow(idCatalog = null, idStepSelected = null) {
 
 
 
-$("#execution_flow").on("change", function() {
+$("#execution_flow").on("change", function () {
   const selectedOption = $(this).find("option:selected");
   const execFlow = selectedOption.data("execution") || null;
   console.log("Execution flow seleccionado:", execFlow);
@@ -481,98 +500,98 @@ function preCargarDatosProcess() {
 
 
 function saveProcessEdit() {
-    const id_process_stages = sessionStorage.getItem('id_process_stages');
-    // Obtener process_catalog de la URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const process_catalog = urlParams.get('process_catalog');
-    const description = $("#description").val().trim();
-    const selectedOption = $("#execution_flow option:selected");
-    const selectedValue = selectedOption.val();
-    const process_manager = $("#process_manager").val();
+  const id_process_stages = sessionStorage.getItem('id_process_stages');
+  // Obtener process_catalog de la URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const process_catalog = urlParams.get('process_catalog');
+  const description = $("#description").val().trim();
+  const selectedOption = $("#execution_flow option:selected");
+  const selectedValue = selectedOption.val();
+  const process_manager = $("#process_manager").val();
 
 
-    if (description.length === 0) {
-        alert("Debe escribir una descripción");
-        $("#description").focus();
-        return;
-    }
+  if (description.length === 0) {
+    alert("Debe escribir una descripción");
+    $("#description").focus();
+    return;
+  }
 
-    if (!selectedValue || selectedValue === "null") {
-        alert("Debe seleccionar un flujo de ejecución");
-        $("#execution_flow").focus();
-        return;
-    }
+  if (!selectedValue || selectedValue === "null") {
+    alert("Debe seleccionar un flujo de ejecución");
+    $("#execution_flow").focus();
+    return;
+  }
 
-    if (!process_manager || process_manager === "null") {
-        alert("Debe seleccionar un encargado");
-        $("#process_manager").focus();
-        return;
-    }
+  if (!process_manager || process_manager === "null") {
+    alert("Debe seleccionar un encargado");
+    $("#process_manager").focus();
+    return;
+  }
 
-    const enviarEdicion = (execution_flow_real) => {
-        $.ajax({
-            url: "../../controller/process/controller_process.php",
-            cache: false,
-            dataType: 'JSON',
-            type: 'POST',
-            data: {
-                action: 7,
-                id_process_stages: id_process_stages,
-                process_catalog: process_catalog,
-                description: description,
-                execution_flow: execution_flow_real,
-                process_manager: process_manager
-            },
-            success: function (result) {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Éxito',
-                    text: 'Paso del proceso actualizado correctamente',
-                    timer: 500,
-                    timerProgressBar: true
-                }).then((r) => {
-                    if (r.dismiss === Swal.DismissReason.timer) {
-                        window.location.href = "../process/process.php";
-                    }
-                });
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.log("Error en Ajax:");
-                console.log("Estado: " + textStatus);
-                console.log("Error: " + errorThrown);
-                console.log("Respuesta completa: ", jqXHR);
-
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error al actualizar el paso',
-                    html: `<b>Estado:</b> ${textStatus}<br><b>Error:</b> ${errorThrown}`,
-                    footer: 'Revisa consola para más detalles',
-                    timer: 10000,
-                    timerProgressBar: true,
-                });
-            }
+  const enviarEdicion = (execution_flow_real) => {
+    $.ajax({
+      url: "../../controller/process/controller_process.php",
+      cache: false,
+      dataType: 'JSON',
+      type: 'POST',
+      data: {
+        action: 7,
+        id_process_stages: id_process_stages,
+        process_catalog: process_catalog,
+        description: description,
+        execution_flow: execution_flow_real,
+        process_manager: process_manager
+      },
+      success: function (result) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Éxito',
+          text: 'Paso del proceso actualizado correctamente',
+          timer: 500,
+          timerProgressBar: true
+        }).then((r) => {
+          if (r.dismiss === Swal.DismissReason.timer) {
+            window.location.href = "../process/process.php";
+          }
         });
-    };
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log("Error en Ajax:");
+        console.log("Estado: " + textStatus);
+        console.log("Error: " + errorThrown);
+        console.log("Respuesta completa: ", jqXHR);
 
-    // Si es secuencial, obtener el máximo y sumarle 1
-    if (selectedValue === "sequential") {
-        $.ajax({
-            url: "../../controller/process/controller_process.php",
-            type: "POST",
-            dataType: "JSON",
-            data: { action: 11 },
-            success: function (resp) {
-                const nextFlow = resp.next_execution_flow;
-                enviarEdicion(nextFlow);
-            },
-            error: function () {
-                alert("Error al obtener el siguiente flujo de ejecución.");
-            }
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al actualizar el paso',
+          html: `<b>Estado:</b> ${textStatus}<br><b>Error:</b> ${errorThrown}`,
+          footer: 'Revisa consola para más detalles',
+          timer: 10000,
+          timerProgressBar: true,
         });
-    } else {
-        const execution_flow_real = selectedOption.data("execution");
-        enviarEdicion(execution_flow_real);
-    }
+      }
+    });
+  };
+
+  // Si es secuencial, obtener el máximo y sumarle 1
+  if (selectedValue === "sequential") {
+    $.ajax({
+      url: "../../controller/process/controller_process.php",
+      type: "POST",
+      dataType: "JSON",
+      data: { action: 11 },
+      success: function (resp) {
+        const nextFlow = resp.next_execution_flow;
+        enviarEdicion(nextFlow);
+      },
+      error: function () {
+        alert("Error al obtener el siguiente flujo de ejecución.");
+      }
+    });
+  } else {
+    const execution_flow_real = selectedOption.data("execution");
+    enviarEdicion(execution_flow_real);
+  }
 }
 
 
@@ -581,61 +600,61 @@ function saveProcessEdit() {
 
 
 function deleteProcess(id_process_stages) {
-    console.log("ID del paso a eliminar:", id_process_stages);
+  console.log("ID del paso a eliminar:", id_process_stages);
 
-    Swal.fire({
-        title: '¿Estás seguro?',
-        text: 'Esta acción eliminará el paso del proceso. ¿Deseas continuar?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, eliminar',
-        cancelButtonText: 'Cancelar'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            $.ajax({
-                url: "../../controller/process/controller_process.php",
-                cache: false,
-                dataType: 'JSON',
-                type: 'POST',
-                data: {
-                    action: 8,
-                    id_process_stages: id_process_stages
-                },
-                success: function (result) {
-                    console.log(result);
-                    if (result.status === "success") {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Éxito',
-                            text: 'Paso del proceso eliminado correctamente',
-                            timer: 500,
-                            timerProgressBar: true,
-                        }).then((r) => {
-                            if (r.dismiss === Swal.DismissReason.timer) {
-                                location.reload();
-                            }
-                        });
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Ocurrió un error al eliminar el paso del proceso'
-                        });
-                    }
-                },
-                error: function (result) {
-                    console.log(result);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Ocurrió un error al realizar la solicitud'
-                    });
-                }
+  Swal.fire({
+    title: '¿Estás seguro?',
+    text: 'Esta acción eliminará el paso del proceso. ¿Deseas continuar?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.ajax({
+        url: "../../controller/process/controller_process.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        data: {
+          action: 8,
+          id_process_stages: id_process_stages
+        },
+        success: function (result) {
+          console.log(result);
+          if (result.status === "success") {
+            Swal.fire({
+              icon: 'success',
+              title: 'Éxito',
+              text: 'Paso del proceso eliminado correctamente',
+              timer: 500,
+              timerProgressBar: true,
+            }).then((r) => {
+              if (r.dismiss === Swal.DismissReason.timer) {
+                location.reload();
+              }
             });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Ocurrió un error al eliminar el paso del proceso'
+            });
+          }
+        },
+        error: function (result) {
+          console.log(result);
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Ocurrió un error al realizar la solicitud'
+          });
         }
-    });
+      });
+    }
+  });
 }
 
 
@@ -647,23 +666,23 @@ function deleteProcess(id_process_stages) {
 
 
 document.addEventListener('DOMContentLoaded', function () {
-    let id = new URLSearchParams(window.location.search).get('dc');
-    if(id){ // Solo si existe el id en la URL
-        preCargarDatosProcess(id);
-        processManager();
-        loadExecutionFlow();
-    }
+  let id = new URLSearchParams(window.location.search).get('dc');
+  if (id) { // Solo si existe el id en la URL
+    preCargarDatosProcess(id);
+    processManager();
+    loadExecutionFlow();
+  }
 });
 
-function editProcess(id_process_stages){
-    const selectedProcessId = $("#process_catalog_filter").val();
-    if (!selectedProcessId) {
-        alert("Por favor, selecciona un proceso en el filtro antes de editar un paso.");
-        return;
-    }
-    sessionStorage.setItem("id_process_stages", id_process_stages);
-    // Pasar ambos parámetros en la URL: id del paso y process_catalog
-    location.href = `../process/actualizar_process.php?dc=${id_process_stages}&process_catalog=${selectedProcessId}`;  
+function editProcess(id_process_stages) {
+  const selectedProcessId = $("#process_catalog_filter").val();
+  if (!selectedProcessId) {
+    alert("Por favor, selecciona un proceso en el filtro antes de editar un paso.");
+    return;
+  }
+  sessionStorage.setItem("id_process_stages", id_process_stages);
+  // Pasar ambos parámetros en la URL: id del paso y process_catalog
+  location.href = `../process/actualizar_process.php?dc=${id_process_stages}&process_catalog=${selectedProcessId}`;
 }
 
 function NewProcess() {
@@ -677,10 +696,10 @@ function NewProcess() {
 }
 
 // Al cargar el documento, verificar si hay un parámetro en la URL y asignarlo a la variable `processCatalogId`
-$(document).ready(function() {
+$(document).ready(function () {
   const urlParams = new URLSearchParams(window.location.search);
   const processCatalogId = urlParams.get('process_catalog');
-  
+
   if (processCatalogId) {
     $("#process_catalog").val(processCatalogId);
     console.log("processCatalogId:", processCatalogId);
@@ -690,16 +709,16 @@ $(document).ready(function() {
 
 
 function cancel() {
-    window.history.back();
+  window.history.back();
 }
 
-$("#exit").click(function() {
-    //loader.fadeIn();
-    $(".loader").fadeOut("slow");
+$("#exit").click(function () {
+  //loader.fadeIn();
+  $(".loader").fadeOut("slow");
 
-    setTimeout(function() {
-        location.href = "../../index.php";
-    }, 1000);
+  setTimeout(function () {
+    location.href = "../../index.php";
+  }, 1000);
 });
 
 

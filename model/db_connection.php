@@ -4,7 +4,7 @@
     
         public function openDB(){
             $this->conn = pg_connect(
-                "host=localhost port=5433 dbname=students_areas user=postgres password=021114"
+                "host=localhost port=5433 dbname=areas_liberacion user=postgres password=021114"
             );
             
             if (!$this->conn) {

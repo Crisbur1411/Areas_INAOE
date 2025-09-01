@@ -611,16 +611,21 @@ public function coursesAds($id_student){
         $con=new DBconnection();
         $con->openDB();
 
-        $dataCourseAd = $con->query("SELECT academic_programs.id_academic_programs AS id_academic_programs, academic_programs.name FROM students
-                                        INNER JOIN academic_programs ON students.fk_academic_programs = academic_programs.id_academic_programs
-                                        WHERE id_student = ". $id_student);
+        $dataCourseAd = $con->query("SELECT 
+                                        academic_programs.id_academic_programs AS id_academic_programs, 
+                                        academic_programs.name,
+                                        academic_programs.type_program
+                                            FROM students
+                                            INNER JOIN academic_programs ON students.fk_academic_programs = academic_programs.id_academic_programs
+                                            WHERE id_student = ". $id_student);
 
         $data = array();
 
         while($row = pg_fetch_array($dataCourseAd)){
             $dat = array(
                 "id_academic_programs" =>$row["id_academic_programs"],
-                "name" =>$row["name"]
+                "name" =>$row["name"],
+                "type_program" =>$row["type_program"]
             );
             $data[] = $dat;
         }
