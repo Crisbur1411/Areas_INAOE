@@ -159,27 +159,27 @@ if (!isset($_SESSION['username'])) {
 							<input type="text" class="form-control"  id="description" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">
 						</div>
 						<div class="col-sm-4">
-							<label for="execution_flow"><span class="text-danger">* </span>Flujo de Ejecución</label>
-                            <select name="execution_flow" id="execution_flow" class="form-control">
-								<option value="null" selected disabled>Seleccione un Paso</option>
-							</select>
+							<label for="execution_flow"><span class="text-danger">* </span>Número de Ejecución</label>
+                            <input type="number" class="form-control"  id="execution_flow" min="1">
                         </div>	
                         <div class="col-sm-4">
-							<label for="process_manager"><span class="text-danger">* </span>Encargado de Liberar</label>
-							<select name="process_manager" id="process_manager" class="form-control">
-								<option value="null" selected disabled>Seleccione un Encargado</option>
-							</select>
-						</div>				
+							<label for="area_select"><span class="text-danger">* </span>Área a liberar</label>
+                            <select name="area_select" id="area_select" class="form-control">
+								<option value="null" selected disabled>Seleccione un Área</option>
+							</select>						
+                        </div>				
 					</div>
 				</div>
                 <div class="form-group">
 				<div class="row">
-                        <div class="col-sm-4">
-							<label for="area_user"><span class="text-danger">* </span>Área Asociada al Encargado</label>
+                        <div class="col-sm-6">
+							<label for="area_user"><span class="text-danger">* </span>Encargado asociado al área</label>
 							<input type="text" class="form-control"  id="area_user" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();" disabled>
+                            <input type="hidden" id="area_user_id">
 						</div>					
 					</div>
 				</div>
+                
                 <div class="col-sm-12">
 					<label for="text"><span class="text-danger">* </span>En el flujo de ejecución, se deberá seleccionar el paso con el que se desea que el nuevo paso se ejecute de forma simultánea. En caso de no requerir ejecución simultánea con ningún paso, se deberá seleccionar la opción de paso secuencial. </label>
 				</div>

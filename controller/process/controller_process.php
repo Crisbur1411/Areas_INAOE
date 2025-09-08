@@ -35,15 +35,15 @@
             echo json_encode($data);
         }
 
-        public function getProcessManager(){
+        public function getAreas(){
             $this->Process = new Process();
-            $data = $this->Process->getProcessManager();
+            $data = $this->Process->getAreas();
             echo json_encode($data);
         }
 
         public function getAreaUser(){
             $this->Process = new Process();
-            $data = $this->Process->getAreaUser($_POST['id_user']);
+            $data = $this->Process->getAreaUser($_POST['id_area']);
             echo json_encode($data);
         }
 
@@ -97,7 +97,7 @@
         } else if ($_POST["action"]==3){
             $obj->getProcessCatalog();
         } else if ($_POST["action"]==4){
-            $obj->getProcessManager();
+            $obj->getAreas();
         } else if ($_POST["action"]==5){
             $obj->saveProcess();
         } else if ($_POST["action"]==6){

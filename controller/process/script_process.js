@@ -25,8 +25,7 @@ $(function () {
   $(".loader").fadeOut("slow");
   $("#info").removeClass("d-none");
   processCatalogFilter();
-  processManager();
-  loadExecutionFlow();
+  getAreas();
 });
 
 let stepCount = 0;
@@ -106,16 +105,18 @@ function listProcess() {
     },
     success: function (result) {
       stepCount = 0;
-      $('#steps-container').empty();
+      $('#steps-body').empty(); // limpiar solo las filas
 
       const flujoCounts = {};
       const pasosActivos = result.filter(val => val.status == 1);
 
       if (pasosActivos.length === 0) {
-        $('#steps-container').html(`
-          <div class="alert alert-warning" role="alert">
-            No existen pasos asignados aún para este proceso.
-          </div>
+        $('#steps-body').html(`
+          <tr>
+            <td colspan="5" class="text-center text-muted">
+              No existen pasos asignados aún para este proceso.
+            </td>
+          </tr>
         `);
         return;
       }
@@ -125,63 +126,32 @@ function listProcess() {
         flujoCounts[val.flujo_ejecucion] = (flujoCounts[val.flujo_ejecucion] || 0) + 1;
       });
 
-      // Crear mapa ID → número de paso
-      const stepNumbers = {};
-      let tempCount = 0;
-      pasosActivos.forEach(p => {
-        tempCount++;
-        stepNumbers[p.id_process_stages] = tempCount;
-      });
-
-      // Renderizar pasos
+      // Renderizar filas
       pasosActivos.forEach(val => {
         stepCount++;
         const tipo = flujoCounts[val.flujo_ejecucion] > 1 ? 'Simultáneo' : 'Secuencial';
 
-        // Buscar otros pasos simultáneos y mostrar con número de paso
-        let simultaneos = [];
-        if (tipo === 'Simultáneo') {
-          simultaneos = pasosActivos
-            .filter(p => p.flujo_ejecucion === val.flujo_ejecucion && p.id_process_stages !== val.id_process_stages)
-            .map(p => `Paso ${stepNumbers[p.id_process_stages]} - ${p.description}`);
-        }
-
-
-        const stepHTML = `
-          <div class="border rounded p-3 mb-3" style="border-left: 6px solid #691C32; background-color: #f8f9fa;">
-            <div class="d-flex justify-content-between align-items-center">
-              <div class="text-start">
-                <strong>Paso ${stepCount}:</strong>
-                <span>${val.description}</span>
-                <div><small><strong>Responsable:</strong> ${val.name_user}</small></div>
-                ${simultaneos.length > 0 ? `<div><small><strong>Simultáneo con:</strong> ${simultaneos.join(", ")}</small></div>` : ""}
-              </div>
-
-              <div class="d-flex align-items-center">
-                <div class="form-group mb-0 mr-3">
-                  <label class="mb-0 mr-2">Tipo:</label>
-                  <select class="form-control form-control-sm d-inline-block" style="width: auto;" disabled>
-                    <option ${tipo === 'Secuencial' ? 'selected' : ''}>Secuencial</option>
-                    <option ${tipo === 'Simultáneo' ? 'selected' : ''}>Simultáneo</option>
-                  </select>
-                </div>
-                <div class="btn-group" role="group">
-                  <button class="btn btn-sm btn-outline-primary ml-1" title="Ver detalles" onclick="DetailsProcess(${val.id_process_stages}, '${tipo}')">
-                    <i class="fas fa-eye"></i>
-                  </button>
-                  <button class="btn btn-sm btn-secondary ml-1" title="Editar paso" onclick="editProcess(${val.id_process_stages})">
-                    <i class="fas fa-edit"></i>
-                  </button>
-                  <button class="btn btn-sm btn-danger ml-1" title="Eliminar paso" onclick="deleteProcess(${val.id_process_stages})">
-                    <i class="fas fa-trash"></i>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+        const rowHTML = `
+          <tr>
+            <td>${stepCount}</td>
+            <td>${val.description}</td>
+            <td>${val.name_user}</td>
+            <td>${val.flujo_ejecucion}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-primary ml-1" title="Ver detalles" onclick="DetailsProcess(${val.id_process_stages}, '${tipo}')">
+                <i class="fas fa-eye"></i>
+              </button>
+              <button class="btn btn-sm btn-secondary ml-1" title="Editar paso" onclick="editProcess(${val.id_process_stages})">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-danger ml-1" title="Eliminar paso" onclick="deleteProcess(${val.id_process_stages})">
+                <i class="fas fa-trash"></i>
+              </button>
+            </td>
+          </tr>
         `;
 
-        $('#steps-container').append(stepHTML);
+        $('#steps-body').append(rowHTML);
       });
     },
     error: function (result) {
@@ -191,11 +161,6 @@ function listProcess() {
 }
 
 
-
-// Detectar cambio en el select y recargar la lista
-$(document).on("change", "#process_catalog_filter", function () {
-  listProcess();
-});
 
 
 
@@ -244,51 +209,51 @@ function DetailsProcess(id_process_stages, tipo) {
 
 
 
-function processManager(selectedId = null) {
+function getAreas(selectedId = null) {
   $(".loader").fadeOut("slow");
   $.ajax({
     url: "../../controller/process/controller_process.php",
     cache: false,
     dataType: 'JSON',
     type: 'POST',
-    data: { action: 4 },
+    data: { action: 4 }, // ya está enlazado con getAreas() en tu PHP
     success: function (result) {
-      let options = `<option value="null" disabled ${selectedId === null ? "selected" : ""}>Seleccione un Encargado</option>`;
+      let options = `<option value="null" disabled ${selectedId === null ? "selected" : ""}>Seleccione un Área</option>`;
+      
       $.each(result, function (index, val) {
-        const selected = (val.id_user == selectedId) ? "selected" : "";
-        options += `<option value='${val.id_user}' ${selected}>${val.name_user}</option>`;
+        const selected = (val.id_area == selectedId) ? "selected" : "";
+        options += `<option value='${val.id_area}' ${selected}>${val.name_area}</option>`;
       });
-      $("#process_manager").html(options);
-
-      // Si ya hay un encargado seleccionado, mostrar su área
-      if (selectedId) {
-        getAreaByUser(selectedId);
-      }
+      
+      $("#area_select").html(options); // 👈 ajusta el ID de tu <select>
     },
     error: function (result) {
-      console.log(result);
+      console.error("Error al obtener áreas:", result);
     }
   });
 }
 
+
 // Evento: cuando el usuario cambia el encargado
-$(document).on("change", "#process_manager", function () {
-  const id_user = $(this).val();
-  getAreaByUser(id_user);
+$(document).on("change", "#area_select", function () {
+  const id_area = $(this).val();
+  getAreaByUser(id_area);
 });
 
-// Función que obtiene el área por ID de usuario
-function getAreaByUser(id_user) {
+// Función que obtiene el usuario asociado a un área por ID
+function getAreaByUser(id_area) {
   $.ajax({
     url: "../../controller/process/controller_process.php",
     type: "POST",
-    data: { action: 9, id_user: id_user },
+    data: { action: 9, id_area: id_area },
     dataType: "JSON",
     success: function (response) {
       if (response.length > 0) {
-        $("#area_user").val(response[0].name_area);
+        $("#area_user").val(response[0].full_name);  // nombre visible
+        $("#area_user_id").val(response[0].id_user); // id oculto
       } else {
         $("#area_user").val("Sin área asignada");
+        $("#area_user_id").val("");
       }
     },
     error: function (error) {
@@ -301,60 +266,30 @@ function getAreaByUser(id_user) {
 
 
 
+
+
 $(document).ready(function () {
-  const params = new URLSearchParams(window.location.search);
-  const idStep = params.get('dc'); // id del paso, solo existe si es editar
-  const processCatalog = params.get('process_catalog');
+    const params = new URLSearchParams(window.location.search);
+    const idStep = params.get('dc'); // id del paso, solo existe si es editar
+    const processCatalog = params.get('process_catalog');
 
-  if (!idStep) {
-    // Si es registro (nuevo), cargar solo con el catálogo
-    loadExecutionFlow(processCatalog, null);
-  } else {
-    // Si es edición, pre-cargar datos completos (incluye loadExecutionFlow con paso marcado)
-    preCargarDatosProcess();
-  }
-});
-
-
-function loadExecutionFlow(idCatalog = null, idStepSelected = null) {
-
-
-  $(".loader").fadeOut("slow");
-  $.ajax({
-    url: "../../controller/process/controller_process.php",
-    cache: false,
-    dataType: 'JSON',
-    type: 'POST',
-    data: { action: 10, id_process_catalog: idCatalog },
-    success: function (result) {
-      let options = `<option value="null" disabled ${!idStepSelected ? "selected" : ""}>Seleccione un Paso</option>`;
-
-      $.each(result, function (index, val) {
-        const selected = (val.id_process_stages == idStepSelected) ? "selected" : "";
-        options += `<option value='${val.id_process_stages}' data-execution='${val.execution_flow}' ${selected}>${val.description}</option>`;
-      });
-
-      // Opción secuencial
-      const isSequentialSelected = idStepSelected === 'sequential';
-      options += `<option value="sequential" ${isSequentialSelected ? "selected" : ""}>PASO SECUENCIAL</option>`;
-
-      $("#execution_flow").html(options);
-    },
-    error: function (result) {
-      console.log(result);
+    if (!idStep) {
+        // Registro (nuevo): solo asegurarse que el formulario esté listo
+        // Por ejemplo, podrías limpiar campos o establecer valores por defecto
+        $("#description").val("");
+        $("#execution_flow").val(""); // si es input tipo número
+        $("#process_manager").val(null);
+        $("#area_select").val(null);
+        $("#area_user").val("");
+        $("#area_user_id").val("");
+    } else {
+        // Edición: precargar datos del paso
+        preCargarDatosProcess(idStep);
     }
-  });
-}
-
-
-
-
-
-$("#execution_flow").on("change", function () {
-  const selectedOption = $(this).find("option:selected");
-  const execFlow = selectedOption.data("execution") || null;
-  console.log("Execution flow seleccionado:", execFlow);
 });
+
+
+
 
 
 
@@ -368,104 +303,85 @@ function getQueryParam(param) {
 }
 
 function saveProcess() {
-  // Tomar process_catalog solo desde la URL
-  const process_catalog = getQueryParam('process_catalog');
+    const process_catalog = getQueryParam('process_catalog');
+    const description = $("#description").val().trim();
+    const execution_flow = $("#execution_flow").val();
+    const process_manager = $("#area_user_id").val();
 
-  const description = $("#description").val().trim();
-  const selectedOption = $("#execution_flow option:selected");
-  const selectedValue = selectedOption.val();
-  const process_manager = $("#process_manager").val();
+    // Validaciones
+    if (!process_catalog) {
+        alert("El proceso no está definido en la URL");
+        return 0;
+    }
 
-  if (!process_catalog) {
-    alert("El proceso no está definido en la URL");
-    return;
-  }
+    if (description.length === 0) {
+        alert("El campo descripción no puede estar vacío");
+        $("#description").focus();
+        return 0;
+    }
 
-  if (description.length === 0) {
-    alert("El campo descripción no puede estar vacío");
-    $("#description").focus();
-    return;
-  }
-
-  if (!selectedValue) {
-    alert("Tiene que seleccionar un paso");
+    if (!execution_flow || isNaN(execution_flow) || execution_flow <= 0) {
+    alert("Tiene que colocar un número de ejecución válido (mayor a 0).");
     $("#execution_flow").focus();
-    return;
-  }
+    return 0;
+}
 
-  if (!process_manager) {
-    alert("Tiene que seleccionar un encargado de liberar");
-    $("#process_manager").focus();
-    return;
-  }
+    if (!process_manager) {
+        alert("Tiene que seleccionar un área de liberar");
+        $("#process_manager").focus();
+        return 0;
+    }
 
-  const enviarRegistro = (execution_flow_real) => {
+    // Enviar registro
     $.ajax({
-      url: "../../controller/process/controller_process.php",
-      cache: false,
-      dataType: 'JSON',
-      type: 'POST',
-      data: {
-        action: 5,
-        process_catalog: process_catalog,
-        description: description,
-        execution_flow: execution_flow_real,
-        process_manager: process_manager
-      },
-      success: function () {
-        location.href = "../process/process.php";
-      },
-      error: function () {
-        bootbox.confirm({
-          title: "<h4>Error al registrar paso para el proceso</h4>",
-          message: "<h5>Ocurrió un error al hacer el registro.</h5>",
-          buttons: {
-            cancel: {
-              label: 'Cancelar',
-              className: 'btn-secondary'
-            },
-            confirm: {
-              label: 'Aceptar',
-              className: 'btn-success'
-            }
-          },
-          closeButton: false,
-          callback: function (result) {
-            if (!result) history.go(-1);
-          }
-        });
-      }
+        url: "../../controller/process/controller_process.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        data: { 
+            action: 5,
+            process_catalog: process_catalog,
+            description: description,
+            execution_flow: execution_flow,
+            process_manager: process_manager
+        },
+        success: function () {
+            location.href = "../process/process.php";
+        },
+        error: function (result) {
+            console.log(result);
+            bootbox.confirm({
+                title: "<h4>Error al registrar paso del proceso</h4>",
+                message: "<h5>Ocurrió un error al hacer el registro.</h5>",
+                buttons: {
+                    cancel: {
+                        label: 'Cancelar',
+                        className: 'btn-secondary'
+                    },
+                    confirm: {
+                        label: 'Aceptar',
+                        className: 'btn-success'
+                    }
+                },
+                closeButton: false,
+                callback: function (result) {
+                    if (result == false) {
+                        history.go(-1);
+                    }
+                }
+            });
+        }
     });
-  };
-
-  if (selectedValue === "sequential") {
-    $.ajax({
-      url: "../../controller/process/controller_process.php",
-      type: "POST",
-      dataType: "JSON",
-      data: { action: 11 },
-      success: function (resp) {
-        const nextFlow = resp.next_execution_flow;
-        enviarRegistro(nextFlow);
-      },
-      error: function () {
-        alert("Error al obtener el siguiente flujo de ejecución.");
-      }
-    });
-  } else {
-    const execution_flow = selectedOption.data("execution");
-    enviarRegistro(execution_flow);
-  }
 }
 
 
 
 
-function preCargarDatosProcess() {
-  const processID = sessionStorage.getItem('id_process_stages');
+
+function preCargarDatosProcess(idStep) {
   const formData = new FormData();
   formData.append('action', 6);
-  formData.append('id_process_stages', processID);
+  formData.append('id_process_stages', idStep);
 
   $.ajax({
     url: "../../controller/process/controller_process.php",
@@ -479,15 +395,22 @@ function preCargarDatosProcess() {
       if (result.status == 200) {
         const processData = result.data;
 
-        processManager(processData.fk_process_manager);
-        loadExecutionFlow(processData.fk_process_catalog, processData.id_process_stages); // ahora sí
-        $('#process_catalog').val(processData.fk_process_catalog);
-        $('#process_manager').val(processData.fk_process_manager);
+        // llenar los campos primero
         $('#description').val(processData.description);
+        $('#execution_flow').val(processData.execution_flow);
 
-        getAreaByUser(processData.fk_process_manager);
+        // cargar áreas y después seleccionar la correcta
+        getAreas(processData.id_area);
+
+        // cargar encargado
+        getAreaByUser(processData.id_area);
+
       } else {
-        Swal.fire({ icon: 'error', title: 'Error', text: 'Ocurrió un error al editar el paso del proceso' });
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Ocurrió un error al editar el paso del proceso'
+        });
       }
     },
     error: function (xhr, status, error) {
@@ -499,100 +422,80 @@ function preCargarDatosProcess() {
 
 
 
+
+
 function saveProcessEdit() {
-  const id_process_stages = sessionStorage.getItem('id_process_stages');
-  // Obtener process_catalog de la URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const process_catalog = urlParams.get('process_catalog');
-  const description = $("#description").val().trim();
-  const selectedOption = $("#execution_flow option:selected");
-  const selectedValue = selectedOption.val();
-  const process_manager = $("#process_manager").val();
+    const id_process_stages = sessionStorage.getItem('id_process_stages');
+    const urlParams = new URLSearchParams(window.location.search);
+    const process_catalog = urlParams.get('process_catalog');
+    const description = $("#description").val().trim();
+    const execution_flow = $("#execution_flow").val().trim();
+    const process_manager = $("#area_user_id").val(); // el id del encargado oculto
 
+    // Validaciones
+    if (description.length === 0) {
+        alert("Debe escribir una descripción");
+        $("#description").focus();
+        return 0;
+    }
 
-  if (description.length === 0) {
-    alert("Debe escribir una descripción");
-    $("#description").focus();
-    return;
-  }
+    if (!execution_flow || parseInt(execution_flow) <= 0) {
+        alert("Debe ingresar un número de ejecución válido (mayor a 0)");
+        $("#execution_flow").focus();
+        return 0;
+    }
 
-  if (!selectedValue || selectedValue === "null") {
-    alert("Debe seleccionar un flujo de ejecución");
-    $("#execution_flow").focus();
-    return;
-  }
+    if (!process_manager || process_manager === "null") {
+        alert("Debe seleccionar un encargado");
+        $("#area_select").focus();
+        return 0;
+    }
 
-  if (!process_manager || process_manager === "null") {
-    alert("Debe seleccionar un encargado");
-    $("#process_manager").focus();
-    return;
-  }
-
-  const enviarEdicion = (execution_flow_real) => {
+    // Si todo está correcto
     $.ajax({
-      url: "../../controller/process/controller_process.php",
-      cache: false,
-      dataType: 'JSON',
-      type: 'POST',
-      data: {
-        action: 7,
-        id_process_stages: id_process_stages,
-        process_catalog: process_catalog,
-        description: description,
-        execution_flow: execution_flow_real,
-        process_manager: process_manager
-      },
-      success: function (result) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Éxito',
-          text: 'Paso del proceso actualizado correctamente',
-          timer: 500,
-          timerProgressBar: true
-        }).then((r) => {
-          if (r.dismiss === Swal.DismissReason.timer) {
-            window.location.href = "../process/process.php";
-          }
-        });
-      },
-      error: function (jqXHR, textStatus, errorThrown) {
-        console.log("Error en Ajax:");
-        console.log("Estado: " + textStatus);
-        console.log("Error: " + errorThrown);
-        console.log("Respuesta completa: ", jqXHR);
+        url: "../../controller/process/controller_process.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        data: { 
+            action: 7,
+            id_process_stages: id_process_stages,
+            process_catalog: process_catalog,
+            description: description,
+            execution_flow: execution_flow,
+            process_manager: process_manager
+        },
+        success: function (result) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Éxito',
+                text: 'Paso del proceso actualizado correctamente',
+                timer: 500,
+                timerProgressBar: true,
+            }).then((res) => {
+                if (res.dismiss === Swal.DismissReason.timer) {
+                    location.href = "../process/process.php";
+                }
+            });
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log("Error en Ajax:");
+            console.log("Estado: " + textStatus);
+            console.log("Error: " + errorThrown);
+            console.log("Respuesta completa: ", jqXHR);
 
-        Swal.fire({
-          icon: 'error',
-          title: 'Error al actualizar el paso',
-          html: `<b>Estado:</b> ${textStatus}<br><b>Error:</b> ${errorThrown}`,
-          footer: 'Revisa consola para más detalles',
-          timer: 10000,
-          timerProgressBar: true,
-        });
-      }
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al actualizar el paso del proceso',
+                html: `<b>Estado:</b> ${textStatus}<br><b>Error:</b> ${errorThrown}`,
+                footer: 'Revisa consola para más detalles',
+                timer: 10000,
+                timerProgressBar: true,
+            });
+        }
     });
-  };
-
-  // Si es secuencial, obtener el máximo y sumarle 1
-  if (selectedValue === "sequential") {
-    $.ajax({
-      url: "../../controller/process/controller_process.php",
-      type: "POST",
-      dataType: "JSON",
-      data: { action: 11 },
-      success: function (resp) {
-        const nextFlow = resp.next_execution_flow;
-        enviarEdicion(nextFlow);
-      },
-      error: function () {
-        alert("Error al obtener el siguiente flujo de ejecución.");
-      }
-    });
-  } else {
-    const execution_flow_real = selectedOption.data("execution");
-    enviarEdicion(execution_flow_real);
-  }
 }
+
 
 
 
@@ -669,8 +572,7 @@ document.addEventListener('DOMContentLoaded', function () {
   let id = new URLSearchParams(window.location.search).get('dc');
   if (id) { // Solo si existe el id en la URL
     preCargarDatosProcess(id);
-    processManager();
-    loadExecutionFlow();
+    getAreas();
   }
 });
 
