@@ -90,7 +90,7 @@ foreach ($stages as $stage) {
             $correoDestino = $stage["email"];
 
             $mensajeCorreo = "Estimado/a $responsable,\n\n";
-            $mensajeCorreo .= "Se ha registrado el estudiante $nombreEstudiante en el proceso $proceso.\n\n";
+            $mensajeCorreo .= "Se ha registrado el estudiante $nombreEstudiante en el Proceso de Liberación.\n\n";
             $mensajeCorreo .= "Correo del estudiante: $correoEstudiante\n";
             $mensajeCorreo .= "Fecha de aviso: $currentTime\n\n";
             $mensajeCorreo .= "Acceda al sistema: $enlaceSistema\n\n";
