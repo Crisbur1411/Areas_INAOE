@@ -22,7 +22,8 @@ class alumnos
                                  CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
                                  students.control_number, 
                                  DATE(students.date_register) AS date, 
-                                 academic_programs.name AS namecourse, 
+                                 academic_programs.name AS namecourse,
+                                 students.fk_process_catalog, 
                                  students.status
                           FROM
                               students
@@ -47,6 +48,7 @@ class alumnos
                 "control_number" => $row["control_number"],
                 "date" => $row["date"],
                 "namecourse" => $row["namecourse"],
+                "fk_process_catalog" => $row["fk_process_catalog"],
                 "status" => $row["status"]
             );
             $data[] = $dat;
@@ -731,7 +733,7 @@ public function coursesAds($id_student){
 }
 
 
-
+//Se utiliza para obtener los procesos de catalogo para mostrarlos en el select de registro de alumnos
 public function getProcessCatalog() {
         $con = new DBconnection(); 
         $con->openDB();

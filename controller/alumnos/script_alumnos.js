@@ -57,7 +57,7 @@ function listStudent() {
                     + "<th style='text-align:center'>"+val.date+"</th>"
                     + "<th style='text-align:center'><button type='button' class='btn btn-secondary btn-sm' id='btn-edit' title='Click para editar' onclick='editStudent("+val.id_student+")'>"+'<i class="fas fa-edit"></i>'+"</button></th>"
                     + "<th style='text-align:center'><button type='button' class='btn btn-danger btn-sm' id='btn-details' id-student='"+val.id_student+"' title='Click para eliminar' onclick='deleteStudent("+val.id_student+")'>"+'<i class="fas fa-trash"></i>'+"</button></th>"
-                    + "<th style='text-align:center'><button type='button' class='btn btn-success btn-sm' id='btn-details' id-student='"+val.id_student+"' title='Click para turnar a firma'  onclick='turnSingAreas("+val.id_student+")'>"+'<i class="fa-solid fa-file-signature"></i>'+"</button></th>"
+                    + "<th style='text-align:center'><button type='button' class='btn btn-success btn-sm' id='btn-details' id-student='"+val.id_student+"' title='Click para turnar a firma'  onclick='turnSingAreas("+val.id_student+", " + val.fk_process_catalog + ")'>"+'<i class="fa-solid fa-file-signature"></i>'+"</button></th>"
                     + "</tr>";
                 }
             });
@@ -110,7 +110,7 @@ function newStudent() {
     location.href = "../alumnos/registro_alumnos.php";
 }
 
-function turnSingAreas(id_student) {
+function turnSingAreas(id_student, fk_process_catalog) {
     $u = document.getElementById("user");
     $user = $u.innerHTML;
 
@@ -138,14 +138,24 @@ function turnSingAreas(id_student) {
                         url: "../../services/send_email.php",
                         type: 'GET',
                         dataType: 'JSON',
-                        data: { id_student: id_student },
+                        data: { 
+                            id_student: id_student,
+                            fk_process_catalog: fk_process_catalog, // importante
+                            proceso: "Proceso de Liberación" // opcional
+                        },
                         success: function(response) {
-                            console.log(response);
+                            console.log("Correo enviado por turno:", response);
+
+                            // ✅ Después de enviar el correo, continuar con la firma del estudiante
+                            signStudent(id_student, null, fk_process_catalog);
                         },
                         error: function(error) {
-                            console.error(error);
+                            console.error("Error enviando correo:", error);
+                            // Aun así podemos continuar
+                            signStudent(id_student, null, fk_process_catalog);
                         }
                     });
+
 
 
                     $.ajax({

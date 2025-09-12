@@ -79,6 +79,7 @@ function signStudent(id_student, full_name, fk_process_catalog) {
     const $u = document.getElementById("user");
     const $user = $u.innerHTML;
     const $id_user = ID_USER;
+
     console.log("ID del usuario:", $id_user);
     console.log("ID proceso catalog del estudiante:", fk_process_catalog);
 
@@ -159,6 +160,24 @@ function signStudent(id_student, full_name, fk_process_catalog) {
                                                         fk_process_catalog: fk_process_catalog
                                                     },
                                                     complete: function () {
+                                                        // ✅ Paso 6: Enviar correo al siguiente flujo
+                                                        $.ajax({
+                                                            url: "../../services/send_email.php",
+                                                            type: 'GET',
+                                                            dataType: 'JSON',
+                                                            data: { 
+                                                                id_student: id_student,
+                                                                fk_process_catalog: fk_process_catalog,
+                                                                proceso: "Proceso de Liberación"
+                                                            },
+                                                            success: function(responseEmail) {
+                                                                console.log("Correo enviado al siguiente flujo:", responseEmail);
+                                                            },
+                                                            error: function(errorEmail) {
+                                                                console.error("Error enviando correo al siguiente flujo:", errorEmail);
+                                                            }
+                                                        });
+
                                                         $(".loader").fadeOut("slow");
                                                         $("#info").removeClass("d-none");
                                                         listStudentInProgress();
@@ -208,6 +227,7 @@ function signStudent(id_student, full_name, fk_process_catalog) {
         }
     });
 }
+
 
 
 
