@@ -24,7 +24,7 @@ class validacionController{
 	{
 		$this->proceso = new proceso();
 
-		$data = $this->proceso->showRegisterAreas($_POST["id_student"]);
+		$data = $this->proceso->showRegisterAreas($_POST["id_student"], $_POST["fk_process_catalog"]);
 		echo json_encode($data);
 	}
 

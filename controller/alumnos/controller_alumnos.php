@@ -68,7 +68,7 @@ class alumnosController
 	{
 		$this->alumnos = new alumnos();
 
-		$data = $this->alumnos->showRegisterAreas($_POST["id_student"]);
+		$data = $this->alumnos->showRegisterAreas($_POST["id_student"], $_POST["fk_process_catalog"]);
 		echo json_encode($data);
 	}
 

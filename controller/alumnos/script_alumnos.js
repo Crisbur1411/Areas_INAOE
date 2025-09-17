@@ -213,7 +213,7 @@ function listStudentInProgress() {
                     + "<th style='text-align:center'>"+val.id_student+"</th>"
                     + "<th style='text-align:center'>"+val.control_number+"</a></th>"
                     + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
-                    + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showRegisterAreas("+val.id_student+");'>"+val.areas_count+"</a></th>"
+                    + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showRegisterAreas("+val.id_student+", "+val.fk_process_catalog+");'>"+val.areas_count+"</a></th>"
                     + "<th style='text-align:center'><button type='button' class='btn btn-primary btn-sm' title='Click para finalizar el trámite' onClick='freeStudent("+val.id_student+", "+val.fk_process_catalog+");'><i class='fa-solid fa-file-import'></i></button></a></th>"
                     + "<th style='text-align:center'><button type='button' class='btn btn-danger btn-sm' title='Click para cancelar el trámite' onClick='cancelStudent("+val.id_student+");'><i class='fa-solid fa-file-excel'></i></button></a></th>"
                     + "</tr>";
@@ -239,42 +239,43 @@ function listStudentInProgress() {
     }); 
 }
 
-function showRegisterAreas(id_student) { 
-  
+function showRegisterAreas(id_student, fk_process_catalog) { 
     $('#exampleModalCenter').modal();
     var modal = $('#exampleModalCenter')
     modal.find('.modal-title').text('Detalles')
 
     $.ajax({
-           url: "../../controller/alumnos/controller_alumnos.php",
-           cache: false,
-           dataType: 'JSON',
-           type: 'POST',
-           data: { action: 5, id_student: id_student},
-           success: function(result) {
-            //console.log(result);
+        url: "../../controller/alumnos/controller_alumnos.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        data: { 
+            action: 5, 
+            id_student: id_student,
+            fk_process_catalog: fk_process_catalog 
+        },
+        success: function(result) {
             var table = "";
-            var name_student="";
-                $.each(result, function(index, val) {
-                    if (val.status == 2)
-                    {             
-                        name_student = val.full_name;  
-                    }      
-                        table += "<tr>"       
-                        + "<th style='text-align:center'>"+val.namearea+"</a></th>"
-                        + "<th style='text-align:center'>"+val.formatted_date+"</th>"
-                        + "<th style='text-align:center'>"+val.description+"</th>"
-                         + "</tr>";
-                    
-                });
-                $('#table-modal-info-areas').html(table);
-                $('#title-name-student').html(name_student);
-                 
-           },error: function(result){
-                console.log(result);
-           }                   
-       });     
+            var name_student = "";
+            $.each(result, function(index, val) {
+                if (val.status == 2) {             
+                    name_student = val.full_name;  
+                }      
+                table += "<tr>"       
+                    + "<th style='text-align:center'>"+val.namearea+"</th>"
+                    + "<th style='text-align:center'>"+val.formatted_date+"</th>"
+                    + "<th style='text-align:center'>"+val.description+"</th>"
+                + "</tr>";
+            });
+            $('#table-modal-info-areas').html(table);
+            $('#title-name-student').html(name_student);
+        },
+        error: function(result){
+            console.log(result);
+        }                   
+    });     
 }
+
 
 function freeStudent(id_student, fk_process_catalog) {
     const $u = document.getElementById("user");
