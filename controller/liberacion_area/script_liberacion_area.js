@@ -92,6 +92,13 @@ function signStudent(id_student, full_name, fk_process_catalog) {
         success: function (responseFlow) {
             if (responseFlow.status === 200 && responseFlow.data) {
                 const user_execution_flow = parseInt(responseFlow.data.execution_flow);
+
+                // 🚨 Validación extra: si el flujo viene nulo o no es un número válido
+                if (!user_execution_flow || isNaN(user_execution_flow)) {
+                    swal("Acción no permitida", "No se puede liberar al alumno ya que no pertenece a su proceso de liberación.", "warning");
+                    return;
+                }
+
                 console.log("Execution flow del usuario:", user_execution_flow);
 
                 // Paso 2: Obtener el avance del estudiante
@@ -227,6 +234,7 @@ function signStudent(id_student, full_name, fk_process_catalog) {
         }
     });
 }
+
 
 
 
