@@ -26,18 +26,25 @@ class liberacionArea{
                                         pc.description AS process_name,
                                         SUM(CASE WHEN n.fk_area = ".$fk_area." THEN 1 ELSE 0 END) AS note_count
                                     FROM students s
-                                    LEFT JOIN trace_student_areas tsa 
-                                        ON tsa.fk_student = s.id_student
+                                    JOIN process_catalog pc 
+                                        ON pc.id_process_catalog = s.fk_process_catalog
+                                    JOIN process_stages ps
+                                        ON ps.fk_process_catalog = pc.id_process_catalog
+                                    AND ps.status = 1
+                                    AND ps.status_process_stages = 1
+                                    JOIN users u
+                                        ON u.id_user = ps.fk_process_manager
+                                    JOIN user_area ua
+                                        ON ua.fk_user = u.id_user
+                                    AND ua.fk_area = ".$fk_area."
                                     LEFT JOIN notes n 
                                         ON n.fk_student = s.id_student
-                                    LEFT JOIN process_catalog pc 
-                                        ON pc.id_process_catalog = s.fk_process_catalog
                                     WHERE s.status = 2
                                     AND NOT EXISTS (
                                         SELECT 1 
-                                        FROM trace_student_areas 
-                                        WHERE fk_student = s.id_student 
-                                        AND fk_area = ".$fk_area."
+                                        FROM trace_student_areas tsa
+                                        WHERE tsa.fk_student = s.id_student 
+                                        AND tsa.fk_area = ".$fk_area."
                                     )
                                     GROUP BY 
                                         s.id_student, 
@@ -47,6 +54,7 @@ class liberacionArea{
                                         s.fk_process_catalog,
                                         pc.description
                                     ORDER BY s.id_student;
+
 
                                     ");
 
