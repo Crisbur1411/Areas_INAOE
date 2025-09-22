@@ -213,6 +213,7 @@ if (!isset($_SESSION['username'])) {
                             <th scope="col" style="text-align:center"># REGISTRO</th>
 							<th scope="col" style="text-align:center">MATRÍCULA</th>
                             <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>
+                            <th scope="col" style="text-align:center">PROCESO</th>
                             <th scope="col" style="text-align:center">TOTAL DE ÁREAS LIBERADAS</th>
                             <th scope="col" style="text-align:center">FINALIZAR TRÁMITE</th>
                             <th scope="col" style="text-align:center">CANCELAR TRÁMITE</th>

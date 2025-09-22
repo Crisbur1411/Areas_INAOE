@@ -172,6 +172,7 @@ if (!isset($_SESSION['username'])) {
                             <th scope="col" style="text-align:center"># REGISTRO</th>
 							<th scope="col" style="text-align:center">MATRÍCULA</th>
                             <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>
+                            <th scope="col" style="text-align:center">PROCESO</th>
                             <th scope="col" style="text-align:center">LIBERAR ALUMNO</th>
                             <th scope="col" style="text-align:center">AGREGAR NOTA</th>
                         </tr>

@@ -171,26 +171,32 @@ class alumnos
         $con = new DBconnection();
         $con->openDB();
 
-        $dataR = $con->query("SELECT students.id_student, 
-                                    CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
-                                    students.control_number, 
-                                    COUNT(trace_student_areas.fk_area) AS areas_count,                                      
-                                    students.status,
-                                    students.fk_process_catalog
-                                    FROM 
-                                        students
-                                    LEFT JOIN 
-                                        trace_student_areas ON trace_student_areas.fk_student = students.id_student
-                                    WHERE 
-                                        students.status = 2 
-                                    GROUP BY 
-                                        students.id_student, 
-                                        CONCAT(students.name, ' ', students.surname, ' ', students.second_surname),
-                                        students.control_number,
-                                        students.status,
-                                        students.fk_process_catalog
-                                    ORDER BY 
-                                        students.id_student;
+        $dataR = $con->query("SELECT 
+                                    s.id_student, 
+                                    CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
+                                    s.control_number, 
+                                    COUNT(tsa.fk_area) AS areas_count,                                      
+                                    s.status,
+                                    s.fk_process_catalog,
+                                    pc.description AS process_name
+                                FROM 
+                                    students s
+                                LEFT JOIN 
+                                    trace_student_areas tsa ON tsa.fk_student = s.id_student
+                                LEFT JOIN 
+                                    process_catalog pc ON pc.id_process_catalog = s.fk_process_catalog
+                                WHERE 
+                                    s.status = 2 
+                                GROUP BY 
+                                    s.id_student, 
+                                    CONCAT(s.name, ' ', s.surname, ' ', s.second_surname),
+                                    s.control_number,
+                                    s.status,
+                                    s.fk_process_catalog,
+                                    pc.description
+                                ORDER BY 
+                                    s.id_student;
+
                                     ");
 
         $data = array();
@@ -202,7 +208,8 @@ class alumnos
                 "control_number" => $row["control_number"],
                 "areas_count" => $row["areas_count"],
                 "status" => $row["status"],
-                "fk_process_catalog" => $row["fk_process_catalog"]
+                "fk_process_catalog" => $row["fk_process_catalog"],
+                "process_name" => $row["process_name"]
             );
             $data[] = $dat;
         }
