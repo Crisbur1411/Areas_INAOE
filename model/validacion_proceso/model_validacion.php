@@ -24,7 +24,8 @@ public function listStudentInProgress($email)
                                 students.control_number,
                                 students.email, 
                                 COUNT(trace_student_areas.fk_area) AS areas_count,                                      
-                                students.status
+                                students.status,
+                                students.fk_process_catalog
                             FROM 
                                 students
                             LEFT JOIN 
@@ -51,7 +52,8 @@ public function listStudentInProgress($email)
             "email" => $row["email"],
             "control_number" => $row["control_number"],
             "areas_count" => $row["areas_count"],
-            "status" => $row["status"]
+            "status" => $row["status"],
+            "fk_process_catalog" => $row["fk_process_catalog"]
         );
         $data[] = $dat;
     }
@@ -62,44 +64,59 @@ public function listStudentInProgress($email)
 
 
 
-    public function showRegisterAreas($id_student)
+    public function showRegisterAreas($id_student, $fk_process_catalog)
 {
     $con = new DBconnection();
     $con->openDB();
-    $id_student = intval($id_student); // <-- aquí casteas a entero
 
-    $dataR = $con->query("SELECT 
-    trace_student_areas.id_trace_student_area, 
-    students.id_student, 
-    CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name, 
-    COALESCE(areas.name, '-') AS namearea, 
-    COALESCE(to_char(trace_student_areas.date, 'YYYY-MM-DD HH24:MI:SS'), '-') AS formatted_date, 
-    COALESCE(trace_student_areas.description, 'Sin autorizar') AS description, 
-    COALESCE(students.status, 0) AS status
-FROM 
-    areas
-LEFT JOIN 
-    trace_student_areas ON areas.id_area = trace_student_areas.fk_area 
-        AND trace_student_areas.fk_student = " . $id_student . "
-LEFT JOIN 
-    students ON students.id_student = trace_student_areas.fk_student
-WHERE 
-    areas.status = 1
-ORDER BY 
-    areas.id_area;
-                        ");
+    $sql = "
+        SELECT 
+            tsa.id_trace_student_area,
+            s.id_student,
+            CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
+            COALESCE(a.name, '-') AS namearea,
+            COALESCE(to_char(tsa.date, 'YYYY-MM-DD HH24:MI:SS'), '-') AS formatted_date,
+            COALESCE(tsa.description, 'Sin autorizar') AS description,
+            COALESCE(s.status, 0) AS status
+        FROM (
+            -- 🔑 Subconsulta: áreas que pertenecen a un catálogo específico
+            SELECT DISTINCT 
+                a.id_area, 
+                a.name
+            FROM process_stages ps
+            INNER JOIN process_catalog pc 
+                ON pc.id_process_catalog = ps.fk_process_catalog
+            INNER JOIN users u 
+                ON u.id_user = ps.fk_process_manager
+            INNER JOIN user_area ua 
+                ON ua.fk_user = u.id_user
+            INNER JOIN areas a 
+                ON a.id_area = ua.fk_area
+            WHERE ps.status = 1
+              AND pc.id_process_catalog = $fk_process_catalog
+              AND a.status = 1
+        ) a
+        LEFT JOIN trace_student_areas tsa 
+            ON tsa.fk_area = a.id_area 
+           AND tsa.fk_student = $id_student
+        LEFT JOIN students s 
+            ON s.id_student = tsa.fk_student
+        ORDER BY a.id_area, tsa.date
+    ";
+
+    $dataR = $con->query($sql);
 
     $data = array();
 
     while ($row = pg_fetch_array($dataR)) {
         $dat = array(
             "id_trace_student_area" => $row["id_trace_student_area"],
-            "id_student" => $row["id_student"],
-            "full_name" => $row["full_name"],
-            "namearea" => $row["namearea"],
-            "formatted_date" => $row["formatted_date"],
-            "description" => $row["description"],
-            "status" => $row["status"]
+            "id_student"            => $row["id_student"],
+            "full_name"             => $row["full_name"],
+            "namearea"              => $row["namearea"],
+            "formatted_date"        => $row["formatted_date"],
+            "description"           => $row["description"],
+            "status"                => $row["status"]
         );
         $data[] = $dat;
     }

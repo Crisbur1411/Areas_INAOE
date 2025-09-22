@@ -49,6 +49,7 @@ function listStudentInProgress() {
                         + "<th style='text-align:center'>"+val.id_student+"</th>"
                         + "<th style='text-align:center'>"+val.control_number+"</a></th>"
                         + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
+                        + "<th style='text-align:center'>"+val.process_name+"</a></th>"
                         + "<th style='text-align:center'><button type='button' class='btn btn-primary btn-sm' title='Click para finalizar el trámite' onClick='signStudent("+val.id_student+", \""+val.full_name.replace(/"/g, '&quot;')+"\", "+val.fk_process_catalog+");'><i class='fa-solid fa-file-import'></i></button></a></th>"
                         + "<th style='text-align:center'><button type='button' class='btn btn-secondary btn-sm' title='Click para ver las notas' data-toggle='modal' onClick='notesStudent("+val.id_student+");'><i class='fa-solid fa-eye'></i></button></a></th>"
                         + "</tr>";
@@ -57,6 +58,7 @@ function listStudentInProgress() {
                         + "<th style='text-align:center'>"+val.id_student+"</th>"
                         + "<th style='text-align:center'>"+val.control_number+"</a></th>"
                         + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
+                        + "<th style='text-align:center'>"+val.process_name+"</a></th>"
                         + "<th style='text-align:center'><button type='button' class='btn btn-primary btn-sm' title='Click para finalizar el trámite' onClick='signStudent("+val.id_student+", \""+val.full_name.replace(/"/g, '&quot;')+"\", "+val.fk_process_catalog+");'><i class='fa-solid fa-file-import'></i></button></a></th>"
                         + "<th style='text-align:center'><button type='button' class='btn btn-info btn-sm' title='Click para agregar una nota en el trámite' onClick='noteStudent("+val.id_student+");'><i class='fa-solid fa-file-lines'></i></button></a></th>"
                         + "</tr>";
@@ -79,6 +81,7 @@ function signStudent(id_student, full_name, fk_process_catalog) {
     const $u = document.getElementById("user");
     const $user = $u.innerHTML;
     const $id_user = ID_USER;
+
     console.log("ID del usuario:", $id_user);
     console.log("ID proceso catalog del estudiante:", fk_process_catalog);
 
@@ -91,6 +94,13 @@ function signStudent(id_student, full_name, fk_process_catalog) {
         success: function (responseFlow) {
             if (responseFlow.status === 200 && responseFlow.data) {
                 const user_execution_flow = parseInt(responseFlow.data.execution_flow);
+
+                // 🚨 Validación extra: si el flujo viene nulo o no es un número válido
+                if (!user_execution_flow || isNaN(user_execution_flow)) {
+                    swal("Acción no permitida", "No se puede liberar al alumno ya que no pertenece a su proceso de liberación.", "warning");
+                    return;
+                }
+
                 console.log("Execution flow del usuario:", user_execution_flow);
 
                 // Paso 2: Obtener el avance del estudiante
@@ -159,6 +169,24 @@ function signStudent(id_student, full_name, fk_process_catalog) {
                                                         fk_process_catalog: fk_process_catalog
                                                     },
                                                     complete: function () {
+                                                        // ✅ Paso 6: Enviar correo al siguiente flujo
+                                                        $.ajax({
+                                                            url: "../../services/send_email.php",
+                                                            type: 'GET',
+                                                            dataType: 'JSON',
+                                                            data: { 
+                                                                id_student: id_student,
+                                                                fk_process_catalog: fk_process_catalog,
+                                                                proceso: "Proceso de Liberación"
+                                                            },
+                                                            success: function(responseEmail) {
+                                                                console.log("Correo enviado al siguiente flujo:", responseEmail);
+                                                            },
+                                                            error: function(errorEmail) {
+                                                                console.error("Error enviando correo al siguiente flujo:", errorEmail);
+                                                            }
+                                                        });
+
                                                         $(".loader").fadeOut("slow");
                                                         $("#info").removeClass("d-none");
                                                         listStudentInProgress();
@@ -208,6 +236,8 @@ function signStudent(id_student, full_name, fk_process_catalog) {
         }
     });
 }
+
+
 
 
 

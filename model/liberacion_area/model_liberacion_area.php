@@ -18,31 +18,44 @@ class liberacionArea{
         $fk_area  = $_SESSION["id_area"];
 
         $dataR = $con->query("SELECT 
-    students.id_student, 
-    CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
-    students.control_number,                                    
-    students.status,
-    students.fk_process_catalog,
-    SUM(CASE WHEN notes.fk_area = ".$fk_area." THEN 1 ELSE 0 END) AS note_count
-FROM students
-LEFT JOIN trace_student_areas 
-    ON trace_student_areas.fk_student = students.id_student
-LEFT JOIN notes 
-    ON notes.fk_student = students.id_student
-WHERE students.status = 2
-AND NOT EXISTS (
-    SELECT 1 
-    FROM trace_student_areas 
-    WHERE fk_student = students.id_student 
-    AND fk_area = ".$fk_area."
-)
-GROUP BY 
-    students.id_student, 
-    CONCAT(students.name, ' ', students.surname, ' ', students.second_surname),
-    students.control_number,
-    students.status,
-    students.fk_process_catalog
-ORDER BY students.id_student;
+                                        s.id_student, 
+                                        CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
+                                        s.control_number,                                    
+                                        s.status,
+                                        s.fk_process_catalog,
+                                        pc.description AS process_name,
+                                        SUM(CASE WHEN n.fk_area = ".$fk_area." THEN 1 ELSE 0 END) AS note_count
+                                    FROM students s
+                                    JOIN process_catalog pc 
+                                        ON pc.id_process_catalog = s.fk_process_catalog
+                                    JOIN process_stages ps
+                                        ON ps.fk_process_catalog = pc.id_process_catalog
+                                    AND ps.status = 1
+                                    AND ps.status_process_stages = 1
+                                    JOIN users u
+                                        ON u.id_user = ps.fk_process_manager
+                                    JOIN user_area ua
+                                        ON ua.fk_user = u.id_user
+                                    AND ua.fk_area = ".$fk_area."
+                                    LEFT JOIN notes n 
+                                        ON n.fk_student = s.id_student
+                                    WHERE s.status = 2
+                                    AND NOT EXISTS (
+                                        SELECT 1 
+                                        FROM trace_student_areas tsa
+                                        WHERE tsa.fk_student = s.id_student 
+                                        AND tsa.fk_area = ".$fk_area."
+                                    )
+                                    GROUP BY 
+                                        s.id_student, 
+                                        CONCAT(s.name, ' ', s.surname, ' ', s.second_surname),
+                                        s.control_number,
+                                        s.status,
+                                        s.fk_process_catalog,
+                                        pc.description
+                                    ORDER BY s.id_student;
+
+
                                     ");
 
         $data = array();
@@ -54,7 +67,8 @@ ORDER BY students.id_student;
                 "control_number"=>$row["control_number"],
                 "note_count"=>$row["note_count"],
                 "status" => $row["status"],
-                "fk_process_catalog" => $row["fk_process_catalog"]
+                "fk_process_catalog" => $row["fk_process_catalog"],
+                "process_name" => $row["process_name"]
             );
             $data[] = $dat;
         }

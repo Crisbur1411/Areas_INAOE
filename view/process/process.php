@@ -180,6 +180,26 @@ if (!isset($_SESSION['username'])) {
                 <button class="btn btnConfirm btn-lg active" onclick="NewProcess()">Añadir Nuevo Paso</button>
             </div>
         </div>
+
+<div class="table-responsive">
+  <table class="table table-bordered table-hover align-middle">
+    <thead style="background-color: #691C32; color: #fff;">
+      <tr>
+        <th scope="col"># Paso</th>
+        <th scope="col">Descripción</th>
+        <th scope="col">Responsable</th>
+        <th scope="col"># Ejecución</th>
+        <th scope="col" class="text-center">Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="steps-body">
+      <!-- Aquí JS agregará las filas -->
+    </tbody>
+  </table>
+</div>
+
+
+
     </div>
 
 

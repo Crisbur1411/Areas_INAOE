@@ -141,25 +141,22 @@ class Process {
 
 
 
-    public function getProcessManager() {
+    public function getAreas() {
         $con = new DBconnection(); 
         $con->openDB();
 
-        $dataTitle = $con->query("SELECT
-                                        id_user,
-                                        CONCAT (name, ' ' , surname, ' ' , second_surname) AS name_user
-                                    FROM
-                                        users
-                                    WHERE
-                                        status = 1
-                                    ORDER BY id_user ASC;");
+        $dataTitle = $con->query("SELECT 
+                                        id_area, 
+                                        name AS name_area 
+                                        FROM areas 
+                                        ORDER BY id_area ASC;");
 
         $data = array();
 
         while($row = pg_fetch_array($dataTitle)){
             $dat = array(
-                "id_user" => $row["id_user"],
-                "name_user" => $row["name_user"]
+                "id_area" => $row["id_area"],
+                "name_area" => $row["name_area"]
             );
             $data[] = $dat;
         }
@@ -169,15 +166,17 @@ class Process {
     }
 
 
-    public function getAreaUser($id_user) {
+    public function getAreaUser($id_area) {
         $con = new DBconnection(); 
         $con->openDB();
 
         $dataTitle = $con->query("SELECT
                                             areas.id_area,
                                             areas.name AS name_area,
+                                            areas.status,
                                             users.id_user,
-                                            CONCAT (users.name, ' ', users.surname, ' ', users.second_surname) AS full_name
+                                            CONCAT(users.name, ' ', users.surname, ' ', users.second_surname) AS full_name,
+                                            users.user_category AS user_role 
                                         FROM
                                             user_area
                                         INNER JOIN
@@ -185,14 +184,18 @@ class Process {
                                         INNER JOIN
                                             users ON user_area.fk_user = users.id_user
                                         WHERE
-                                            user_area.fk_user = $id_user ;");
+                                            areas.id_area = $id_area
+                                            AND areas.status = 1
+                                            AND users.user_category = 'PRINCIPAL' ;");
 
         $data = array();
 
         while($row = pg_fetch_array($dataTitle)){
             $dat = array(
                 "id_area" => $row["id_area"],
-                "name_area" => $row["name_area"]
+                "name_area" => $row["name_area"],
+                "id_user" => $row["id_user"],
+                "full_name" => $row["full_name"]
             );
             $data[] = $dat;
         }
@@ -282,40 +285,57 @@ public function getNextExecutionFlow() {
 
 
     public function getProcessInfo($id_process_stages) {
-        $con = new DBconnection(); 
-        $con->openDB();
+    $con = new DBconnection(); 
+    $con->openDB();
 
-        $dataProcess = $con->query("SELECT
-                                        process_stages.id_process_stages,
-                                        process_stages.stage,
-                                        process_stages.description,
-                                        process_stages.execution_flow,
-                                        process_stages.status,
-                                        process_stages.status_process_stages,
-                                        process_stages.creation_date,
-                                        process_stages.fk_process_catalog,
-                                        process_stages.fk_process_manager
-                                    FROM
-                                        process_stages
-                                    WHERE
-                                        id_process_stages = $id_process_stages;");
+    $sql = "SELECT
+                ps.id_process_stages,
+                ps.stage,
+                ps.description,
+                ps.execution_flow,
+                ps.status,
+                ps.status_process_stages,
+                ps.creation_date,
+                ps.fk_process_catalog,
+                ps.fk_process_manager,
+                u.id_user,
+                u.name || ' ' || u.surname || ' ' || u.second_surname AS manager_name,
+                a.id_area,
+                a.name AS area_name
+            FROM process_stages ps
+            LEFT JOIN users u 
+                   ON ps.fk_process_manager = u.id_user
+            LEFT JOIN user_area ua 
+                   ON u.id_user = ua.fk_user
+            LEFT JOIN areas a 
+                   ON ua.fk_area = a.id_area
+            WHERE ps.id_process_stages = $id_process_stages;";
 
-            $row = pg_fetch_array($dataProcess);
-        
-            $dataProcess = array(
-                "id_process_stages" => $row["id_process_stages"],
-                "stage" => $row["stage"],
-                "description" => $row["description"],
-                "execution_flow" => $row["execution_flow"],
-                "status" => $row["status"],
-                "status_process_stages" => $row["status_process_stages"],
-                "creation_date" => $row["creation_date"],
-                "fk_process_catalog" => $row["fk_process_catalog"],
-                "fk_process_manager" => $row["fk_process_manager"]
-            );
-        $con->closeDB();
-        return array("status" => 200, "data" => $dataProcess);
-    }
+    $dataProcess = $con->query($sql);
+    $row = pg_fetch_array($dataProcess);
+
+    $dataProcess = array(
+        "id_process_stages" => $row["id_process_stages"],
+        "stage" => $row["stage"],
+        "description" => $row["description"],
+        "execution_flow" => $row["execution_flow"],
+        "status" => $row["status"],
+        "status_process_stages" => $row["status_process_stages"],
+        "creation_date" => $row["creation_date"],
+        "fk_process_catalog" => $row["fk_process_catalog"],
+        "fk_process_manager" => $row["fk_process_manager"],
+
+        // campos extra del JOIN
+        "id_user" => $row["id_user"],
+        "manager_name" => $row["manager_name"],
+        "id_area" => $row["id_area"],
+        "area_name" => $row["area_name"]
+    );
+
+    $con->closeDB();
+    return array("status" => 200, "data" => $dataProcess);
+}
+
 
 
     public function saveProcessEdit ($id_process_stages, $process_catalog, $description, $execution_flow, $process_manager) {

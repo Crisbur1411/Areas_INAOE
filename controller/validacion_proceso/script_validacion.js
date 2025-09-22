@@ -90,7 +90,7 @@ function listStudentInProgress() {
                         + "<th style='text-align:center'>" + val.control_number + "</th>"
                         + "<th style='text-align:center'>" + val.areas_count + "</th>"
                         + "<th style='text-align:center'>"
-                        + "<button class='btn btn-info btn-sm' onClick='showRegisterAreas(" + val.id_student + ")'>Detalles</button>"
+                        + "<button class='btn btn-info btn-sm' onClick='showRegisterAreas(" + val.id_student + ", "+val.fk_process_catalog+")'>Detalles</button>"
                         + "</th>"
                         + "</tr>";
                 } else {
@@ -100,7 +100,7 @@ function listStudentInProgress() {
                         + "<th style='text-align:center'>" + val.full_name + "</th>"
                         + "<th style='text-align:center'>" + val.areas_count + "</th>"
                         + "<th style='text-align:center'>"
-                        + "<button class='btn btn-info btn-sm' onClick='showRegisterAreas(" + val.id_student + ")'>Detalles</button>"
+                        + "<button class='btn btn-info btn-sm' onClick='showRegisterAreas(" + val.id_student + ", "+val.fk_process_catalog+")'>Detalles</button>"
                         + "</th>"
                         + "</tr>";
                 }
@@ -119,16 +119,21 @@ function listStudentInProgress() {
 
 
 
-function showRegisterAreas(id_student) { 
+function showRegisterAreas(id_student, fk_process_catalog) { 
     $('#exampleModalCenter').modal();
     var modal = $('#exampleModalCenter')
     modal.find('.modal-title').text('Detalles')
+
     $.ajax({
         url: "../../controller/validacion_proceso/controller_validacionProceso.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
-        data: { action: 2, id_student: id_student }, 
+        data: { 
+            action: 2, 
+            id_student: id_student,
+            fk_process_catalog: fk_process_catalog 
+        },
         success: function(result) {
             var table = "";
             var name_student = "";
@@ -137,10 +142,10 @@ function showRegisterAreas(id_student) {
                     name_student = val.full_name;  
                 }      
                 table += "<tr>"       
-                    + "<th style='text-align:center'>" + val.namearea + "</a></th>"
-                    + "<th style='text-align:center'>" + val.formatted_date + "</th>"
-                    + "<th style='text-align:center'>" + val.description + "</th>"
-                    + "</tr>";
+                    + "<th style='text-align:center'>"+val.namearea+"</th>"
+                    + "<th style='text-align:center'>"+val.formatted_date+"</th>"
+                    + "<th style='text-align:center'>"+val.description+"</th>"
+                + "</tr>";
             });
             $('#table-modal-info-areas').html(table);
             $('#title-name-student').html(name_student);

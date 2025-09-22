@@ -22,7 +22,8 @@ class alumnos
                                  CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
                                  students.control_number, 
                                  DATE(students.date_register) AS date, 
-                                 academic_programs.name AS namecourse, 
+                                 academic_programs.name AS namecourse,
+                                 students.fk_process_catalog, 
                                  students.status
                           FROM
                               students
@@ -47,6 +48,7 @@ class alumnos
                 "control_number" => $row["control_number"],
                 "date" => $row["date"],
                 "namecourse" => $row["namecourse"],
+                "fk_process_catalog" => $row["fk_process_catalog"],
                 "status" => $row["status"]
             );
             $data[] = $dat;
@@ -169,26 +171,32 @@ class alumnos
         $con = new DBconnection();
         $con->openDB();
 
-        $dataR = $con->query("SELECT students.id_student, 
-                                    CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
-                                    students.control_number, 
-                                    COUNT(trace_student_areas.fk_area) AS areas_count,                                      
-                                    students.status,
-                                    students.fk_process_catalog
-                                    FROM 
-                                        students
-                                    LEFT JOIN 
-                                        trace_student_areas ON trace_student_areas.fk_student = students.id_student
-                                    WHERE 
-                                        students.status = 2 
-                                    GROUP BY 
-                                        students.id_student, 
-                                        CONCAT(students.name, ' ', students.surname, ' ', students.second_surname),
-                                        students.control_number,
-                                        students.status,
-                                        students.fk_process_catalog
-                                    ORDER BY 
-                                        students.id_student;
+        $dataR = $con->query("SELECT 
+                                    s.id_student, 
+                                    CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
+                                    s.control_number, 
+                                    COUNT(tsa.fk_area) AS areas_count,                                      
+                                    s.status,
+                                    s.fk_process_catalog,
+                                    pc.description AS process_name
+                                FROM 
+                                    students s
+                                LEFT JOIN 
+                                    trace_student_areas tsa ON tsa.fk_student = s.id_student
+                                LEFT JOIN 
+                                    process_catalog pc ON pc.id_process_catalog = s.fk_process_catalog
+                                WHERE 
+                                    s.status = 2 
+                                GROUP BY 
+                                    s.id_student, 
+                                    CONCAT(s.name, ' ', s.surname, ' ', s.second_surname),
+                                    s.control_number,
+                                    s.status,
+                                    s.fk_process_catalog,
+                                    pc.description
+                                ORDER BY 
+                                    s.id_student;
+
                                     ");
 
         $data = array();
@@ -200,7 +208,8 @@ class alumnos
                 "control_number" => $row["control_number"],
                 "areas_count" => $row["areas_count"],
                 "status" => $row["status"],
-                "fk_process_catalog" => $row["fk_process_catalog"]
+                "fk_process_catalog" => $row["fk_process_catalog"],
+                "process_name" => $row["process_name"]
             );
             $data[] = $dat;
         }
@@ -209,51 +218,69 @@ class alumnos
         return $data;
     }
 
-    public function showRegisterAreas($id_student)
-    {
-        $con = new DBconnection();
-        $con->openDB();
+    public function showRegisterAreas($id_student, $fk_process_catalog)
+{
+    $con = new DBconnection();
+    $con->openDB();
 
-        $dataR = $con->query("SELECT 
-    trace_student_areas.id_trace_student_area, 
-    students.id_student, 
-    CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name, 
-    COALESCE(areas.name, '-') AS namearea, 
-    COALESCE(to_char(trace_student_areas.date, 'YYYY-MM-DD HH24:MI:SS'), '-') AS formatted_date, 
-    COALESCE(trace_student_areas.description, 'Sin autorizar') AS description, 
-    COALESCE(students.status, 0) AS status
-FROM 
-    areas
-LEFT JOIN 
-    trace_student_areas ON areas.id_area = trace_student_areas.fk_area 
-        AND trace_student_areas.fk_student = " . $id_student . "
-LEFT JOIN 
-    students ON students.id_student = trace_student_areas.fk_student
-WHERE 
-    areas.status = 1
-ORDER BY 
-    areas.id_area;
+    $sql = "
+        SELECT 
+    tsa.id_trace_student_area,
+    s.id_student,
+    CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
+    COALESCE(a.name, '-') AS namearea,
+    COALESCE(to_char(tsa.date, 'YYYY-MM-DD HH24:MI:SS'), '-') AS formatted_date,
+    COALESCE(tsa.description, 'Sin autorizar') AS description,
+    COALESCE(s.status, 0) AS status,
+    a.process_name
+FROM (
+    SELECT DISTINCT 
+        a.id_area, 
+        a.name,
+        pc.description AS process_name
+    FROM process_stages ps
+    INNER JOIN process_catalog pc 
+        ON pc.id_process_catalog = ps.fk_process_catalog
+    INNER JOIN users u 
+        ON u.id_user = ps.fk_process_manager
+    INNER JOIN user_area ua 
+        ON ua.fk_user = u.id_user
+    INNER JOIN areas a 
+        ON a.id_area = ua.fk_area
+    WHERE ps.status = 1
+      AND pc.id_process_catalog = $fk_process_catalog
+      AND a.status = 1
+) a
+LEFT JOIN trace_student_areas tsa 
+    ON tsa.fk_area = a.id_area 
+   AND tsa.fk_student = $id_student
+LEFT JOIN students s 
+    ON s.id_student = tsa.fk_student
+ORDER BY a.id_area, tsa.date";
 
-                            ");
 
-        $data = array();
+    $dataR = $con->query($sql);
 
-        while ($row = pg_fetch_array($dataR)) {
-            $dat = array(
-                "id_trace_student_area" => $row["id_trace_student_area"],
-                "id_student" => $row["id_student"],
-                "full_name" => $row["full_name"],
-                "namearea" => $row["namearea"],
-                "formatted_date" => $row["formatted_date"],
-                "description" => $row["description"],
-                "status" => $row["status"]
-            );
-            $data[] = $dat;
-        }
-        $con->closeDB();
+    $data = array();
 
-        return $data;
+    while ($row = pg_fetch_array($dataR)) {
+        $dat = array(
+            "id_trace_student_area" => $row["id_trace_student_area"],
+            "id_student"            => $row["id_student"],
+            "full_name"             => $row["full_name"],
+            "namearea"              => $row["namearea"],
+            "formatted_date"        => $row["formatted_date"],
+            "description"           => $row["description"],
+            "status"                => $row["status"],
+            "process_name"          => $row["process_name"]
+        );
+        $data[] = $dat;
     }
+    $con->closeDB();
+
+    return $data;
+}
+
 
 public function freeStudent($id_student, $user)
 {
@@ -611,16 +638,21 @@ public function coursesAds($id_student){
         $con=new DBconnection();
         $con->openDB();
 
-        $dataCourseAd = $con->query("SELECT academic_programs.id_academic_programs AS id_academic_programs, academic_programs.name FROM students
-                                        INNER JOIN academic_programs ON students.fk_academic_programs = academic_programs.id_academic_programs
-                                        WHERE id_student = ". $id_student);
+        $dataCourseAd = $con->query("SELECT 
+                                        academic_programs.id_academic_programs AS id_academic_programs, 
+                                        academic_programs.name,
+                                        academic_programs.type_program
+                                            FROM students
+                                            INNER JOIN academic_programs ON students.fk_academic_programs = academic_programs.id_academic_programs
+                                            WHERE id_student = ". $id_student);
 
         $data = array();
 
         while($row = pg_fetch_array($dataCourseAd)){
             $dat = array(
                 "id_academic_programs" =>$row["id_academic_programs"],
-                "name" =>$row["name"]
+                "name" =>$row["name"],
+                "type_program" =>$row["type_program"]
             );
             $data[] = $dat;
         }
@@ -726,7 +758,7 @@ public function coursesAds($id_student){
 }
 
 
-
+//Se utiliza para obtener los procesos de catalogo para mostrarlos en el select de registro de alumnos
 public function getProcessCatalog() {
         $con = new DBconnection(); 
         $con->openDB();

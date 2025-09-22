@@ -57,7 +57,7 @@ function listStudent() {
                     + "<th style='text-align:center'>"+val.date+"</th>"
                     + "<th style='text-align:center'><button type='button' class='btn btn-secondary btn-sm' id='btn-edit' title='Click para editar' onclick='editStudent("+val.id_student+")'>"+'<i class="fas fa-edit"></i>'+"</button></th>"
                     + "<th style='text-align:center'><button type='button' class='btn btn-danger btn-sm' id='btn-details' id-student='"+val.id_student+"' title='Click para eliminar' onclick='deleteStudent("+val.id_student+")'>"+'<i class="fas fa-trash"></i>'+"</button></th>"
-                    + "<th style='text-align:center'><button type='button' class='btn btn-success btn-sm' id='btn-details' id-student='"+val.id_student+"' title='Click para turnar a firma'  onclick='turnSingAreas("+val.id_student+")'>"+'<i class="fa-solid fa-file-signature"></i>'+"</button></th>"
+                    + "<th style='text-align:center'><button type='button' class='btn btn-success btn-sm' id='btn-details' id-student='"+val.id_student+"' title='Click para turnar a firma'  onclick='turnSingAreas("+val.id_student+", " + val.fk_process_catalog + ")'>"+'<i class="fa-solid fa-file-signature"></i>'+"</button></th>"
                     + "</tr>";
                 }
             });
@@ -110,7 +110,7 @@ function newStudent() {
     location.href = "../alumnos/registro_alumnos.php";
 }
 
-function turnSingAreas(id_student) {
+function turnSingAreas(id_student, fk_process_catalog) {
     $u = document.getElementById("user");
     $user = $u.innerHTML;
 
@@ -138,14 +138,24 @@ function turnSingAreas(id_student) {
                         url: "../../services/send_email.php",
                         type: 'GET',
                         dataType: 'JSON',
-                        data: { id_student: id_student },
+                        data: { 
+                            id_student: id_student,
+                            fk_process_catalog: fk_process_catalog, // importante
+                            proceso: "Proceso de Liberación" // opcional
+                        },
                         success: function(response) {
-                            console.log(response);
+                            console.log("Correo enviado por turno:", response);
+
+                            // ✅ Después de enviar el correo, continuar con la firma del estudiante
+                            signStudent(id_student, null, fk_process_catalog);
                         },
                         error: function(error) {
-                            console.error(error);
+                            console.error("Error enviando correo:", error);
+                            // Aun así podemos continuar
+                            signStudent(id_student, null, fk_process_catalog);
                         }
                     });
+
 
 
                     $.ajax({
@@ -202,8 +212,9 @@ function listStudentInProgress() {
                     table += "<tr>"       
                     + "<th style='text-align:center'>"+val.id_student+"</th>"
                     + "<th style='text-align:center'>"+val.control_number+"</a></th>"
-                    + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
-                    + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showRegisterAreas("+val.id_student+");'>"+val.areas_count+"</a></th>"
+                    + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>"
+                    + "<th style='text-align:center'>"+val.process_name+"</a></th>"
+                    + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showRegisterAreas("+val.id_student+", "+val.fk_process_catalog+");'>"+val.areas_count+"</a></th>"
                     + "<th style='text-align:center'><button type='button' class='btn btn-primary btn-sm' title='Click para finalizar el trámite' onClick='freeStudent("+val.id_student+", "+val.fk_process_catalog+");'><i class='fa-solid fa-file-import'></i></button></a></th>"
                     + "<th style='text-align:center'><button type='button' class='btn btn-danger btn-sm' title='Click para cancelar el trámite' onClick='cancelStudent("+val.id_student+");'><i class='fa-solid fa-file-excel'></i></button></a></th>"
                     + "</tr>";
@@ -212,6 +223,7 @@ function listStudentInProgress() {
                     + "<th style='text-align:center'>"+val.id_student+"</th>"
                     + "<th style='text-align:center'>"+val.control_number+"</a></th>"
                     + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
+                    + "<th style='text-align:center'>"+val.process_name+"</a></th>"
                     + "<th style='text-align:center'>"+val.areas_count+"</th>"
                     + "<th style='text-align:center'><button type='button' class='btn btn-primary btn-sm' title='Click para finalizar el trámite' onClick='freeStudent("+val.id_student+", "+val.fk_process_catalog+");'><i class='fa-solid fa-file-import'></i></button></a></th>"
                     + "<th style='text-align:center'><button type='button' class='btn btn-danger btn-sm' title='Click para cancelar el trámite' onClick='cancelStudent("+val.id_student+");'><i class='fa-solid fa-file-excel'></i></button></a></th>"
@@ -229,42 +241,50 @@ function listStudentInProgress() {
     }); 
 }
 
-function showRegisterAreas(id_student) { 
-  
+function showRegisterAreas(id_student, fk_process_catalog) { 
     $('#exampleModalCenter').modal();
     var modal = $('#exampleModalCenter')
-    modal.find('.modal-title').text('Detalles')
+    modal.find('.modal-title').text('Detalles');
 
     $.ajax({
-           url: "../../controller/alumnos/controller_alumnos.php",
-           cache: false,
-           dataType: 'JSON',
-           type: 'POST',
-           data: { action: 5, id_student: id_student},
-           success: function(result) {
-            //console.log(result);
+        url: "../../controller/alumnos/controller_alumnos.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        data: { 
+            action: 5, 
+            id_student: id_student,
+            fk_process_catalog: fk_process_catalog 
+        },
+        success: function(result) {
             var table = "";
-            var name_student="";
-                $.each(result, function(index, val) {
-                    if (val.status == 2)
-                    {             
-                        name_student = val.full_name;  
-                    }      
-                        table += "<tr>"       
-                        + "<th style='text-align:center'>"+val.namearea+"</a></th>"
-                        + "<th style='text-align:center'>"+val.formatted_date+"</th>"
-                        + "<th style='text-align:center'>"+val.description+"</th>"
-                         + "</tr>";
-                    
-                });
-                $('#table-modal-info-areas').html(table);
-                $('#title-name-student').html(name_student);
-                 
-           },error: function(result){
-                console.log(result);
-           }                   
-       });     
+            var name_student = "";
+            var process_name = "";
+
+            $.each(result, function(index, val) {
+                if (val.status == 2) {             
+                    name_student = val.full_name;  
+                    process_name = val.process_name;  
+                }      
+                table += "<tr>"       
+                    + "<th style='text-align:center'>"+val.namearea+"</th>"
+                    + "<th style='text-align:center'>"+val.formatted_date+"</th>"
+                    + "<th style='text-align:center'>"+val.description+"</th>"
+                + "</tr>";
+            });
+
+            $('#table-modal-info-areas').html(table);
+            $('#title-name-student').html(name_student);
+
+            $('#title-process-name').html(process_name); 
+        },
+        error: function(result){
+            console.log(result);
+        }                   
+    });     
 }
+
+
 
 function freeStudent(id_student, fk_process_catalog) {
     const $u = document.getElementById("user");
@@ -785,7 +805,8 @@ function getCourses(){
 //Agregar cursos al select de editar alumnos
 function coursesAds(){
     let params = new URLSearchParams(location.search);
-    id_student = parseInt(params.get('dc'));
+    let id_student = parseInt(params.get('dc'));
+
     $.ajax({
         url: "../../controller/alumnos/controller_alumnos.php",
         cache: false,
@@ -794,24 +815,59 @@ function coursesAds(){
         data: { action: 16, id_student: id_student },
         success: function(result) {
             var addArea = "";
+
             $.each(result, function(index, val){
                 addArea += "<option value='"+ val.id_academic_programs +"'>"+ val.name +"</option>";
             });
-            //console.log(result[0].name);
-            var stringP = result[0].name.toString();
-            var primerCaracter = stringP.charAt(0);
-            if( primerCaracter == 'M'){
-                $("#program").val(1);
-                $("#course").html(addArea); 
-            }else{
-                $("#program").val(2); 
-                $("#course").html(addArea);
+
+            // Llenar el select de cursos
+            $("#course").html(addArea); 
+
+            // Crear opciones del select de programas
+            var programs = `
+                <option value="1">MAESTRÍA</option>
+                <option value="2">DOCTORADO</option>
+                <option value="3">EXTERNO LICENCIATURA</option>
+                <option value="4">EXTERNO BACHILLERATO</option>
+            `;
+            $("#program").html(programs);
+
+            // Mostrar en consola el valor de type_program del primer curso
+            if(result.length > 0){
+                const typeProgram = result[0].type_program;
+                console.log("Valor de type_program obtenido:", typeProgram); 
+
+                let programValue;
+
+                switch(typeProgram.toLowerCase()){
+                    case 'maestría':
+                        programValue = 1;
+                        break;
+                    case 'doctorado':
+                        programValue = 2;
+                        break;
+                    case 'externo licenciatura':
+                        programValue = 3;
+                        break;
+                    case 'externo bachillerato':
+                        programValue = 4;
+                        break;
+                    default:
+                        programValue = 0;
+                }
+
+                if(programValue !== 0){
+                    $("#program").val(programValue);
+                }
             }
-        }, error: function ( result) {
+        },
+        error: function(result) {
             console.log(result);
         } 
     });
 }
+
+
 
 // Obtener los datos del alumno a editar
 function getStudent() {
