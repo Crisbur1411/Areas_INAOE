@@ -244,7 +244,7 @@ function listStudentInProgress() {
 function showRegisterAreas(id_student, fk_process_catalog) { 
     $('#exampleModalCenter').modal();
     var modal = $('#exampleModalCenter')
-    modal.find('.modal-title').text('Detalles')
+    modal.find('.modal-title').text('Detalles');
 
     $.ajax({
         url: "../../controller/alumnos/controller_alumnos.php",
@@ -259,9 +259,12 @@ function showRegisterAreas(id_student, fk_process_catalog) {
         success: function(result) {
             var table = "";
             var name_student = "";
+            var process_name = "";
+
             $.each(result, function(index, val) {
                 if (val.status == 2) {             
                     name_student = val.full_name;  
+                    process_name = val.process_name;  
                 }      
                 table += "<tr>"       
                     + "<th style='text-align:center'>"+val.namearea+"</th>"
@@ -269,14 +272,18 @@ function showRegisterAreas(id_student, fk_process_catalog) {
                     + "<th style='text-align:center'>"+val.description+"</th>"
                 + "</tr>";
             });
+
             $('#table-modal-info-areas').html(table);
             $('#title-name-student').html(name_student);
+
+            $('#title-process-name').html(process_name); 
         },
         error: function(result){
             console.log(result);
         }                   
     });     
 }
+
 
 
 function freeStudent(id_student, fk_process_catalog) {

@@ -336,32 +336,31 @@ if (!isset($_SESSION['username'])) {
             </div>
             <div class="col-9">
                 <h5 id="title-name-student"></h5>
+                <h6 id="title-process-name" class="text-muted"></h6>
             </div>
         </div>
         <br>
-    <div class="row" aria-labelledby="nav-titlesCast-tab">
-		<table class="table table-striped table-bordered">
-			<thead style="background: #691C32; color: white;">
-				<tr>
-					<th scope="col" style="text-align:center">ÁREA</th>
-					<th scope="col" style="text-align:center">FECHA DE LIBERACIÓN</th>
-					<th scope="col" style="text-align:center">DESCRIPCIÓN</th>
-				</tr>
-			</thead>
-			<tbody class="bg-gray" id="table-modal-info-areas">
-				<!-- Aquí se llenarán las filas con JavaScript -->
-			</tbody>
-		</table>
-	</div>
+        <div class="row" aria-labelledby="nav-titlesCast-tab">
+            <table class="table table-striped table-bordered">
+                <thead style="background: #691C32; color: white;">
+                    <tr>
+                        <th scope="col" style="text-align:center">ÁREA</th>
+                        <th scope="col" style="text-align:center">FECHA DE LIBERACIÓN</th>
+                        <th scope="col" style="text-align:center">DESCRIPCIÓN</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-gray" id="table-modal-info-areas">
+                </tbody>
+            </table>
+        </div>
 
       <div class="modal-footer">
-	  <!-- <button type="button" class="btn btn-success" >Descargar</button> -->
         <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
       </div>
     </div>
   </div>
 </div>
-</div>
+
 
 <!-- Modal de detalles de estudiantes -->
 <div class="modal fade" id="modalStudentDetails" tabindex="-1" role="dialog" aria-labelledby="modalStudentDetailsTitle" aria-hidden="true">
