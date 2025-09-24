@@ -573,49 +573,77 @@ public function freeStudent($id_student, $user)
     $area_program = $studentData["academic_program"];
 
 
-    $html = '
-        <center>
-        <br></br>
-        <p style="text-align: right;"><strong>Constancia de no adeudo al INAOE<br>ALUMNOS GRADUADOS</strong></p>
-        <br></br>
-        <div>
-        <br></br>
-        <p style="text-align:left;"><strong>Folio: ' . $folio . '</strong></p>
-        <p>Por este medio los abajo firmantes hacemos constar que el(la) estudiante: <strong>' . strtoupper($studentData["full_name"]) . '</strong> del Programa de: ' . $programName . ', en el área de ' . $area_program . ', <strong>NO TIENE NINGÚN ADEUDO</strong> en los departamentos o laboratorios a nuestro cargo.</p>
-        </div>
-        <br></br>
-        <table border="0.3" style="width: 100%;">
-            <thead>
-                <tr style="text-align: center;">
-                    <td>Área</td>
-                    <td>Firmante</td>
-                    <td>Fecha de Liberación</td>
-                    <td>Sello de Área</td>
-                </tr>
-            </thead>
-            <tbody>';
 
-    foreach ($pdfData as $area) {
-        $imageName = $area["key"] . ".png";
-        $html .= '<tr>
-                    <td height="60">' . $area["area_name"] . '</td>
-                    <td>' . $area["libera"] . '</td>
-                    <td>' . $area["date"] . '</td>
-                    <td>' . $area["firma"] . '</td>
-                  </tr>';
+
+$html = '
+    <center>
+    <br><br>
+    <p style="text-align: right; font-size:14pt;">
+        <strong>Constancia de no adeudo al INAOE<br>ALUMNOS GRADUADOS</strong>
+    </p>
+    <br><br>
+    <div>
+        <p style="text-align:left; font-size:12pt;">
+            <strong>Folio: ' . $folio . '</strong>
+        </p>
+<p style="text-align:justify; font-size:12pt; line-height:1.6;">
+Por este medio los abajo firmantes hacemos constar que el(la) estudiante: 
+            <strong>' . strtoupper($studentData["full_name"]) . '</strong> 
+            del Programa de: ' . $programName . ', en el área de ' . $area_program . ', 
+            <strong>NO TIENE NINGÚN ADEUDO</strong> en los departamentos o laboratorios a nuestro cargo.
+        </p>
+    </div>
+    <br><br>
+
+    <table cellspacing="5" cellpadding="3" border="0" style="width:100%;">';
+
+$counter = 0;
+foreach ($pdfData as $area) {
+    if ($counter % 2 == 0) {
+        $html .= '<tr>';
     }
 
-    $html .= '</tbody>
-        </table>
-        </center>
-        <div style="text-align: center;">
-            <p>Formato acreditado por la DFA, Santa María Tonantzintla a Fecha: ' . date("d-m-Y") . '</p>
-        </div>';
+$html .= '
+<td style="border:1px solid #000; 
+           border-radius:6px; 
+           width:50%; 
+           text-align:center; 
+           vertical-align:top; 
+           padding:8px;">
+<div style="font-size:14pt; font-weight:bold; margin-bottom:0;">' . $area["area_name"] . '</div>
+<p style="margin:2px 0 0 0;"><strong>Firmante:</strong> ' . trim(str_replace('Autorizado por: ', '', $area["libera"])) . '</p>
+<p style="margin:2px 0 0 0;"><strong>Fecha:</strong> ' . $area["date"] . '</p>
+<p style="margin:2px 0 0 0;"><strong>Firma:</strong> ' . $area["firma"] . '</p>
+
+</td>
+
+
+';
+
+
+
+    if ($counter % 2 == 1) {
+        $html .= '</tr>';
+    }
+    $counter++;
+}
+
+if ($counter % 2 != 0) {
+    $html .= '<td style="border:1px solid #000; border-radius:6px; width:50%;"></td></tr>';
+}
+
+$html .= '</table>
+    </center>
+    <div style="text-align: left; font-size:11pt; margin-top:20px;">
+        <p>Formato acreditado por la DFA, Santa María Tonantzintla a Fecha: ' . date("d-m-Y") . '</p>
+    </div>';
+
+
 
     $pdf->SetFont('helvetica', '', 12);
     $pdf->writeHTML($html, true, false, true, false, '');
-    //$urlToEncode = 'http://adria.inaoep.mx:11038/liberacion_maina_funcional/view/consulta_folio/consulta_folio.php?folio=' . $folio;
-    $urlToEncode = 'http://localhost/liberacion-maina/view/consulta_folio/consulta_folio.php?folio=' . $folio;
+    $urlToEncode = 'http://adria.inaoep.mx:11038/liberacion_maina_funcional/view/consulta_folio/consulta_folio.php?folio=' . $folio;
+    //$urlToEncode = 'http://localhost/liberacion-maina/view/consulta_folio/consulta_folio.php?folio=' . $folio;
 
     $pdf->write2DBarcode($urlToEncode, 'QRCODE,H', 170, 240, 30, 30, $style, 'N');
     $pdf->SetFont('helvetica', '', 10); // Fuente para el texto
