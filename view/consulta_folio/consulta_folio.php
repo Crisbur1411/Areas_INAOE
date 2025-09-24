@@ -12,6 +12,9 @@
     <link rel="stylesheet" href="../../assets/css/sidebar.css">
     <link rel="stylesheet" href="../../assets/css/navNavegation.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        body { overflow-x: hidden; }
+    </style>
 </head>
 <body>
 
@@ -24,9 +27,11 @@
                     alt="Página de inicio, Gobierno de México"></a>
             </div>
             <div class="secciones">
-                <li><a href="https://www.gob.mx/tramites">Trámites</a></li>
-                <li><a href="https://www.gob.mx/gobierno">Gobierno</a></li>
-                <a href="https://www.gob.mx/busqueda"><span class="sr-only">Búsqueda</span><i class="fa fa-search" style="color: white;"></i></a>
+                <ul class="list-unstyled d-flex flex-wrap mb-0">
+                    <li class="mr-3"><a href="https://www.gob.mx/tramites">Trámites</a></li>
+                    <li class="mr-3"><a href="https://www.gob.mx/gobierno">Gobierno</a></li>
+                    <li><a href="https://www.gob.mx/busqueda"><i class="fa fa-search" style="color: white;"></i></a></li>
+                </ul>
             </div>
         </div>
     </div>
@@ -36,10 +41,14 @@
     <div class="container-fluid">
         <div class="contNav">
             <div class="seccionesINAOE">
-                <li><a>INAOE</a></li>
+                <ul class="list-unstyled d-flex flex-wrap mb-0">
+                    <li><a>INAOE</a></li>
+                </ul>
             </div>
             <div class="seccionesEstatus">
-                <li><a href="../../index.php">Inicio</a></li>
+                <ul class="list-unstyled d-flex flex-wrap mb-0">
+                    <li><a href="../../index.php">Inicio</a></li>
+                </ul>
             </div>
         </div>
     </div>
@@ -48,7 +57,7 @@
 <div class="container-fluid mt-5">
     <div id="info" class="d-block text-center">
         <span style="color: black; font-weight: bold; font-size: 16px;">CONSULTA DE FOLIO DE LIBERACIÓN</span><br><br><br>
-        <div style="text-align: center; border-bottom: 3px solid #cecece; margin-bottom: 30px; margin-top: 30px">
+        <div class="text-center border-bottom mb-3 mt-3">
             <nav class="navbar navbar-light">
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     <span class="gov-style-label">DETALLES DE LIBERACIÓN</span>
@@ -62,9 +71,9 @@
                     <table class="table table-striped table-bordered">
                         <thead style="background: #691C32; color: white;">
                             <tr>
-                                <th scope="col" style="text-align:center"># REGISTRO</th>
-                                <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>
-                                <th scope="col" style="text-align:center">DETALLES</th>
+                                <th scope="col" class="text-center"># REGISTRO</th>
+                                <th scope="col" class="text-center">NOMBRE DEL ALUMNO</th>
+                                <th scope="col" class="text-center">DETALLES</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white" id="table-students-free"></tbody>

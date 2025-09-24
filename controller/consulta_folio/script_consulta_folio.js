@@ -183,8 +183,8 @@ function openConstanciaPDF() {
     let folio = getFolio();
     if (folio) {
         // Aquí defines la URL completa al PDF que quieres abrir
-        //let urlPDF = `http://adria.inaoep.mx:11038/liberacion_maina_funcional/res/temp/${folio}.pdf`;
-        let urlPDF = `http://localhost/liberacion-maina/res/temp/${folio}.pdf`;
+        let urlPDF = `http://adria.inaoep.mx:11038/liberacion_maina_funcional/res/temp/${folio}.pdf`;
+        //let urlPDF = `http://localhost/liberacion-maina/res/temp/${folio}.pdf`;
         window.open(urlPDF, '_blank');
     } else {
         alert("No se ha encontrado un folio válido.");
