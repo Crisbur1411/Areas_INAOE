@@ -404,7 +404,7 @@ function listStudentFree() {
                         + "<th style='text-align:center'>" + val.id_student + "</th>"
                         + "<th style='text-align:center'>" + val.control_number + "</th>"
                         + "<th style='text-align:center'><a href='#' data-toggle='modal' onClick='showStudentDetails(" + val.id_student + ");'>" + val.full_name + "</a></th>"
-                        + "<th style='text-align:center'><a href='#' data-toggle='modal' onClick='showRegisterAreas(" + val.id_student + ");'>" + val.date + "</a></th>"
+                        + "<th style='text-align:center'>" + val.date + "</a></th>"
                         + "<th style='text-align:center'>" + folioText + "</th>"
                         + "<th style='text-align:center'>"
                         + "<button type='button' class='btn btn-primary btn-sm' title='Click para imprimir la constancia' "

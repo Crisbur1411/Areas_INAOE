@@ -11,173 +11,209 @@ if(file_exists('./model/db_connection.php')){
 
 class liberacionArea{
 
-    public function listStudentInProgress(){
-        $con=new DBconnection(); 
-        $con->openDB();
-        session_start();
-        $fk_area  = $_SESSION["id_area"];
+// LISTAR ESTUDIANTES EN PROGRESO
+public function listStudentInProgress(){
+    $con = new DBconnection(); 
+    $con->openDB();
+    session_start();
+    $fk_area_real = $_SESSION["id_area"]; // id de la tabla areas
+    $id_user = $_SESSION["id_user"];      // id del usuario actual
 
-        $dataR = $con->query("SELECT 
-                                        s.id_student, 
-                                        CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
-                                        s.control_number,                                    
-                                        s.status,
-                                        s.fk_process_catalog,
-                                        pc.description AS process_name,
-                                        SUM(CASE WHEN n.fk_area = ".$fk_area." THEN 1 ELSE 0 END) AS note_count
-                                    FROM students s
-                                    JOIN process_catalog pc 
-                                        ON pc.id_process_catalog = s.fk_process_catalog
-                                    JOIN process_stages ps
-                                        ON ps.fk_process_catalog = pc.id_process_catalog
-                                    AND ps.status = 1
-                                    AND ps.status_process_stages = 1
-                                    JOIN users u
-                                        ON u.id_user = ps.fk_process_manager
-                                    JOIN user_area ua
-                                        ON ua.fk_user = u.id_user
-                                    AND ua.fk_area = ".$fk_area."
-                                    LEFT JOIN notes n 
-                                        ON n.fk_student = s.id_student
-                                    WHERE s.status = 2
-                                    AND NOT EXISTS (
-                                        SELECT 1 
-                                        FROM trace_student_areas tsa
-                                        WHERE tsa.fk_student = s.id_student 
-                                        AND tsa.fk_area = ".$fk_area."
-                                    )
-                                    GROUP BY 
-                                        s.id_student, 
-                                        CONCAT(s.name, ' ', s.surname, ' ', s.second_surname),
-                                        s.control_number,
-                                        s.status,
-                                        s.fk_process_catalog,
-                                        pc.description
-                                    ORDER BY s.id_student;
-
-
-                                    ");
-
-        $data = array();
-
-        while($row = pg_fetch_array($dataR)){
-            $dat = array(
-                "id_student"=>$row["id_student"],
-                "full_name"=>$row["full_name"],
-                "control_number"=>$row["control_number"],
-                "note_count"=>$row["note_count"],
-                "status" => $row["status"],
-                "fk_process_catalog" => $row["fk_process_catalog"],
-                "process_name" => $row["process_name"]
-            );
-            $data[] = $dat;
-        }
+    // Obtener id_user_area
+    $userAreaQuery = $con->query("
+        SELECT id_user_area 
+        FROM user_area 
+        WHERE fk_user = $id_user 
+          AND fk_area = $fk_area_real
+    ");
+    if(!$userAreaQuery || pg_num_rows($userAreaQuery) == 0){
         $con->closeDB();
-        
-        return $data;
+        return [];
+    }
+    $userAreaRow = pg_fetch_assoc($userAreaQuery);
+    $id_user_area = $userAreaRow['id_user_area'];
+
+    $dataR = $con->query("
+        SELECT 
+            s.id_student, 
+            CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
+            s.control_number,                                    
+            s.status,
+            s.fk_process_catalog,
+            pc.description AS process_name,
+            SUM(CASE WHEN n.fk_area = $id_user_area THEN 1 ELSE 0 END) AS note_count
+        FROM students s
+        JOIN process_catalog pc 
+            ON pc.id_process_catalog = s.fk_process_catalog
+        JOIN process_stages ps
+            ON ps.fk_process_catalog = pc.id_process_catalog
+            AND ps.status = 1
+            AND ps.status_process_stages = 1
+        JOIN users u
+            ON u.id_user = ps.fk_process_manager
+        JOIN user_area ua
+            ON ua.fk_user = u.id_user
+            AND ua.id_user_area = $id_user_area
+        LEFT JOIN notes n 
+            ON n.fk_student = s.id_student
+        WHERE s.status = 2
+        AND NOT EXISTS (
+            SELECT 1 
+            FROM trace_student_areas tsa
+            WHERE tsa.fk_student = s.id_student 
+              AND tsa.fk_area = $id_user_area
+        )
+        GROUP BY 
+            s.id_student, 
+            CONCAT(s.name, ' ', s.surname, ' ', s.second_surname),
+            s.control_number,
+            s.status,
+            s.fk_process_catalog,
+            pc.description
+        ORDER BY s.id_student;
+    ");
+
+    $data = [];
+    while($row = pg_fetch_array($dataR)){
+        $data[] = [
+            "id_student"=>$row["id_student"],
+            "full_name"=>$row["full_name"],
+            "control_number"=>$row["control_number"],
+            "note_count"=>$row["note_count"],
+            "status" => $row["status"],
+            "fk_process_catalog" => $row["fk_process_catalog"],
+            "process_name" => $row["process_name"]
+        ];
     }
 
-    public function signStudent($id_student, $user, $full_name, $id_user, $fk_process_catalog){
+    $con->closeDB();
+    return $data;
+}
+
+// LIBERAR ESTUDIANTE
+public function signStudent($id_student, $user, $full_name, $id_user, $fk_process_catalog){
     $con = new DBconnection();
     $con->openDB();
     $descrip = 'Autorizado por: '.$user;
     $clave = 'Lib3r4c10n-1N403';
 
     session_start();
-    $fk_area  = $_SESSION["id_area"];
+    $fk_area_real = $_SESSION["id_area"]; // id de la tabla areas
 
-    // Fecha actual desde PHP
+    // Fecha actual
     $date = date('Y-m-d H:i:s');
 
-    // Hash sha256(id_student|user|fecha|clave)
+    // Hash sha256
     $hash_release = hash('sha256', $date . '|' . $full_name . '|' . $user . '|' . $clave);
 
-    //Se genera el fk_process_stages para agregar el registro en la tabla trace_student_areas
-    //Se obtiene mediante el id_user y el fk_area del usuario relacionados al proceso que se libero libero
-    $dataProcess = $con->query("SELECT
-                                            process_stages.id_process_stages,
-											 process_stages.fk_process_manager,
-                                            CONCAT(users.name, ' ', users.surname, ' ', users.second_surname) AS name_user,
-											 areas.id_area AS id_area_user,
-                                            areas.name AS area_user
-                                        FROM process_stages
-                                        INNER JOIN process_catalog ON process_stages.fk_process_catalog = process_catalog.id_process_catalog
-                                        INNER JOIN users ON process_stages.fk_process_manager = users.id_user
-                                        INNER JOIN user_area ON users.id_user = user_area.fk_user
-                                        INNER JOIN areas ON user_area.fk_area = areas.id_area
-                                        WHERE
-                                            process_stages.status = 1
-                                            AND process_stages.fk_process_manager = ".$id_user."
-												AND areas.id_area = ".$fk_area."
-                                                    AND process_stages.fk_process_catalog = ".$fk_process_catalog."");
-    $row = pg_fetch_assoc($dataProcess);
-    if($row){
-        $fk_process_stages = $row['id_process_stages'];
-    } else {
+    // Obtener id_user_area
+    $userAreaQuery = $con->query("
+        SELECT id_user_area 
+        FROM user_area 
+        WHERE fk_user = $id_user AND fk_area = $fk_area_real
+    ");
+    if(!$userAreaQuery || pg_num_rows($userAreaQuery) == 0){
         $con->closeDB();
-        return "error"; // No se encontró el proceso
+        return ["success" => false, "message" => "No existe relación user_area para este usuario y área"];
     }
+    $userAreaRow = pg_fetch_assoc($userAreaQuery);
+    $id_user_area = $userAreaRow['id_user_area'];
 
-    $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, fk_area, status, hash_release, fk_process_stage) 
-                                VALUES (".$id_student.", '".$descrip."', '".$date."', ".$fk_area.", 2, '".$hash_release."' , ".$fk_process_stages.") 
-                                RETURNING id_trace_student_area ");
+    // Obtener fk_process_stage
+    $dataProcess = $con->query("
+        SELECT ps.id_process_stages
+        FROM process_stages ps
+        WHERE ps.status = 1
+          AND ps.fk_process_manager = $id_user
+          AND ps.fk_process_catalog = $fk_process_catalog
+    ");
+    $row = pg_fetch_assoc($dataProcess);
+    if(!$row){
+        $con->closeDB();
+        return ["success" => false, "message" => "No se encontró proceso para este usuario y catálogo"];
+    }
+    $fk_process_stages = $row['id_process_stages'];
+
+    // Insertar en trace_student_areas
+    $insertQuery = "
+        INSERT INTO trace_student_areas 
+            (fk_student, description, date, fk_area, status, hash_release, fk_process_stage)
+        VALUES 
+            ($id_student, '$descrip', '$date', $id_user_area, 2, '$hash_release', $fk_process_stages)
+        RETURNING id_trace_student_area
+    ";
+    $updateTurn = $con->query($insertQuery);
+    if(!$updateTurn){
+        $error = pg_last_error($con->connection);
+        $con->closeDB();
+        return ["success" => false, "message" => "Error insertando: $error"];
+    }
 
     $validateUpdateTurn = pg_fetch_row($updateTurn);
-
-    if ($validateUpdateTurn > 0)
-    {            
+    if ($validateUpdateTurn && $validateUpdateTurn[0] > 0){
         $con->closeDB();
-        return $validateUpdateTurn[0];
-    }
-    else
-    {
+        return ["success" => true, "id_trace_student_area" => $validateUpdateTurn[0]];
+    } else {
         $con->closeDB();
-        return "error"; 
+        return ["success" => false, "message" => "Error desconocido al insertar trace_student_areas"];
     }
 }
 
+// LISTAR ESTUDIANTES LIBERADOS
+public function listStudentFree(){
+    $con = new DBconnection(); 
+    $con->openDB();
+    session_start();
+    $fk_area_real = $_SESSION["id_area"]; // id de la tabla areas
+    $id_user = $_SESSION["id_user"];      // id del usuario actual
 
-
-    public function listStudentFree(){
-        $con=new DBconnection(); 
-        $con->openDB();
-        session_start();
-        $fk_area  = $_SESSION["id_area"];
-
-        $dataR = $con->query("SELECT students.id_student, 
-                                        CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
-                                        students.control_number,                                    
-                                        students.status
-                                FROM students
-                                LEFT JOIN trace_student_areas ON trace_student_areas.fk_student = students.id_student
-                                WHERE students.status = 2 
-                                AND EXISTS (
-                                    SELECT 1 FROM trace_student_areas 
-                                    WHERE fk_student = students.id_student 
-                                    AND fk_area = ".$fk_area." 
-                                )
-                                GROUP BY students.id_student, 
-                                        CONCAT(students.name, ' ', students.surname, ' ', students.second_surname),
-                                        students.control_number,
-                                        students.status
-                                ORDER BY students.id_student;
-                                    ");
-
-        $data = array();
-
-        while($row = pg_fetch_array($dataR)){
-            $dat = array(
-                "id_student"=>$row["id_student"],
-                "full_name"=>$row["full_name"],
-                "control_number"=>$row["control_number"],
-                "status" => $row["status"]
-            );
-            $data[] = $dat;
-        }
+    // Obtener id_user_area
+    $userAreaQuery = $con->query("
+        SELECT id_user_area 
+        FROM user_area 
+        WHERE fk_user = $id_user 
+          AND fk_area = $fk_area_real
+    ");
+    if(!$userAreaQuery || pg_num_rows($userAreaQuery) == 0){
         $con->closeDB();
-        
-        return $data;
+        return [];
     }
+    $userAreaRow = pg_fetch_assoc($userAreaQuery);
+    $id_user_area = $userAreaRow['id_user_area'];
+
+    $dataR = $con->query("
+        SELECT s.id_student, 
+               CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
+               s.control_number,                                    
+               s.status
+        FROM students s
+        LEFT JOIN trace_student_areas tsa 
+               ON tsa.fk_student = s.id_student
+        WHERE s.status = 2 
+          AND EXISTS (
+              SELECT 1 
+              FROM trace_student_areas 
+              WHERE fk_student = s.id_student 
+                AND fk_area = $id_user_area
+          )
+        GROUP BY s.id_student, CONCAT(s.name, ' ', s.surname, ' ', s.second_surname), s.control_number, s.status
+        ORDER BY s.id_student;
+    ");
+
+    $data = [];
+    while($row = pg_fetch_array($dataR)){
+        $data[] = [
+            "id_student"=>$row["id_student"],
+            "full_name"=>$row["full_name"],
+            "control_number"=>$row["control_number"],
+            "status" => $row["status"]
+        ];
+    }
+
+    $con->closeDB();
+    return $data;
+}
+
 
     public function noteStudent($id_student, $user, $motivo){
         $con=new DBconnection();
