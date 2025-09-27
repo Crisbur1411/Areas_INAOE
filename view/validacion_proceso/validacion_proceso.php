@@ -133,6 +133,7 @@
             </div>
             <div class="col-9">
                 <h5 id="title-name-student"></h5>
+                <h6 id="title-process-name" class="text-muted"></h6>
             </div>
         </div>
         <br>

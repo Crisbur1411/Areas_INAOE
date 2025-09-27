@@ -225,46 +225,46 @@ class alumnos
 
     $sql = "
         SELECT 
-    tsa.id_trace_student_area,
-    s.id_student,
-    CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
-    COALESCE(a.name, '-') AS namearea,
-    COALESCE(to_char(tsa.date, 'YYYY-MM-DD HH24:MI:SS'), '-') AS formatted_date,
-    COALESCE(tsa.description, 'Sin autorizar') AS description,
-    COALESCE(s.status, 0) AS status,
-    a.process_name
-FROM (
-    SELECT DISTINCT 
-        a.id_area, 
-        a.name,
-        pc.description AS process_name
-    FROM process_stages ps
-    INNER JOIN process_catalog pc 
-        ON pc.id_process_catalog = ps.fk_process_catalog
-    INNER JOIN users u 
-        ON u.id_user = ps.fk_process_manager
-    INNER JOIN user_area ua 
-        ON ua.fk_user = u.id_user
-    INNER JOIN areas a 
-        ON a.id_area = ua.fk_area
-    WHERE ps.status = 1
-      AND pc.id_process_catalog = $fk_process_catalog
-      AND a.status = 1
-) a
-LEFT JOIN trace_student_areas tsa 
-    ON tsa.fk_area = a.id_area 
-   AND tsa.fk_student = $id_student
-LEFT JOIN students s 
-    ON s.id_student = tsa.fk_student
-ORDER BY a.id_area, tsa.date";
-
+            tsa.id_trace_student_area,
+            s.id_student,
+            CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
+            COALESCE(a.name, '-') AS namearea,
+            COALESCE(to_char(tsa.date, 'YYYY-MM-DD HH24:MI:SS'), '-') AS formatted_date,
+            COALESCE(tsa.description, 'Sin autorizar') AS description,
+            COALESCE(s.status, 0) AS status,
+            a.process_name
+        FROM (
+            SELECT DISTINCT 
+                a.id_area, 
+                a.name,
+                ua.id_user_area,
+                pc.description AS process_name
+            FROM process_stages ps
+            INNER JOIN process_catalog pc 
+                ON pc.id_process_catalog = ps.fk_process_catalog
+            INNER JOIN users u 
+                ON u.id_user = ps.fk_process_manager
+            INNER JOIN user_area ua 
+                ON ua.fk_user = u.id_user
+            INNER JOIN areas a 
+                ON a.id_area = ua.fk_area
+            WHERE ps.status = 1
+              AND pc.id_process_catalog = $fk_process_catalog
+              AND a.status = 1
+        ) a
+        LEFT JOIN trace_student_areas tsa 
+            ON tsa.fk_area = a.id_user_area
+            AND tsa.fk_student = $id_student
+        LEFT JOIN students s 
+            ON s.id_student = $id_student
+        ORDER BY a.id_area, tsa.date;
+    ";
 
     $dataR = $con->query($sql);
 
     $data = array();
-
     while ($row = pg_fetch_array($dataR)) {
-        $dat = array(
+        $data[] = array(
             "id_trace_student_area" => $row["id_trace_student_area"],
             "id_student"            => $row["id_student"],
             "full_name"             => $row["full_name"],
@@ -274,12 +274,12 @@ ORDER BY a.id_area, tsa.date";
             "status"                => $row["status"],
             "process_name"          => $row["process_name"]
         );
-        $data[] = $dat;
     }
-    $con->closeDB();
 
+    $con->closeDB();
     return $data;
 }
+
 
 
 public function freeStudent($id_student, $user)

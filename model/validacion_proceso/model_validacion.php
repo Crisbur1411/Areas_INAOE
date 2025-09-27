@@ -64,7 +64,7 @@ public function listStudentInProgress($email)
 
 
 
-    public function showRegisterAreas($id_student, $fk_process_catalog)
+public function showRegisterAreas($id_student, $fk_process_catalog)
 {
     $con = new DBconnection();
     $con->openDB();
@@ -77,12 +77,14 @@ public function listStudentInProgress($email)
             COALESCE(a.name, '-') AS namearea,
             COALESCE(to_char(tsa.date, 'YYYY-MM-DD HH24:MI:SS'), '-') AS formatted_date,
             COALESCE(tsa.description, 'Sin autorizar') AS description,
-            COALESCE(s.status, 0) AS status
+            COALESCE(s.status, 0) AS status,
+            a.process_name
         FROM (
-            -- 🔑 Subconsulta: áreas que pertenecen a un catálogo específico
             SELECT DISTINCT 
                 a.id_area, 
-                a.name
+                a.name,
+                ua.id_user_area,
+                pc.description AS process_name
             FROM process_stages ps
             INNER JOIN process_catalog pc 
                 ON pc.id_process_catalog = ps.fk_process_catalog
@@ -97,33 +99,33 @@ public function listStudentInProgress($email)
               AND a.status = 1
         ) a
         LEFT JOIN trace_student_areas tsa 
-            ON tsa.fk_area = a.id_area 
-           AND tsa.fk_student = $id_student
+            ON tsa.fk_area = a.id_user_area
+            AND tsa.fk_student = $id_student
         LEFT JOIN students s 
-            ON s.id_student = tsa.fk_student
-        ORDER BY a.id_area, tsa.date
+            ON s.id_student = $id_student
+        ORDER BY a.id_area, tsa.date;
     ";
 
     $dataR = $con->query($sql);
 
     $data = array();
-
     while ($row = pg_fetch_array($dataR)) {
-        $dat = array(
+        $data[] = array(
             "id_trace_student_area" => $row["id_trace_student_area"],
             "id_student"            => $row["id_student"],
             "full_name"             => $row["full_name"],
             "namearea"              => $row["namearea"],
             "formatted_date"        => $row["formatted_date"],
             "description"           => $row["description"],
-            "status"                => $row["status"]
+            "status"                => $row["status"],
+            "process_name"          => $row["process_name"]
         );
-        $data[] = $dat;
     }
-    $con->closeDB();
 
+    $con->closeDB();
     return $data;
 }
+
 
 
 

@@ -137,10 +137,13 @@ function showRegisterAreas(id_student, fk_process_catalog) {
         success: function(result) {
             var table = "";
             var name_student = "";
+            var process_name = "";
+
             $.each(result, function(index, val) {
                 if (val.status == 2) {             
                     name_student = val.full_name;  
-                }      
+                    process_name = val.process_name;  
+                }    
                 table += "<tr>"       
                     + "<th style='text-align:center'>"+val.namearea+"</th>"
                     + "<th style='text-align:center'>"+val.formatted_date+"</th>"
@@ -149,6 +152,7 @@ function showRegisterAreas(id_student, fk_process_catalog) {
             });
             $('#table-modal-info-areas').html(table);
             $('#title-name-student').html(name_student);
+            $('#title-process-name').html(process_name);
         },
         error: function(result){
             console.log(result);
