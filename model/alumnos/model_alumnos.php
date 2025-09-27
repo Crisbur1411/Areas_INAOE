@@ -485,19 +485,22 @@ public function freeStudent($id_student, $user)
 
     $type = $academicProgramRow['type'];
 
-    $pdfinfo = $con->query("SELECT CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
-													 p.name AS academic_program,
-                                                    a.name AS area_name,
-                                                    a.key AS key, 
-                                                    ta.description AS libera,
-													 ta.hash_release AS firma,	
-                                                    DATE(ta.date) AS date
-                                            FROM students s
-                                            JOIN trace_student_areas ta ON s.id_student = ta.fk_student
-                                            JOIN areas a ON ta.fk_area = a.id_area
-											 JOIN academic_programs p ON s.fk_academic_programs = p.id_academic_programs
-                                            WHERE s.id_student = '$id_student'
-                                            ORDER BY ta.id_trace_student_area ASC;");
+    $pdfinfo = $con->query("SELECT 
+                                    CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
+                                    p.name AS academic_program,
+                                    ar.name AS area_name,
+                                    ar.key AS key,
+                                    ta.description AS libera,
+                                    ta.hash_release AS firma,
+                                    DATE(ta.date) AS date
+                                FROM students s
+                                JOIN trace_student_areas ta ON s.id_student = ta.fk_student
+                                JOIN user_area ua ON ta.fk_area = ua.id_user_area
+                                JOIN areas ar ON ua.fk_area = ar.id_area
+                                JOIN academic_programs p ON s.fk_academic_programs = p.id_academic_programs
+                                WHERE s.id_student = '$id_student'
+                                ORDER BY ta.id_trace_student_area ASC;
+                                ");
 
     $pdfData = array();
 
