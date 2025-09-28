@@ -133,9 +133,9 @@ if (!isset($_SESSION['username'])) {
                     <li><p class="text_inaoe">INAOE</p></li>
                 </div>
                
-            <div class="seccionesEstatus">
-                <li><a>Liberación de área</a></li>
-            </div>
+                <div class="seccionesEstatus">
+                    <li><a>Liberación de área</a></li>
+                </div>
             </div>
         </div>
     </nav>

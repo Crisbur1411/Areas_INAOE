@@ -27,10 +27,30 @@ $(function(){
     listStudentInProgress();
     listStudentFree();
     listStudentCancel();
+    getAreaName();
 });
 
+
+function getAreaName() {
+    $.ajax({
+        url: "../../controller/liberacion_area/controller_liberacion_area.php",
+        type: "POST",
+        dataType: "JSON",
+        data: { action: 10 },
+        success: function (result) {
+            if(result.area_name){
+                $(".seccionesEstatus a").text("Liberación de área - " + result.area_name);
+            }
+        },
+        error: function (xhr) {
+            console.error("Error al obtener el área:", xhr);
+        }
+    });
+}
+
+
 function listStudentInProgress() {
-    let i2 = 0; // Inicializamos i1 con 0
+    let i2 = 0; 
     $.ajax({
         url: "../../controller/liberacion_area/controller_liberacion_area.php",
         cache: false,
@@ -42,7 +62,7 @@ function listStudentInProgress() {
             $.each(result, function(index, val) {
                 if (val.status == 2 )
                 { 
-                    i2++; // Incrementamos i1 solo si el estudiante cumple con la condición
+                    i2++; 
                     if (val.note_count > 0)
                     {
                         table += "<tr>"       
@@ -66,7 +86,7 @@ function listStudentInProgress() {
                     
                 }
             });
-            $('#pf2').text(i2); // Actualizamos el valor en el elemento con id 'pf'
+            $('#pf2').text(i2); 
             if(i2 != 0){
                 $('#table-students-in-progress').html(table);
                 $('#alert2').hide();

@@ -414,5 +414,27 @@ public function getDetailsStudent($id_student)
 
 
 
+
+
+public function getAreaNameBySession(){
+    $con = new DBconnection(); 
+    $con->openDB();
+    session_start();
+    $fk_area  = $_SESSION["id_area"];
+
+        $query = $con->query("SELECT name AS area_name FROM areas WHERE id_area = $fk_area LIMIT 1");
+
+        $areaName = "";
+        if($query && pg_num_rows($query) > 0){
+            $row = pg_fetch_assoc($query);
+            $areaName = $row['area_name'];
+        }
+
+        $con->closeDB();
+        return ["area_name" => $areaName];
+
+}
+
+
 }
 ?>
