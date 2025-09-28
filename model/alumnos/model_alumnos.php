@@ -483,13 +483,18 @@ public function freeStudent($id_student, $user)
 
     //desarrollaod por bryam el 09/04/2024 trae todo los datos que lleva el pdf
 
-    public function generatePDF($id_student, $full_name, $control_number, $date_register)
+public function generatePDF($id_student, $full_name, $control_number, $date_register)
 {
     $con = new DBconnection();
     $con->openDB();
 
     // Obtener el valor del curso del estudiante
-    $academicProgramQuery = $con->query("SELECT c.type FROM students s JOIN academic_programs c ON s.fk_academic_programs = c.id_academic_programs WHERE s.id_student = '$id_student'");
+    $academicProgramQuery = $con->query("
+        SELECT c.type 
+        FROM students s 
+        JOIN academic_programs c ON s.fk_academic_programs = c.id_academic_programs 
+        WHERE s.id_student = '$id_student'
+    ");
     $academicProgramRow = pg_fetch_array($academicProgramQuery);
 
     if (!$academicProgramRow) {
@@ -499,25 +504,25 @@ public function freeStudent($id_student, $user)
 
     $type = $academicProgramRow['type'];
 
-    $pdfinfo = $con->query("SELECT 
-                                    CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
-                                    p.name AS academic_program,
-                                    ar.name AS area_name,
-                                    ar.key AS key,
-                                    ta.description AS libera,
-                                    ta.hash_release AS firma,
-                                    DATE(ta.date) AS date
-                                FROM students s
-                                JOIN trace_student_areas ta ON s.id_student = ta.fk_student
-                                JOIN user_area ua ON ta.fk_area = ua.id_user_area
-                                JOIN areas ar ON ua.fk_area = ar.id_area
-                                JOIN academic_programs p ON s.fk_academic_programs = p.id_academic_programs
-                                WHERE s.id_student = '$id_student'
-                                ORDER BY ta.id_trace_student_area ASC;
-                                ");
+    $pdfinfo = $con->query("
+        SELECT 
+            CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
+            p.name AS academic_program,
+            ar.name AS area_name,
+            ar.key AS key,
+            ta.description AS libera,
+            ta.hash_release AS firma,
+            DATE(ta.date) AS date
+        FROM students s
+        JOIN trace_student_areas ta ON s.id_student = ta.fk_student
+        JOIN user_area ua ON ta.fk_area = ua.id_user_area
+        JOIN areas ar ON ua.fk_area = ar.id_area
+        JOIN academic_programs p ON s.fk_academic_programs = p.id_academic_programs
+        WHERE s.id_student = '$id_student'
+        ORDER BY ta.id_trace_student_area ASC;
+    ");
 
     $pdfData = array();
-
     while ($row = pg_fetch_array($pdfinfo)) {
         $dat = array(
             "full_name" => $row["full_name"],
@@ -533,29 +538,26 @@ public function freeStudent($id_student, $user)
 
     $con->closeDB();
 
-    // Validar si hay datos para generar PDF
     if (count($pdfData) === 0) {
         return array('error' => 'No se encontraron registros de áreas para este estudiante.');
     }
 
-    // Generar el folio, de este modo si el id del estudiane y el nombre es el mismo, el folio siempre será el mismo
+    // Generar folio
     $folioSeed = $id_student . '-' . $full_name . '-' . $control_number . '-' . $date_register;
-    $folioHash = strtoupper(substr(md5($folioSeed), 0, 16)); // puedes cambiar 8 por la longitud que gustes
+    $folioHash = strtoupper(substr(md5($folioSeed), 0, 16));
     $folio = 'DFA-' . $folioHash;
 
-    //Se inserta el folio al estudiante en la base de datos
+    // Guardar folio en DB
     $con = new DBconnection();
     $con->openDB();
     $con->query("UPDATE students SET folio = '$folio' WHERE id_student = '$id_student'");
     $con->closeDB();
 
-
+    // Configurar PDF
     $pdf = new TCPDF('P', PDF_UNIT, 'A4', true, 'UTF-8', false);
     $pdf->SetCreator('DFA');
     $pdf->SetAuthor('YO');
     $pdf->SetTitle('Student Certificate');
-    $pdf->SetSubject('Certificate for Student');
-    $pdf->SetKeywords('Certificate, Student, TCPDF');
     $pdf->SetMargins(10, 7, 10);
     $pdf->SetFooterMargin(10);
     $pdf->setPrintHeader(false);
@@ -563,36 +565,29 @@ public function freeStudent($id_student, $user)
     $pdf->AddPage();
     $pdf->Image('../../res/temp/logo_inaoe.jpeg', 10, 17, 30, 30, 'JPG', '', '', false, 300);
 
-
-
-    //Se genera el pdf y se inserta en la hoja
     $style = array(
-    'border' => 0,
-    'vpadding' => 'auto',
-    'hpadding' => 'auto',
-    'fgcolor' => array(0,0,0),
-    'bgcolor' => false, 
-    'module_width' => 1,
-    'module_height' => 1
-);
-
+        'border' => 0,
+        'vpadding' => 'auto',
+        'hpadding' => 'auto',
+        'fgcolor' => array(0,0,0),
+        'bgcolor' => false, 
+        'module_width' => 1,
+        'module_height' => 1
+    );
 
     $studentData = $pdfData[0];
 
     $programNames = [
-    1 => 'Maestría',
-    2 => 'Doctorado',
-    3 => 'Externo de Licenciatura',
-    4 => 'Externo de Bachillerato'
+        1 => 'Maestría',
+        2 => 'Doctorado',
+        3 => 'Externo de Licenciatura',
+        4 => 'Externo de Bachillerato'
     ];
-
     $programName = isset($programNames[$type]) ? strtoupper($programNames[$type]) : 'PROGRAMA DESCONOCIDO';
     $area_program = $studentData["academic_program"];
 
-
-
-
-$html = '
+    // Construir HTML
+    $html = '
     <center>
     <br><br>
     <p style="text-align: right; font-size:14pt;">
@@ -601,72 +596,66 @@ $html = '
     <br><br>
     <div>
         <p style="text-align:left; font-size:12pt;">
-            <strong>Folio: ' . $folio . '</strong>
+<strong>Folio: ' . $folio . '</strong>
         </p>
-<p style="text-align:justify; font-size:12pt; line-height:1.6;">
-Por este medio los abajo firmantes hacemos constar que el(la) estudiante: 
+        <p style="text-align:justify; font-size:12pt; line-height:1.6;">Por este medio los abajo firmantes hacemos constar que el(la) estudiante: 
             <strong>' . strtoupper($studentData["full_name"]) . '</strong> 
             del Programa de: ' . $programName . ', en el área de ' . $area_program . ', 
             <strong>NO TIENE NINGÚN ADEUDO</strong> en los departamentos o laboratorios a nuestro cargo.
         </p>
     </div>
-    <br><br>
+    <table cellspacing="5" cellpadding="0" border="0" style="width:100%;">';
 
-    <table cellspacing="5" cellpadding="3" border="0" style="width:100%;">';
+    $counter = 0;
+    foreach ($pdfData as $area) {
+        if ($counter % 2 == 0) {
+            $html .= '<tr style="page-break-inside: avoid;">';
+        }
 
-$counter = 0;
-foreach ($pdfData as $area) {
-    if ($counter % 2 == 0) {
-        $html .= '<tr>';
+        $html .= '
+        <td style="
+    border:1px solid #000; 
+    border-radius:6px; 
+    width:50%; 
+    text-align:center; 
+    vertical-align:top; 
+    padding:8px;
+    height: auto;
+">
+            <div style="font-size:14pt; font-weight:bold; margin-bottom:0;">' . $area["area_name"] . '</div>
+            <p style="margin:2px 0 0 0;"><strong>Firmante:</strong> ' . trim(str_replace('Autorizado por: ', '', $area["libera"])) . '</p>
+            <p style="margin:2px 0 0 0;"><strong>Fecha:</strong> ' . $area["date"] . '</p>
+            <p style="margin:2px 0 0 0;"><strong>Firma:</strong> ' . $area["firma"] . '</p>
+        </td>';
+
+        if ($counter % 2 == 1) {
+            $html .= '</tr>';
+        }
+        $counter++;
     }
 
-$html .= '
-<td style="border:1px solid #000; 
-           border-radius:6px; 
-           width:50%; 
-           text-align:center; 
-           vertical-align:top; 
-           padding:8px;">
-<div style="font-size:14pt; font-weight:bold; margin-bottom:0;">' . $area["area_name"] . '</div>
-<p style="margin:2px 0 0 0;"><strong>Firmante:</strong> ' . trim(str_replace('Autorizado por: ', '', $area["libera"])) . '</p>
-<p style="margin:2px 0 0 0;"><strong>Fecha:</strong> ' . $area["date"] . '</p>
-<p style="margin:2px 0 0 0;"><strong>Firma:</strong> ' . $area["firma"] . '</p>
-
-</td>
-
-
-';
-
-
-
-    if ($counter % 2 == 1) {
-        $html .= '</tr>';
+    if ($counter % 2 != 0) {
+        $html .= '<td style="border:1px solid #000; border-radius:6px; width:50%; page-break-inside: avoid;"></td></tr>';
     }
-    $counter++;
-}
 
-if ($counter % 2 != 0) {
-    $html .= '<td style="border:1px solid #000; border-radius:6px; width:50%;"></td></tr>';
-}
-
-$html .= '</table>
+    $html .= '</table>
     </center>
     <div style="text-align: left; font-size:11pt; margin-top:20px;">
         <p>Formato acreditado por la DFA, Santa María Tonantzintla a Fecha: ' . date("d-m-Y") . '</p>
     </div>';
 
-
-
+    // Escribir HTML en PDF
     $pdf->SetFont('helvetica', '', 12);
     $pdf->writeHTML($html, true, false, true, false, '');
+
+    // Código QR
     $urlToEncode = 'http://adria.inaoep.mx:11038/liberacion_maina_funcional/view/consulta_folio/consulta_folio.php?folio=' . $folio;
-    //$urlToEncode = 'http://localhost/liberacion-maina/view/consulta_folio/consulta_folio.php?folio=' . $folio;
-
     $pdf->write2DBarcode($urlToEncode, 'QRCODE,H', 170, 240, 30, 30, $style, 'N');
-    $pdf->SetFont('helvetica', '', 10); // Fuente para el texto
-    $pdf->SetXY(170, 239 + 30 + 2); // Posición: misma X, Y + alto del QR + margen
-    $pdf->Cell(30, 5, 'QR de verificación', 0, 0, 'C'); // Texto alineado centrado debajo del QR
+    $pdf->SetFont('helvetica', '', 10);
+    $pdf->SetXY(170, 239 + 30 + 2);
+    $pdf->Cell(30, 5, 'QR de verificación', 0, 0, 'C');
 
+    // Guardar PDF
     $pdfContent = $pdf->Output('student_certificate.pdf', 'S');
     $pdfPath = '../../res/temp/' . $folio . '.pdf';
     file_put_contents($pdfPath, $pdfContent);
@@ -674,6 +663,7 @@ $html .= '</table>
 
     return array('pdf_url' => $pdfUrl);
 }
+
 
 
 
