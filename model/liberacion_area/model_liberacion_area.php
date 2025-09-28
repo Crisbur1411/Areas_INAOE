@@ -182,22 +182,31 @@ public function listStudentFree(){
     $id_user_area = $userAreaRow['id_user_area'];
 
     $dataR = $con->query("
-        SELECT s.id_student, 
-               CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
-               s.control_number,                                    
-               s.status
-        FROM students s
-        LEFT JOIN trace_student_areas tsa 
-               ON tsa.fk_student = s.id_student
-        WHERE s.status = 2 
-          AND EXISTS (
-              SELECT 1 
-              FROM trace_student_areas 
-              WHERE fk_student = s.id_student 
-                AND fk_area = $id_user_area
-          )
-        GROUP BY s.id_student, CONCAT(s.name, ' ', s.surname, ' ', s.second_surname), s.control_number, s.status
-        ORDER BY s.id_student;
+        SELECT 
+    s.id_student, 
+    CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
+    s.control_number,                                    
+    s.status,
+    s.fk_process_catalog,
+    pc.description AS process_name
+FROM students s
+JOIN process_catalog pc 
+    ON pc.id_process_catalog = s.fk_process_catalog
+WHERE s.status = 2
+  AND EXISTS (
+      SELECT 1 
+      FROM trace_student_areas tsa
+      WHERE tsa.fk_student = s.id_student 
+        AND tsa.fk_area = $id_user_area
+  )
+GROUP BY 
+    s.id_student, 
+    s.name, s.surname, s.second_surname,
+    s.control_number,
+    s.status,
+    s.fk_process_catalog,
+    pc.description
+ORDER BY s.id_student;
     ");
 
     $data = [];
@@ -206,7 +215,8 @@ public function listStudentFree(){
             "id_student"=>$row["id_student"],
             "full_name"=>$row["full_name"],
             "control_number"=>$row["control_number"],
-            "status" => $row["status"]
+            "status" => $row["status"],
+            "process_name" => $row["process_name"]
         ];
     }
 
@@ -313,26 +323,30 @@ public function listStudentCancel()
         $con = new DBconnection();
         $con->openDB();
 
-        $dataR = $con->query("SELECT students.id_student, 
-                                    CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
-                                    students.control_number, 
-                                    COUNT(trace_student_areas.fk_area) AS areas_count,  
-                                    DATE(trace_student_areas.date) AS date,
-                                    students.status
-                                    FROM 
-                                        students
-                                    LEFT JOIN 
-                                        trace_student_areas ON trace_student_areas.fk_student = students.id_student
-                                    WHERE 
-                                        students.status = 4 AND trace_student_areas.status= 4
+        $dataR = $con->query("SELECT 
+                                        s.id_student, 
+                                        CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
+                                        s.control_number, 
+                                        COUNT(tsa.fk_area) AS areas_count,  
+                                        DATE(tsa.date) AS date,
+                                        s.status,
+                                        pc.description AS process_name
+                                    FROM students s
+                                    LEFT JOIN trace_student_areas tsa 
+                                        ON tsa.fk_student = s.id_student
+                                    JOIN process_catalog pc
+                                        ON pc.id_process_catalog = s.fk_process_catalog
+                                    WHERE s.status = 4 
+                                    AND tsa.status = 4
                                     GROUP BY 
-                                        students.id_student, 
-                                        CONCAT(students.name, ' ', students.surname, ' ', students.second_surname),
-                                        students.control_number,
-                                        DATE(trace_student_areas.date),
-                                        students.status
+                                        s.id_student, 
+                                        s.name, s.surname, s.second_surname,
+                                        s.control_number,
+                                        DATE(tsa.date),
+                                        s.status,
+                                        pc.description
                                     ORDER BY 
-                                        students.id_student;
+                                        s.id_student;
                                     ");
 
         $data = array();
@@ -343,7 +357,8 @@ public function listStudentCancel()
                 "full_name" => $row["full_name"],
                 "control_number" => $row["control_number"],
                 "date" => $row["date"],
-                "status" => $row["status"]
+                "status" => $row["status"],
+                "process_name" => $row["process_name"]
             );
             $data[] = $dat;
         }

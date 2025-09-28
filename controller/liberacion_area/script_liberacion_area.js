@@ -284,6 +284,7 @@ function listStudentFree() {
                     + "<th style='text-align:center'>"+val.id_student+"</th>"
                     + "<th style='text-align:center'>"+val.control_number+"</a></th>"
                     + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
+                    + "<th style='text-align:center'>"+val.process_name+"</a></th>"
                     + "</tr>";
                 }
             });
@@ -417,6 +418,7 @@ function listStudentCancel() {
                     + "<th style='text-align:center'>"+val.id_student+"</th>"
                     + "<th style='text-align:center'>"+val.control_number+"</a></th>"
                     + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
+                    + "<th style='text-align:center'>"+val.process_name+"</a></th>"                    
                     + "<th style='text-align:center'><p>"+val.date+"</p></th>"
                     + "</tr>";
                 }

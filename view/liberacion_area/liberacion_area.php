@@ -194,6 +194,7 @@ if (!isset($_SESSION['username'])) {
                             <th scope="col" style="text-align:center"># REGISTRO</th>
 							<th scope="col" style="text-align:center">MATRÍCULA</th>
                             <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>   
+                            <th scope="col" style="text-align:center">PROCESO</th>   
                         </tr>
                     </thead>
                     <tbody class="bg-white" id="table-students-free"></tbody>
@@ -212,7 +213,8 @@ if (!isset($_SESSION['username'])) {
                         <tr>
                             <th scope="col" style="text-align:center"># REGISTRO</th>
 							<th scope="col" style="text-align:center">MATRÍCULA</th>
-                            <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>                            
+                            <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>
+                            <th scope="col" style="text-align:center">PROCESO</th>   
                             <th scope="col" style="text-align:center">FECHA DE CANCELACIÓN</th>
                         </tr>
                     </thead>
