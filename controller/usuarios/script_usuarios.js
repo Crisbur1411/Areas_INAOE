@@ -681,8 +681,7 @@ function saveUserEdit() {
     Swal.fire({
         icon: 'error',
         title: 'Error al actualizar usuario',
-        html: `<b>Estado:</b> ${textStatus}<br><b>Error:</b> ${errorThrown}`,
-        footer: 'Revisa consola para más detalles',
+        html: `<b>Verifique que el correo sea válido o que no exista el mismo correo registrado con otro usuario</b>`,
         timer: 10000,
         timerProgressBar: true,
     });
