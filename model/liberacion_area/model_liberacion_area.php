@@ -41,7 +41,7 @@ public function listStudentInProgress(){
             s.status,
             s.fk_process_catalog,
             pc.description AS process_name,
-            SUM(CASE WHEN n.fk_area = $id_user_area THEN 1 ELSE 0 END) AS note_count
+            SUM(CASE WHEN n.fk_area = $fk_area_real THEN 1 ELSE 0 END) AS note_count
         FROM students s
         JOIN process_catalog pc 
             ON pc.id_process_catalog = s.fk_process_catalog
