@@ -18,25 +18,28 @@ class alumnos
         $con = new DBconnection();
         $con->openDB();
 
-            $dataTitle = $con->query("SELECT students.id_student, 
-                                 CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
-                                 students.control_number, 
-                                 DATE(students.date_register) AS date, 
-                                 academic_programs.name AS namecourse,
-                                 students.fk_process_catalog, 
-                                 students.status
-                          FROM
-                              students
-                          INNER JOIN academic_programs 
-                              ON students.fk_academic_programs = academic_programs.id_academic_programs   
-                          WHERE
-                              students.status = 1
-                              AND NOT EXISTS (
-                                  SELECT 1
-                                  FROM trace_student_areas
-                                  WHERE trace_student_areas.fk_student = students.id_student
-                              )
-                          ORDER BY students.id_student;");
+            $dataTitle = $con->query("SELECT 
+                                                students.id_student, 
+                                                CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
+                                                students.control_number, 
+                                                DATE(students.date_register) AS date, 
+                                                academic_programs.name AS namecourse,
+                                                students.fk_process_catalog, 
+                                                pc.description AS process_description,
+                                                students.status
+                                            FROM students
+                                            INNER JOIN academic_programs 
+                                                ON students.fk_academic_programs = academic_programs.id_academic_programs
+                                            INNER JOIN process_catalog pc
+                                                ON students.fk_process_catalog = pc.id_process_catalog
+                                            WHERE students.status = 1
+                                            AND NOT EXISTS (
+                                                SELECT 1
+                                                FROM trace_student_areas
+                                                WHERE trace_student_areas.fk_student = students.id_student
+                                            )
+                                            ORDER BY students.id_student;
+                                            ");
 
 
         $data = array();
@@ -49,7 +52,8 @@ class alumnos
                 "date" => $row["date"],
                 "namecourse" => $row["namecourse"],
                 "fk_process_catalog" => $row["fk_process_catalog"],
-                "status" => $row["status"]
+                "status" => $row["status"],
+                "process_description" => $row["process_description"]
             );
             $data[] = $dat;
         }
@@ -333,28 +337,33 @@ public function freeStudent($id_student, $user)
         $con = new DBconnection();
         $con->openDB();
 
-        $dataR = $con->query("SELECT students.id_student, 
-                                    CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
-                                    students.control_number, 
-                                    COUNT(trace_student_areas.fk_area) AS areas_count,  
-                                    DATE(trace_student_areas.date) AS date,
-									 students.date_register,
-									 students.folio,
-                                    students.status
-                                    FROM 
-                                        students
-                                    LEFT JOIN 
-                                        trace_student_areas ON trace_student_areas.fk_student = students.id_student
-                                    WHERE 
-                                        students.status = 3 AND trace_student_areas.status= 3
+        $dataR = $con->query("SELECT 
+                                        students.id_student, 
+                                        CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
+                                        students.control_number, 
+                                        COUNT(trace_student_areas.fk_area) AS areas_count,  
+                                        DATE(trace_student_areas.date) AS date,
+                                        students.date_register,
+                                        students.folio,
+                                        students.status,
+                                        pc.description AS process_description
+                                    FROM students
+                                    LEFT JOIN trace_student_areas 
+                                        ON trace_student_areas.fk_student = students.id_student
+                                    INNER JOIN process_catalog pc
+                                        ON students.fk_process_catalog = pc.id_process_catalog
+                                    WHERE students.status = 3 
+                                    AND trace_student_areas.status = 3
                                     GROUP BY 
                                         students.id_student, 
                                         CONCAT(students.name, ' ', students.surname, ' ', students.second_surname),
                                         students.control_number,
                                         DATE(trace_student_areas.date),
-                                        students.status
-                                    ORDER BY 
-                                        students.id_student;
+                                        students.date_register,
+                                        students.folio,
+                                        students.status,
+                                        pc.description
+                                    ORDER BY students.id_student;
                                     ");
 
         $data = array();
@@ -367,7 +376,8 @@ public function freeStudent($id_student, $user)
                 "date" => $row["date"],
                 "status" => $row["status"],
                 "folio" => $row["folio"],
-                "date_register" => $row["date_register"]
+                "date_register" => $row["date_register"],
+                "process_description" => $row["process_description"]
             );
             $data[] = $dat;
         }
@@ -427,26 +437,29 @@ public function freeStudent($id_student, $user)
         $con = new DBconnection();
         $con->openDB();
 
-        $dataR = $con->query("SELECT students.id_student, 
-                                    CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
-                                    students.control_number, 
-                                    COUNT(trace_student_areas.fk_area) AS areas_count,  
-                                    DATE(trace_student_areas.date) AS date,
-                                    students.status
-                                    FROM 
-                                        students
-                                    LEFT JOIN 
-                                        trace_student_areas ON trace_student_areas.fk_student = students.id_student
-                                    WHERE 
-                                        students.status = 4 AND trace_student_areas.status= 4
+        $dataR = $con->query("SELECT 
+                                        students.id_student, 
+                                        CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
+                                        students.control_number, 
+                                        COUNT(trace_student_areas.fk_area) AS areas_count,  
+                                        DATE(trace_student_areas.date) AS date,
+                                        students.status,
+                                        pc.description AS process_description
+                                    FROM students
+                                    LEFT JOIN trace_student_areas 
+                                        ON trace_student_areas.fk_student = students.id_student
+                                    INNER JOIN process_catalog pc
+                                        ON students.fk_process_catalog = pc.id_process_catalog
+                                    WHERE students.status = 4 
+                                    AND trace_student_areas.status = 4
                                     GROUP BY 
                                         students.id_student, 
                                         CONCAT(students.name, ' ', students.surname, ' ', students.second_surname),
                                         students.control_number,
                                         DATE(trace_student_areas.date),
-                                        students.status
-                                    ORDER BY 
-                                        students.id_student;
+                                        students.status,
+                                        pc.description
+                                    ORDER BY students.id_student;
                                     ");
 
         $data = array();
@@ -457,7 +470,8 @@ public function freeStudent($id_student, $user)
                 "full_name" => $row["full_name"],
                 "control_number" => $row["control_number"],
                 "date" => $row["date"],
-                "status" => $row["status"]
+                "status" => $row["status"],
+                "process_description" => $row["process_description"]
             );
             $data[] = $dat;
         }

@@ -53,7 +53,7 @@ function listStudent() {
                     + "<th style='text-align:center'>"+val.id_student+"</th>"
                     + "<th style='text-align:center'>"+val.control_number+"</a></th>"
                     + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
-                    + "<th style='text-align:center'>"+val.namecourse+"</th>"
+                    + "<th style='text-align:center'>"+val.process_description+"</th>"
                     + "<th style='text-align:center'>"+val.date+"</th>"
                     + "<th style='text-align:center'><button type='button' class='btn btn-secondary btn-sm' id='btn-edit' title='Click para editar' onclick='editStudent("+val.id_student+")'>"+'<i class="fas fa-edit"></i>'+"</button></th>"
                     + "<th style='text-align:center'><button type='button' class='btn btn-danger btn-sm' id='btn-details' id-student='"+val.id_student+"' title='Click para eliminar' onclick='deleteStudent("+val.id_student+")'>"+'<i class="fas fa-trash"></i>'+"</button></th>"
@@ -404,6 +404,7 @@ function listStudentFree() {
                         + "<th style='text-align:center'>" + val.id_student + "</th>"
                         + "<th style='text-align:center'>" + val.control_number + "</th>"
                         + "<th style='text-align:center'><a href='#' data-toggle='modal' onClick='showStudentDetails(" + val.id_student + ");'>" + val.full_name + "</a></th>"
+                        + "<th style='text-align:center'>" + val.process_description + "</th>"
                         + "<th style='text-align:center'>" + val.date + "</a></th>"
                         + "<th style='text-align:center'>" + folioText + "</th>"
                         + "<th style='text-align:center'>"
@@ -513,7 +514,8 @@ function listStudentCancel() {
                     + "<th style='text-align:center'>"+val.id_student+"</th>"
                     + "<th style='text-align:center'>"+val.control_number+"</a></th>"
                     + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
-                    + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showRegisterAreas("+val.id_student+");'>"+val.date+"</a></th>"
+                    + "<th style='text-align:center'>"+val.process_description+"</a></th>"
+                    + "<th style='text-align:center'>"+val.date+"</a></th>"
                     + "</tr>";
                 }
             });
@@ -704,7 +706,7 @@ function saveStudent(){
         return 0;
     }
 
-    if (institucion==null){
+    if (institucion.length==0){
         alert("Tiene que ingresar la institución")
         $("#institucion").focus();
         return 0;

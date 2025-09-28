@@ -189,7 +189,7 @@ if (!isset($_SESSION['username'])) {
                             <th scope="col" style="text-align:center"># REGISTRO</th>
 							<th scope="col" style="text-align:center">MATRÍCULA</th>
                             <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>
-                            <th scope="col" style="text-align:center">CURSO</th>
+                            <th scope="col" style="text-align:center">PROCESO</th>
                             <th scope="col" style="text-align:center">FECHA DE REGISTRO</th>
                             <th scope="col" style="text-align:center">ACTUALIZAR ALUMNO</th>
                             <th scope="col" style="text-align:center">ELIMINAR ALUMNO</th>
@@ -235,7 +235,8 @@ if (!isset($_SESSION['username'])) {
                         <tr>
                             <th scope="col" style="text-align:center"># REGISTRO</th>
 							<th scope="col" style="text-align:center">MATRÍCULA</th>
-                            <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>                            
+                            <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th> 
+                            <th scope="col" style="text-align:center">PROCESO</th>                            
                             <th scope="col" style="text-align:center">FECHA DE LIBERACIÓN</th>
                             <th scope="col" style="text-align:center">FOLIO DE LIBERACIÓN</th>
                             <th scope="col" style="text-align:center">IMPRIMIR CONSTANCIA</th>
@@ -257,7 +258,8 @@ if (!isset($_SESSION['username'])) {
                         <tr>
                             <th scope="col" style="text-align:center"># REGISTRO</th>
 							<th scope="col" style="text-align:center">MATRÍCULA</th>
-                            <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>                            
+                            <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>   
+                            <th scope="col" style="text-align:center">PROCESO</th>                                                     
                             <th scope="col" style="text-align:center">FECHA DE CANCELACIÓN</th>
                         </tr>
                     </thead>
