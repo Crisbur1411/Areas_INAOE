@@ -110,6 +110,7 @@ function newStudent() {
     location.href = "../alumnos/registro_alumnos.php";
 }
 
+
 function turnSingAreas(id_student, fk_process_catalog) {
     $u = document.getElementById("user");
     $user = $u.innerHTML;
@@ -266,7 +267,8 @@ function showRegisterAreas(id_student, fk_process_catalog) {
                     name_student = val.full_name;  
                     process_name = val.process_name;  
                 }      
-                table += "<tr>"       
+                table += "<tr>"
+                    + "<th style='text-align:center'>"+val.execution_flow+"</th>"       
                     + "<th style='text-align:center'>"+val.namearea+"</th>"
                     + "<th style='text-align:center'>"+val.formatted_date+"</th>"
                     + "<th style='text-align:center'>"+val.description+"</th>"
@@ -628,7 +630,6 @@ function updateInstitucion() {
   }
 }
 
-// Carga los procesos y selecciona el proceso si fk_process existe
 function processCatalog(fk_process = null) {
     $(".loader").fadeOut("slow");
     $.ajax({
@@ -638,22 +639,30 @@ function processCatalog(fk_process = null) {
         type: 'POST',
         data: { action: 22 },
         success: function (result) {
-            var options = `<option value="null" selected disabled>Seleccione un Proceso</option>`;
-            $.each(result, function (index, val) {
-                options += `<option value="${val.id_process_catalog}">${val.description}</option>`;
-            });
-            $("#process_catalog").html(options);
+            let options = "";
 
-            // Seleccionar el valor después de cargar opciones
-            if (fk_process) {
-                $("#process_catalog").val(fk_process);
+            if (!fk_process) {
+                // Si es registro nuevo, opción por defecto seleccionada
+                options += `<option value="null" selected disabled>Seleccione un Proceso</option>`;
+            } else {
+                // Si es edición, solo mostramos la opción por defecto sin selected
+                options += `<option value="null" disabled>Seleccione un Proceso</option>`;
             }
+
+            $.each(result, function (index, val) {
+                let selected = (fk_process && fk_process == val.id_process_catalog) ? "selected" : "";
+                options += `<option value="${val.id_process_catalog}" ${selected}>${val.description}</option>`;
+            });
+
+            $("#process_catalog").html(options);
         },
         error: function (result) {
             console.log(result);
         }
     });
 }
+
+
 
 // Fucncion para registrar un nuevo alumno
 function saveStudent(){
@@ -875,33 +884,36 @@ function coursesAds(){
 function getStudent() {
     $(".loader").fadeOut("slow");
     let params = new URLSearchParams(location.search);
-    id_student = parseInt(params.get('dc'));
-   
+    let id_student = parseInt(params.get('dc'));
+
+    if (!id_student || isNaN(id_student)) return;
+
     $.ajax({
         url: "../../controller/alumnos/controller_alumnos.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
-        data: { action: 17, id_student:id_student },
-        success: function(result) {
-                console.log(result); // <-- aquí  
-            
-            $.each(result, function(index, val){                
+        data: { action: 17, id_student: id_student },
+        success: function (result) {
+            console.log(result);
+
+            $.each(result, function (index, val) {
                 $('#name').val(val.name);
-                $('#surname').val(val.surname); 
+                $('#surname').val(val.surname);
                 $('#second-surname').val(val.second_surname);
                 $('#email').val(val.email);
                 $('#control-number').val(val.control_number);
                 $('#institucion').val(val.institucion);
                 $('#date_conclusion').val(val.date_conclusion);
-                $('#process_catalog').val(val.proceso_description);
-                processCatalog(val.fk_process_catalog); // Cargar el catálogo de procesos y seleccionar el actual
-            });   
-        }, error: function ( result) {
+                processCatalog(val.fk_process_catalog);
+            });
+        },
+        error: function (result) {
             console.log(result);
-        } 
-    }); 
+        }
+    });
 }
+
 
 
 

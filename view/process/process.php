@@ -10,6 +10,14 @@ if (!isset($_SESSION['username'])) {
     header("Location: ../../index.php");
     exit();
 }
+
+// Validacion de caracteres en el nombre de usuario
+$nombreUsuario = $_SESSION['name'];
+if (strlen($nombreUsuario) > 16) {
+    $nombreUsuario = substr($nombreUsuario, 0, 16) . "...";
+}
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -100,7 +108,7 @@ if (!isset($_SESSION['username'])) {
                         <li><a class="dropdown-item" id="navbarDropdown1" href="../usuarios/cuenta.php">
                                 <span class="ctrl-control h5 text-align-right" id="username" style="font-size: 13px;">
                                     <i class="fas fa-user"></i>
-                                    <?php echo $_SESSION['name']; ?>
+                                    <?php echo $nombreUsuario; ?>
                                     <i class="fa-solid fa-caret-down"></i>
                                 </span>
                             </a>

@@ -99,7 +99,7 @@ function listStudentInProgress() {
 
 function signStudent(id_student, full_name, fk_process_catalog) {
     const $u = document.getElementById("user");
-    const $user = $u.innerHTML;
+    const $user = $u ? $u.innerHTML : '';
     const $id_user = ID_USER;
 
     console.log("ID del usuario:", $id_user);
@@ -115,13 +115,10 @@ function signStudent(id_student, full_name, fk_process_catalog) {
             if (responseFlow.status === 200 && responseFlow.data) {
                 const user_execution_flow = parseInt(responseFlow.data.execution_flow);
 
-                // 🚨 Validación extra: si el flujo viene nulo o no es un número válido
                 if (!user_execution_flow || isNaN(user_execution_flow)) {
                     swal("Acción no permitida", "No se puede liberar al alumno ya que no pertenece a su proceso de liberación.", "warning");
                     return;
                 }
-
-                console.log("Execution flow del usuario:", user_execution_flow);
 
                 // Paso 2: Obtener el avance del estudiante
                 $.ajax({
@@ -130,7 +127,7 @@ function signStudent(id_student, full_name, fk_process_catalog) {
                     dataType: "JSON",
                     data: { action: 20, id_student: id_student, fk_process_catalog: fk_process_catalog },
                     success: function (flowResult) {
-                        const flowData = flowResult.data;
+                        const flowData = flowResult.data || [];
 
                         let valid = true;
                         flowData.forEach(f => {
@@ -144,7 +141,7 @@ function signStudent(id_student, full_name, fk_process_catalog) {
                             return;
                         }
 
-                        // Paso 3: Mostrar el modal de contraseña
+                        // --- Paso 3: Mostrar modal de contraseña ---
                         swal({
                             title: "LIBERAR DEL ÁREA AL ALUMNO",
                             text: "Por favor, ingresa tu contraseña para confirmar la liberación del área al alumno:",
@@ -162,9 +159,13 @@ function signStudent(id_student, full_name, fk_process_catalog) {
                                 },
                             },
                             closeOnEsc: false,
+                            closeOnClickOutside: false
                         }).then((value) => {
-                            if (value === "Liberar") {
-                                const password = $(".swal-content__input").val();
+                            // limpiar listener cuando swal se cierre
+                            $(document).off("keydown.signStudent", "#passwordInput");
+
+                            if (value) {
+                                const password = $("#passwordInput").val();
 
                                 // Paso 4: Validar contraseña
                                 $.ajax({
@@ -185,25 +186,19 @@ function signStudent(id_student, full_name, fk_process_catalog) {
                                                         id_student: id_student,
                                                         user: $user,
                                                         full_name: full_name,
-                                                        id_user: $id_user, 
+                                                        id_user: $id_user,
                                                         fk_process_catalog: fk_process_catalog
                                                     },
                                                     complete: function () {
-                                                        // ✅ Paso 6: Enviar correo al siguiente flujo
+                                                        // Paso 6: Enviar correo al siguiente flujo
                                                         $.ajax({
                                                             url: "../../services/send_email.php",
                                                             type: 'GET',
                                                             dataType: 'JSON',
-                                                            data: { 
+                                                            data: {
                                                                 id_student: id_student,
                                                                 fk_process_catalog: fk_process_catalog,
                                                                 proceso: "Proceso de Liberación"
-                                                            },
-                                                            success: function(responseEmail) {
-                                                                console.log("Correo enviado al siguiente flujo:", responseEmail);
-                                                            },
-                                                            error: function(errorEmail) {
-                                                                console.error("Error enviando correo al siguiente flujo:", errorEmail);
                                                             }
                                                         });
 
@@ -218,8 +213,8 @@ function signStudent(id_student, full_name, fk_process_catalog) {
                                                             location.reload();
                                                         });
                                                     },
-                                                    error: function (result) {
-                                                        console.log(result);
+                                                    error: function (err) {
+                                                        console.error(err);
                                                     }
                                                 });
                                             } else if (val.message) {
@@ -234,13 +229,16 @@ function signStudent(id_student, full_name, fk_process_catalog) {
                             }
                         });
 
-                        // Enter bloqueado
-                        $(document).off('keypress', '#passwordInput').on('keypress', '#passwordInput', function (event) {
-                            if (event.which === 13) {
+                        // --- Listener: Enter dentro del input equivale a presionar "Liberar" ---
+                        $(document).off("keydown.signStudent", "#passwordInput").on("keydown.signStudent", "#passwordInput", function (event) {
+                            if (event.which === 13 || event.key === "Enter") {
                                 event.preventDefault();
-                                return false;
+                                const pwd = $(this).val();
+                                if (!pwd || pwd.trim() === "") return; // si está vacío no hace nada
+                                $(".swal-button--confirm").trigger("click"); // dispara el botón "Liberar"
                             }
                         });
+
                     },
                     error: function () {
                         swal("Error", "No se pudo verificar el avance del estudiante.", "error");
@@ -256,6 +254,8 @@ function signStudent(id_student, full_name, fk_process_catalog) {
         }
     });
 }
+
+
 
 
 

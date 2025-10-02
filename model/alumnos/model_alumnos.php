@@ -228,7 +228,7 @@ class alumnos
     $con->openDB();
 
     $sql = "
-        SELECT 
+                        SELECT 
             tsa.id_trace_student_area,
             s.id_student,
             CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
@@ -236,12 +236,14 @@ class alumnos
             COALESCE(to_char(tsa.date, 'YYYY-MM-DD HH24:MI:SS'), '-') AS formatted_date,
             COALESCE(tsa.description, 'Sin autorizar') AS description,
             COALESCE(s.status, 0) AS status,
-            a.process_name
+            a.process_name,
+            a.execution_flow
         FROM (
             SELECT DISTINCT 
                 a.id_area, 
                 a.name,
                 ua.id_user_area,
+                ps.execution_flow,
                 pc.description AS process_name
             FROM process_stages ps
             INNER JOIN process_catalog pc 
@@ -253,15 +255,15 @@ class alumnos
             INNER JOIN areas a 
                 ON a.id_area = ua.fk_area
             WHERE ps.status = 1
-              AND pc.id_process_catalog = $fk_process_catalog
-              AND a.status = 1
+            AND pc.id_process_catalog = $fk_process_catalog
+            AND a.status = 1
         ) a
         LEFT JOIN trace_student_areas tsa 
             ON tsa.fk_area = a.id_user_area
-            AND tsa.fk_student = $id_student
+        AND tsa.fk_student = $id_student
         LEFT JOIN students s 
             ON s.id_student = $id_student
-        ORDER BY a.id_area, tsa.date;
+        ORDER BY a.execution_flow ASC;
     ";
 
     $dataR = $con->query($sql);
@@ -276,7 +278,8 @@ class alumnos
             "formatted_date"        => $row["formatted_date"],
             "description"           => $row["description"],
             "status"                => $row["status"],
-            "process_name"          => $row["process_name"]
+            "process_name"          => $row["process_name"],
+            "execution_flow"        => $row["execution_flow"]
         );
     }
 
