@@ -60,7 +60,7 @@ function enviarCorreoLiberacion($correoDestino, $asunto, $mensaje, $usuario, $co
 }
 
 // Parámetros de conexión al servidor de correo
-$asunto = "Aviso conclución en el trámite de liberación de No Adeudo";
+$asunto = "Conclusión de proceso – Sistema de Liberación de Adeudos Institucionales";
 $usuario = "m.valencia";
 $contrasena = "25v4l3ncia.Mig";
 $servidorCorreo = "ccc.inaoep.mx";
@@ -69,10 +69,12 @@ $servidorCorreo = "ccc.inaoep.mx";
 $currentTime = date("Y-m-d H:i:s");
 
 // Armar mensaje al estudiante
-$mensajeCorreo = "Estimado/a $nombreEstudiante,\n\n";
-$mensajeCorreo .= "Te informamos que tu trámite de liberación ha concluido, por lo cual puedes acudir a la oficina de la Dirección de Formación Académica para solicitar tu constancia de liberación.\n\n";
+$mensajeCorreo  = "Estimado(a) $nombreEstudiante,\n\n";
+$mensajeCorreo .= "El trámite dentro del Sistema de No Adeudo ha concluido. Por favor, continúa con los trámites siguientes en la oficina de la Dirección de Formación Académica.\n\n";
 $mensajeCorreo .= "Fecha de aviso: $currentTime\n\n";
-$mensajeCorreo .= "Atentamente,\nSistema de No Adeudo Institucional\nDirección de Formación Académica – INAOE";
+$mensajeCorreo .= "Atentamente,\n";
+$mensajeCorreo .= "Sistema de No Adeudo Académico\n";
+$mensajeCorreo .= "Dirección de Formación Académica – INAOE";
 
 // Enviar correo al estudiante
 if (enviarCorreoLiberacion($correoEstudiante, $asunto, $mensajeCorreo, $usuario, $contrasena, $servidorCorreo)) {

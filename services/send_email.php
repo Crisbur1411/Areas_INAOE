@@ -57,7 +57,7 @@ function enviarCorreo($correoDestino, $asunto, $mensaje, $usuario, $contrasena, 
     }
 }
 
-$asunto = "Aviso de registro de estudiante en Sistema de No Adeudo";
+$asunto = "Registro en el Proceso de Liberación – Sistema de No Adeudo Académico";
 $usuario = "m.valencia";
 $contrasena = "25v4l3ncia.Mig";
 $servidorCorreo = "ccc.inaoep.mx";
@@ -89,12 +89,17 @@ foreach ($stages as $stage) {
             $responsable = $stage["full_name"];
             $correoDestino = $stage["email"];
 
-            $mensajeCorreo = "Estimado/a $responsable,\n\n";
-            $mensajeCorreo .= "Se ha registrado el estudiante $nombreEstudiante en el Proceso de Liberación.\n\n";
-            $mensajeCorreo .= "Correo del estudiante: $correoEstudiante\n";
+            $mensajeCorreo  = "Estimado(a) Encargado(a) de área,\n\n";
+            $mensajeCorreo .= "Se ha registrado un(a) estudiante en el Proceso de Liberación del Sistema de No Adeudo Académico.\n\n";
+            $mensajeCorreo .= "Datos del registro:\n";
+            $mensajeCorreo .= "Nombre de la persona estudiante: $nombreEstudiante\n";
+            $mensajeCorreo .= "Correo electrónico: $correoEstudiante\n";
             $mensajeCorreo .= "Fecha de aviso: $currentTime\n\n";
-            $mensajeCorreo .= "Acceda al sistema: $enlaceSistema\n\n";
-            $mensajeCorreo .= "Atentamente,\nSistema de No Adeudo Institucional";
+            $mensajeCorreo .= "Puedes acceder al sistema en el siguiente enlace:\n";
+            $mensajeCorreo .= "$enlaceSistema\n\n";
+            $mensajeCorreo .= "Atentamente,\n";
+            $mensajeCorreo .= "Sistema de No Adeudo Académico\n";
+            $mensajeCorreo .= "Dirección de Formación Académica – INAOE";
 
             if (enviarCorreo($correoDestino, $asunto, $mensajeCorreo, $usuario, $contrasena, $servidorCorreo)) {
                 $responses[] = "Correo enviado a $correoDestino (flujo $flow)";
@@ -104,6 +109,7 @@ foreach ($stages as $stage) {
         }
     }
 }
+
 
 if (empty($responses)) {
     $responses[] = "No hay siguientes flujos pendientes para este estudiante";
