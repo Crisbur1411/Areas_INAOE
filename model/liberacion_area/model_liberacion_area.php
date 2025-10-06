@@ -98,7 +98,7 @@ public function signStudent($id_student, $user, $full_name, $id_user, $fk_proces
     $clave = 'Lib3r4c10n-1N403';
 
     session_start();
-    $fk_area_real = $_SESSION["id_area"]; // id de la tabla areas
+    $fk_area_real = $_SESSION["id_area"]; 
 
     // Fecha actual
     $date = date('Y-m-d H:i:s');

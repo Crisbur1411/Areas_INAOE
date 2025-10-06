@@ -186,7 +186,9 @@ class Process {
                                         WHERE
                                             areas.id_area = $id_area
                                             AND areas.status = 1
-                                            AND users.user_category = 'PRINCIPAL' ;");
+                                            AND users.status = 1
+                                            AND users.user_category = 'PRINCIPAL';
+                                        ");
 
         $data = array();
 
