@@ -222,29 +222,30 @@ class alumnos
         return $data;
     }
 
-    public function showRegisterAreas($id_student, $fk_process_catalog)
+public function showRegisterAreas($id_student, $fk_process_catalog)
 {
     $con = new DBconnection();
     $con->openDB();
 
     $sql = "
-                        SELECT 
+        SELECT 
             tsa.id_trace_student_area,
             s.id_student,
             CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
             COALESCE(a.name, '-') AS namearea,
             COALESCE(to_char(tsa.date, 'YYYY-MM-DD HH24:MI:SS'), '-') AS formatted_date,
-            COALESCE(tsa.description, 'Sin autorizar') AS description,
+            COALESCE(tsa.description, 'Sin Autorizar') AS description,
             COALESCE(s.status, 0) AS status,
-            a.process_name,
-            a.execution_flow
+            COALESCE(pc.description, '-') AS process_name,
+            ps.execution_flow,
+            COALESCE(u.name || ' ' || u.surname || ' ' || u.second_surname, '-') AS liberado_por
         FROM (
+            -- Lista completa de áreas que pueden liberar para este proceso
             SELECT DISTINCT 
-                a.id_area, 
+                a.id_area,
                 a.name,
                 ua.id_user_area,
-                ps.execution_flow,
-                pc.description AS process_name
+                ps.execution_flow
             FROM process_stages ps
             INNER JOIN process_catalog pc 
                 ON pc.id_process_catalog = ps.fk_process_catalog
@@ -255,15 +256,27 @@ class alumnos
             INNER JOIN areas a 
                 ON a.id_area = ua.fk_area
             WHERE ps.status = 1
-            AND pc.id_process_catalog = $fk_process_catalog
+            AND ps.fk_process_catalog = $fk_process_catalog
             AND a.status = 1
-        ) a
+        ) ps
         LEFT JOIN trace_student_areas tsa 
-            ON tsa.fk_area = a.id_user_area
-        AND tsa.fk_student = $id_student
+            ON tsa.fk_student = $id_student
+            AND tsa.fk_area IN (
+                SELECT ua.id_user_area 
+                FROM user_area ua
+                WHERE ua.fk_area = ps.id_area
+            )
         LEFT JOIN students s 
             ON s.id_student = $id_student
-        ORDER BY a.execution_flow ASC;
+        LEFT JOIN process_catalog pc
+            ON pc.id_process_catalog = $fk_process_catalog
+        LEFT JOIN areas a
+            ON a.id_area = ps.id_area
+        LEFT JOIN user_area ua
+            ON ua.id_user_area = tsa.fk_area
+        LEFT JOIN users u
+            ON u.id_user = ua.fk_user
+        ORDER BY ps.execution_flow ASC;
     ";
 
     $dataR = $con->query($sql);
@@ -279,13 +292,15 @@ class alumnos
             "description"           => $row["description"],
             "status"                => $row["status"],
             "process_name"          => $row["process_name"],
-            "execution_flow"        => $row["execution_flow"]
+            "execution_flow"        => $row["execution_flow"],
+            "liberado_por"          => $row["liberado_por"]
         );
     }
 
     $con->closeDB();
     return $data;
 }
+
 
 
 
@@ -884,23 +899,21 @@ public function getProcessCatalog() {
 }
 
 
-// Funcion para obtener el flujo de ejecucion al que pertenece cada accion que se esta realizando
-    public function getExecutionFlow($id_user, $id_student, $fk_process_catalog) {
+public function getExecutionFlow($id_user, $id_student, $fk_process_catalog) {
     $con = new DBconnection();
     $con->openDB();
 
     session_start();
     $fk_area  = $_SESSION["id_area"];
 
-    // Paso 1: Obtener todos los process_stages asignados al usuario
+    // Paso 1: Obtener todos los process_stages de la área para ese catálogo
     $query = "SELECT ps.id_process_stages, ps.execution_flow
               FROM process_stages ps
-              INNER JOIN users u ON ps.fk_process_manager = u.id_user
-              INNER JOIN user_area ua ON u.id_user = ua.fk_user
+              INNER JOIN user_area ua ON ps.fk_process_manager = ua.fk_user
               INNER JOIN areas a ON ua.fk_area = a.id_area
               WHERE ps.status = 1 
-              AND ps.fk_process_manager = $id_user 
-              AND a.id_area = $fk_area AND ps.fk_process_catalog = $fk_process_catalog
+              AND a.id_area = $fk_area
+              AND ps.fk_process_catalog = $fk_process_catalog
               ORDER BY ps.execution_flow ASC";
 
     $result = $con->query($query);
@@ -936,6 +949,7 @@ public function getProcessCatalog() {
         )
     );
 }
+
 
 
 
