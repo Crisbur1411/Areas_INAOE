@@ -9,18 +9,22 @@ class EmailModel {
         $con = new DBconnection(); 
         $con->openDB();
 
-        $dataTitle = $con->query("SELECT id_student, 
-                                        CONCAT(name, ' ', surname, ' ', second_surname) AS full_name,
-                                        email
-                                  FROM students 
-                                  WHERE id_student = '$id_student';");
+        $dataTitle = $con->query("SELECT 
+                                            s.id_student,
+                                            CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
+                                            s.email,
+                                            p.name AS process_name
+                                        FROM students s
+                                        LEFT JOIN process_catalog p ON s.fk_process_catalog = p.id_process_catalog
+                                        WHERE s.id_student = '$id_student';");
 
         $data = array();
         while($row = pg_fetch_assoc($dataTitle)){
             $data[] = [
                 'id_student'   => $row['id_student'],
                 'full_name'    => $row['full_name'],
-                'email'        => $row['email']
+                'email'        => $row['email'],
+                'process_name' => $row['process_name']
             ];
         }
 

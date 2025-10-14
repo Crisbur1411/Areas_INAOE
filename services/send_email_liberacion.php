@@ -27,6 +27,7 @@ if (empty($studentData)) {
 $student = $studentData[0];
 $nombreEstudiante = $student['full_name'];
 $correoEstudiante = $student['email'];
+$procesoEstudiante = $student['process_name'];
 
 
 
@@ -71,6 +72,7 @@ $currentTime = date("Y-m-d H:i:s");
 // Armar mensaje al estudiante
 $mensajeCorreo  = "Estimado(a) $nombreEstudiante,\n\n";
 $mensajeCorreo .= "El trámite dentro del Sistema de No Adeudo ha concluido. Por favor, continúa con los trámites siguientes en la oficina de la Dirección de Formación Académica.\n\n";
+$mensajeCorreo .= "Nombre de Proceso: $procesoEstudiante\n\n";
 $mensajeCorreo .= "Fecha de aviso: $currentTime\n\n";
 $mensajeCorreo .= "Atentamente,\n";
 $mensajeCorreo .= "Sistema de No Adeudo Académico\n";
