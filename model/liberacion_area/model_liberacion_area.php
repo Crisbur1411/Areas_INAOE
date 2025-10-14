@@ -96,15 +96,107 @@ public function signStudent($id_student, $user, $full_name, $id_user, $fk_proces
     $con->openDB();
     $descrip = 'Autorizado por: '.$user;
     $clave = 'Lib3r4c10n-1N403';
+    $algoritmo = 'SHA256';
+    $version = 'FES_v1.0';
 
     session_start();
     $fk_area_real = $_SESSION["id_area"]; 
 
     // Fecha actual
     $date = date('Y-m-d H:i:s');
+    
+    //datos de documento y estudiante para hash
+                        $dataDocumentStudentQuery = $con->query("
+                            SELECT 
+                                fk_process_catalog AS id_proceso, 
+                                date_register AS fecha_registro, 
+                                name AS nombre_estudiante, 
+                                surname AS apellido_paterno, 
+                                second_surname AS apellido_materno,
+                                control_number AS matricula,
+                                email AS correo,
+                                fk_academic_programs AS programa,
+                                fecha_conclusion
+                            FROM students
+                            WHERE id_student = $id_student
+                        ");
+
+// Obtener los datos en un array
+$dataStudent = pg_fetch_assoc($dataDocumentStudentQuery);
+
+if (!$dataStudent) {
+    die("No se encontraron datos del estudiante con ID: $id_student");
+}
+
+// Construir los valores individuales
+$id_proceso = trim($dataStudent['id_proceso']);
+$fecha_registro = $dataStudent['fecha_registro'];
+$nombre_estudiante = trim($dataStudent['nombre_estudiante']);
+$apellidoP = trim($dataStudent['apellido_paterno']);
+$apellidoM = trim($dataStudent['apellido_materno']);
+$matricula = trim($dataStudent['matricula']);
+$correo = trim($dataStudent['correo']);
+$programa = trim($dataStudent['programa']);
+$fecha_conclusion = trim($dataStudent['fecha_conclusion']);
+
+// Obtener datos del firmante
+$dataFirmanteQuery = $con->query("
+        SELECT 
+            a.name AS area_f,
+            u.username AS correo_f,
+            u.name AS nombre_f,
+            u.surname AS apellido_paterno_f,
+            u.second_surname AS apellido_materno_f
+        FROM 
+            users u
+        INNER JOIN 
+            user_area ua ON ua.fk_user = u.id_user
+        INNER JOIN 
+            areas a ON a.id_area = ua.fk_area
+        WHERE 
+            ua.fk_area = $fk_area_real
+            AND ua.fk_user = $id_user
+            AND u.status = 1
+            AND a.status = 1
+    ");
+
+$dataFirmante = pg_fetch_assoc($dataFirmanteQuery);
+
+    if (!$dataFirmante) {
+        die("No se encontraron datos del firmante (área: $fk_area_real, usuario: $id_user)");
+    }
+
+    // Construir los valores del firmante
+    $area_f = trim($dataFirmante['area_f']);
+    $correo_f = trim($dataFirmante['correo_f']);
+    $nombre_f = trim($dataFirmante['nombre_f']);
+    $apellido_paterno_f = trim($dataFirmante['apellido_paterno_f']);
+    $apellido_materno_f = trim($dataFirmante['apellido_materno_f']);
+
+// Crear la cadena base para el hash
+    $cadenaHash = 
+        $id_student . '|' . 
+        $id_proceso . '|' . 
+        $fecha_registro . '|' . 
+        $nombre_estudiante . '|' . 
+        $apellidoP . '|' . 
+        $apellidoM . '|' . 
+        $matricula . '|' . 
+        $correo . '|' . 
+        $programa . '|' . 
+        $fecha_conclusion . '|' .
+        $area_f . '|' . 
+        $correo_f . '|' . 
+        $nombre_f . '|' . 
+        $apellido_paterno_f . '|' . 
+        $apellido_materno_f . '|' .
+        $date . '|' .
+        $clave . '|' .
+        $algoritmo . '|' .
+        $version;
 
     // Hash sha256
-    $hash_release = hash('sha256', $date . '|' . $full_name . '|' . $user . '|' . $clave);
+    $hash_release = hash('sha256', $cadenaHash);
 
     // Obtener id_user_area
     $userAreaQuery = $con->query("
