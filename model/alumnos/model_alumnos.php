@@ -523,21 +523,23 @@ public function generatePDF($id_student, $full_name, $control_number, $date_regi
     $type = $academicProgramRow['type'];
 
     $pdfinfo = $con->query("
-        SELECT 
-            CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
-            p.name AS academic_program,
-            ar.name AS area_name,
-            ar.key AS key,
-            ta.description AS libera,
-            ta.hash_release AS firma,
-            DATE(ta.date) AS date
-        FROM students s
-        JOIN trace_student_areas ta ON s.id_student = ta.fk_student
-        JOIN user_area ua ON ta.fk_area = ua.id_user_area
-        JOIN areas ar ON ua.fk_area = ar.id_area
-        JOIN academic_programs p ON s.fk_academic_programs = p.id_academic_programs
-        WHERE s.id_student = '$id_student'
-        ORDER BY ta.id_trace_student_area ASC;
+            SELECT 
+                CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
+                p.name AS academic_program,
+                ar.name AS area_name,
+                ar.key AS key,
+                pc.name AS process_name,
+                ta.description AS libera,
+                ta.hash_release AS firma,
+                DATE(ta.date) AS date
+            FROM students s
+            JOIN trace_student_areas ta ON s.id_student = ta.fk_student
+            JOIN user_area ua ON ta.fk_area = ua.id_user_area
+            JOIN areas ar ON ua.fk_area = ar.id_area
+            JOIN academic_programs p ON s.fk_academic_programs = p.id_academic_programs
+            JOIN process_catalog pc ON s.fk_process_catalog = pc.id_process_catalog
+            WHERE s.id_student = '$id_student'
+            ORDER BY ta.id_trace_student_area ASC;
     ");
 
     $pdfData = array();
@@ -549,7 +551,8 @@ public function generatePDF($id_student, $full_name, $control_number, $date_regi
             "libera" => $row["libera"],
             "firma" => $row["firma"],
             "date" => $row["date"],
-            "academic_program" => $row["academic_program"]
+            "academic_program" => $row["academic_program"],
+            "process_name" => $row["process_name"]
         );
         $pdfData[] = $dat;
     }
@@ -603,15 +606,27 @@ public function generatePDF($id_student, $full_name, $control_number, $date_regi
     ];
     $programName = isset($programNames[$type]) ? strtoupper($programNames[$type]) : 'PROGRAMA DESCONOCIDO';
     $area_program = $studentData["academic_program"];
+    $process_name = $studentData["process_name"];
 
+    // Incluir la frase antes del texto del proceso
+    $texto_completo = 'CONSTANCIA DE NO ADEUDO: ' . $process_name;
+
+    // Dividir en palabras
+    $words = explode(' ', $texto_completo);
+
+    // Agrupar cada 5 palabras y unir con salto de línea
+    $chunks = array_chunk($words, 7);
+    $process_name_formatted = '';
+    foreach ($chunks as $chunk) {
+        $process_name_formatted .= implode(' ', $chunk) . '<br>';
+    }
     // Construir HTML
     $html = '
     <center>
-    <br><br>
-    <p style="text-align: right; font-size:14pt;">
-        <strong>Constancia de no adeudo al INAOE<br>ALUMNOS GRADUADOS</strong>
+    <br>
+    <p style="text-align: right; font-size:11pt;">
+        <strong>DIRECCIÓN DE FORMACIÓN ACADÉMICA<br>DEPARTAMENTO DE SERVICIOS ESCOLARES<br>' . strtoupper(trim($process_name_formatted)) . '</strong>
     </p>
-    <br><br>
     <div>
         <p style="text-align:left; font-size:12pt;">
 <strong>Folio: ' . $folio . '</strong>
