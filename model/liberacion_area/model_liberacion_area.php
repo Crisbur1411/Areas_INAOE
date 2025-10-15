@@ -185,7 +185,7 @@ public function signStudent($id_student, $user, $full_name, $id_user, $fk_proces
     $userAreaRow = pg_fetch_assoc($userAreaQuery);
     $id_user_area = $userAreaRow['id_user_area'];
 
-// 🔍 Buscar el siguiente fk_process_stage disponible para este estudiante
+// Buscar el siguiente fk_process_stage disponible para este estudiante
 $dataProcessStages = $con->query("
     SELECT ps.id_process_stages, ps.execution_flow
     FROM process_stages ps
@@ -216,13 +216,13 @@ while ($row = pg_fetch_assoc($dataProcessStages)) {
     }
 }
 
-// 🧩 Si ya no hay etapas disponibles, se detiene
+//Si ya no hay etapas disponibles, se detiene
 if (!$fk_process_stages) {
     $con->closeDB();
     return ["success" => false, "message" => "Ya se han liberado todas las etapas para este proceso."];
 }
 
-// 📝 Insertar en trace_student_areas con el stage disponible
+//Insertar en trace_student_areas con el stage disponible
 $insertQuery = "
     INSERT INTO trace_student_areas 
         (fk_student, description, date, fk_area, status, hash_release, fk_process_stage)

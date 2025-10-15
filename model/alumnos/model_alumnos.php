@@ -129,14 +129,13 @@ class alumnos
     $con->openDB();
     $descrip = 'Tramite iniciado por: ' . $user;
 
-    // Fecha actual desde PHP para el hash
+    // Fecha actual desde PHP
     $date = date('Y-m-d H:i:s');
 
-    // Hash md5(id_estudiante|user|fecha)
-    $hash_release = md5($id_student . '|' . $user . '|' . $date);
 
-    $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, status, hash_release) 
-                                VALUES (" . $id_student . ", '" . $descrip . "', '" . $date . "', 2, '" . $hash_release . "') 
+
+    $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, status) 
+                                VALUES (" . $id_student . ", '" . $descrip . "', '" . $date . "', 2) 
                                 RETURNING fk_student ");
 
     $validateUpdateTurn = pg_fetch_row($updateTurn);
@@ -310,14 +309,12 @@ public function freeStudent($id_student, $user)
     $con->openDB();
     $descrip = 'Trámite finalizado por ' . $user;
 
-    // Fecha actual desde PHP para el hash
+    // Fecha actual desde PHP
     $date = date('Y-m-d H:i:s');
 
-    // Hash md5(id_student|user|fecha)
-    $hash_release = md5($id_student . '|' . $user . '|' . $date);
 
-    $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, status, hash_release) 
-                                VALUES (" . $id_student . ", '" . $descrip . "', '" . $date . "', 3, '" . $hash_release . "') 
+    $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, status) 
+                                VALUES (" . $id_student . ", '" . $descrip . "', '" . $date . "', 3) 
                                 RETURNING id_trace_student_area ");
 
     $validateUpdateTurn = pg_fetch_row($updateTurn);
