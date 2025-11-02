@@ -43,7 +43,7 @@ class programasAcademicos{
         $con=new DBconnection(); 
         $con->openDB();
 
-        $dataPrograms = $con->query("SELECT id_academic_programs, name, cve, type_program, type FROM academic_programs WHERE id_academic_programs = $id_academic_programs;");
+        $dataPrograms = $con->query("SELECT id_academic_programs, name, cve, type_program, fk_type_program FROM academic_programs WHERE id_academic_programs = $id_academic_programs;");
 
         $row =  pg_fetch_array($dataPrograms);
 
@@ -52,7 +52,7 @@ class programasAcademicos{
             "name"=>$row["name"],
             "cve"=>$row["cve"],
             "type_program"=>$row["type_program"],
-            "type"=>$row["type"]
+            "fk_type_program"=>$row["fk_type_program"]
 
         );
         $con->closeDB();
@@ -70,7 +70,7 @@ class programasAcademicos{
         $con->openDB();
 
 
-        $programData = $con->query("INSERT INTO academic_programs (cve, name, type, type_program) 
+        $programData = $con->query("INSERT INTO academic_programs (cve, name, fk_type_program, type_program) 
         VALUES ('".$cve."', '".$name."', '".$type."', '".$type_program."')
         RETURNING id_academic_programs;");
 
@@ -98,7 +98,7 @@ public function saveProgramEdit($id_academic_programs, $cve, $name, $type, $type
         $con=new DBconnection();
         $con->openDB();
 
-        $programDataEdit = $con->query("UPDATE academic_programs SET cve = '".$cve."', name = '".$name."', type = '".$type."', type_program = '".$type_program."' WHERE id_academic_programs = ".$id_academic_programs." RETURNING id_academic_programs;");
+        $programDataEdit = $con->query("UPDATE academic_programs SET cve = '".$cve."', name = '".$name."', fk_type_program = '".$type."', type_program = '".$type_program."' WHERE id_academic_programs = ".$id_academic_programs." RETURNING id_academic_programs;");
 
         $validateProgramDataEdit = pg_fetch_row($programDataEdit);
 
@@ -147,6 +147,27 @@ public function saveProgramEdit($id_academic_programs, $cve, $name, $type, $type
             $response = ['status' => 'error', 'message' => 'Error al eliminar el programa académico: ' . $e->getMessage()];
         }
         return $response;
+    }
+
+
+
+        public function typeProgram(){
+        $con=new DBconnection();
+        $con->openDB();
+
+        $ar = $con->query("SELECT id_type_program, name FROM  type_program WHERE status=1");
+
+        $data = array();
+
+        while($row = pg_fetch_array($ar)){
+            $dat = array(
+                "id_type_program"=>$row["id_type_program"],
+                "name"=>$row["name"]
+            );
+            $data[] = $dat;
+        }
+        $con->closeDB();
+        return $data;
     }
 
 }

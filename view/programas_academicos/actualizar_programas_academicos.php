@@ -168,16 +168,12 @@ if (strlen($nombreUsuario) > 16) {
 								<label for="cve"><span class="text-danger">* </span>Clave de programa académico</label>
 								<input type="number" class="form-control"  id="cve" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">
 							</div>
-							<div class="col-sm-4">
-                            <label for="type_program"><span class="text-danger">* </span>Tipo de programa académico</label>
-                            <select class="form-control" id="type_program">
-                                <option value="" disabled selected>Seleccione una opción</option>
-                                <option value="1" data-name="Maestría">MAESTRÍA</option>
-                                <option value="2" data-name="Doctorado">DOCTORADO</option>
-                                <option value="3" data-name="Externo Licenciatura">EXTERNO LICENCIATURA</option>
-                                <option value="4" data-name="Externo Bachillerato">EXTERNO BACHILLERATO</option>
-                            </select>
-                        </div>					
+                            <div class="col-sm-4">
+                                <label for="type-program"><span class="text-danger">* </span>Tipo de programa</label>
+                                <select name="type-program" id="type-program" class="form-control" >
+                                    <option value="null" selected disabled>Seleccione un tipo de programa</option>
+                                </select>
+                            </div>				
 						</div>
 					</div>
 					<br><br>	

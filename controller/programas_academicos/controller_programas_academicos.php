@@ -48,6 +48,13 @@ class programasAcademicosController{
 		
 		}
 
+		public function typeProgram(){
+    		$this->programasAcademicos= new programasAcademicos();
+
+	      	$data = $this->programasAcademicos->typeProgram();
+	      	echo json_encode($data);
+		}
+
 
 }
 
@@ -65,7 +72,9 @@ $obj = new programasAcademicosController();
          	$obj->saveProgramEdit();
         }if ($_POST["action"]==5){
          	$obj->deleteProgram();
-        }
+        }if ($_POST["action"]==6){
+		 	$obj->typeProgram();
+		}
 	}
 
 ?>
