@@ -845,7 +845,6 @@ function getCourses(){
 }
 
 
-// Agregar cursos al select de editar alumnos
 function coursesAds() {
     let params = new URLSearchParams(location.search);
     let id_student = parseInt(params.get('dc'));
@@ -857,33 +856,24 @@ function coursesAds() {
         type: 'POST',
         data: { action: 16, id_student: id_student },
         success: function(result) {
-
             if (!result || result.length === 0) {
-                console.warn("⚠️ No se encontraron programas para el alumno.");
+                console.warn("No se encontraron programas para el alumno.");
                 return;
             }
 
-            //Llenar el select de cursos (área de adscripción)
+            // Llenar select de cursos (área de adscripción)
             let addCourse = "";
             $.each(result, function(index, val) {
                 addCourse += `<option value="${val.id_academic_programs}">${val.name}</option>`;
             });
             $("#course").html(addCourse);
 
-            //Llenar el select de tipo de programa
-            let addProgram = "<option value='null' disabled>Seleccione un tipo de programa</option>";
-            $.each(result, function(index, val) {
-                addProgram += `<option value="${val.id_type_program}" data-name="${val.type_program_name}">${val.type_program_name}</option>`;
-            });
-            $("#type-program").html(addProgram);
+            //Primero carga todos los tipos de programa
+            typeProgram(result[0].id_type_program);
 
-            //Seleccionar automáticamente el tipo y el área del alumno
-            const currentTypeProgramID = result[0].id_type_program.toString();
+            //Selecciona el área actual
             const currentAreaID = result[0].id_academic_programs.toString();
-
-            //Asegurar que existan las opciones antes de asignar
             setTimeout(() => {
-                $("#type-program").val(currentTypeProgramID);
                 $("#course").val(currentAreaID);
             }, 200);
         },
@@ -892,6 +882,7 @@ function coursesAds() {
         }
     });
 }
+
 
 
 
@@ -1007,7 +998,7 @@ function updateStudent(){
         $("#course").focus();
         return 0;
     }
-    if (institucion==null){
+    if (institucion.length==0){
         alert("Tiene que agregar la institución")
         $("#institucion").focus();
         return 0;
@@ -1165,11 +1156,20 @@ function typeProgram(fk_type_program) {
 
 
 
+$(document).ready(function () {
+    checkInstitution(); // inicializa el campo de institución
 
-$(document).ready(function() {
-    checkInstitution(); // para inicializar el campo si ya hay un valor seleccionado
-    typeProgram();
+    // Verificamos si es modo edición o registro
+    let params = new URLSearchParams(location.search);
+    let id_student = parseInt(params.get('dc'));
 
+    if (!isNaN(id_student) && id_student > 0) {
+        //Modo edición → solo cargamos los datos del alumno
+        coursesAds();
+    } else {
+        //Modo registro → llenamos el select de tipo de programa vacío
+        typeProgram();
+    }
 });
 
 
