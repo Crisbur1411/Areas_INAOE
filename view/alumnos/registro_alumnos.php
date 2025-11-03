@@ -192,16 +192,11 @@ if (strlen($nombreUsuario) > 16) {
 				</div>	
 				<div class="form-group">
 					<div class="row">						
-						<div class="col-sm-4">
-							<label for="program-type"><span class="text-danger">* </span>Tipo de programa</label>
-							<select name="program" id="program" class="form-control" onchange="updateInstitucion(); courses();">
-							<option value='null' selected disabled>Seleccione una opción</option>
-							<option value="1">MAESTRÍA</option>
-							<option value="2">DOCTORADO</option>
-							<option value="3">EXTERNO LICENCIATURA</option>
-							<option value="4">EXTERNO BACHILLERATO</option>
+                        <div class="col-sm-4">
+							<label for="type-program"><span class="text-danger">* </span>Tipo de programa</label>
+							<select name="type-program" id="type-program" class="form-control" >
+								<option value="null" selected disabled>Seleccione un tipo de programa</option>
 							</select>
-
 						</div>	
 						<div class="col-sm-8">
 							<label for="courses"><span class="text-danger">* </span>Área de Adscripción</label>

@@ -591,44 +591,76 @@ function printPDF(id_student, full_name,control_number, date_register) {
 
 
 
-//Obtener cursos para mostrar en el select de registro de alumnos
+// Obtener cursos para mostrar en el select de registro de alumnos
 function courses(){    
     $(".loader").fadeOut("slow");
-    var program = $("#program").val();
+
+    //Obtener el id del tipo de programa seleccionado
+    var selectType = document.getElementById("type-program");
+    var selectedOption = selectType.options[selectType.selectedIndex];
+
+
+    var program = selectedOption.value;
+
+    //Enviar el id del tipo de programa al backend
     $.ajax({
         url: "../../controller/alumnos/controller_alumnos.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
-        data: { action: 14, program: program },
+        data: { 
+            action: 14, 
+            program: program
+        },
         success: function(result) {
             var addCourse = "<option value='null' selected disabled>Seleccione su área</option>";
             $.each(result, function(index, val){
                 addCourse += "<option value='"+ val.id_academic_programs +"'>"+ val.name +"</option>";
             });            
             $("#course").html(addCourse);             
-        }, error: function(result) {
-            //console.log(result);
+        }, 
+        error: function(result) {
+            console.log("Error al obtener cursos:", result);
         }
     });
 }
 
-//Funciona para actualizar el campo institución en el registro de alumnos
-function updateInstitucion() {
-  var program = $("#program").val();
-  var institucionInput = $("#institucion");
+$("#type-program").on("change", function() {
+    courses(); // se ejecuta automáticamente al seleccionar un tipo de programa
+});
 
-  if (program == "1" || program == "2") {
-    institucionInput.val("INAOE");
-    institucionInput.prop("readonly", true);
-  } else if (program == "3" || program == "4") {
-    institucionInput.val("");
-    institucionInput.prop("readonly", false);
-  } else {
-    institucionInput.val("");
-    institucionInput.prop("readonly", false);
-  }
+
+// Función para actualizar el campo "Institución" según el tipo de programa seleccionado
+function updateInstitucion() {
+    $(".loader").fadeOut("slow");
+
+    // Obtener el id del tipo de programa seleccionado
+    var selectType = document.getElementById("type-program");
+    var selectedOption = selectType.options[selectType.selectedIndex];
+
+    // Si no hay selección, salir
+    if (!selectedOption || selectedOption.value === "null") {
+        $("#institucion").val("").prop("readonly", false);
+        return;
+    }
+
+    var program = selectedOption.value; // id_type_program
+    var institucionInput = $("#institucion");
+
+    // Aplicar lógica según el tipo de programa
+    if (program === "1" || program === "2" || program === "5") {
+        institucionInput.val("INAOE");
+        institucionInput.prop("readonly", true);
+    } else if (program === "3" || program === "4") {
+        institucionInput.val("");
+        institucionInput.prop("readonly", false);
+    } else {
+        institucionInput.val("");
+        institucionInput.prop("readonly", false);
+    }
 }
+
+$("#type-program").on("change", updateInstitucion);
 
 function processCatalog(fk_process = null) {
     $(".loader").fadeOut("slow");
@@ -813,8 +845,8 @@ function getCourses(){
 }
 
 
-//Agregar cursos al select de editar alumnos
-function coursesAds(){
+// Agregar cursos al select de editar alumnos
+function coursesAds() {
     let params = new URLSearchParams(location.search);
     let id_student = parseInt(params.get('dc'));
 
@@ -825,58 +857,44 @@ function coursesAds(){
         type: 'POST',
         data: { action: 16, id_student: id_student },
         success: function(result) {
-            var addArea = "";
 
-            $.each(result, function(index, val){
-                addArea += "<option value='"+ val.id_academic_programs +"'>"+ val.name +"</option>";
-            });
-
-            // Llenar el select de cursos
-            $("#course").html(addArea); 
-
-            // Crear opciones del select de programas
-            var programs = `
-                <option value="1">MAESTRÍA</option>
-                <option value="2">DOCTORADO</option>
-                <option value="3">EXTERNO LICENCIATURA</option>
-                <option value="4">EXTERNO BACHILLERATO</option>
-            `;
-            $("#program").html(programs);
-
-            // Mostrar en consola el valor de type_program del primer curso
-            if(result.length > 0){
-                const typeProgram = result[0].type_program;
-                console.log("Valor de type_program obtenido:", typeProgram); 
-
-                let programValue;
-
-                switch(typeProgram.toLowerCase()){
-                    case 'maestría':
-                        programValue = 1;
-                        break;
-                    case 'doctorado':
-                        programValue = 2;
-                        break;
-                    case 'externo licenciatura':
-                        programValue = 3;
-                        break;
-                    case 'externo bachillerato':
-                        programValue = 4;
-                        break;
-                    default:
-                        programValue = 0;
-                }
-
-                if(programValue !== 0){
-                    $("#program").val(programValue);
-                }
+            if (!result || result.length === 0) {
+                console.warn("⚠️ No se encontraron programas para el alumno.");
+                return;
             }
+
+            //Llenar el select de cursos (área de adscripción)
+            let addCourse = "";
+            $.each(result, function(index, val) {
+                addCourse += `<option value="${val.id_academic_programs}">${val.name}</option>`;
+            });
+            $("#course").html(addCourse);
+
+            //Llenar el select de tipo de programa
+            let addProgram = "<option value='null' disabled>Seleccione un tipo de programa</option>";
+            $.each(result, function(index, val) {
+                addProgram += `<option value="${val.id_type_program}" data-name="${val.type_program_name}">${val.type_program_name}</option>`;
+            });
+            $("#type-program").html(addProgram);
+
+            //Seleccionar automáticamente el tipo y el área del alumno
+            const currentTypeProgramID = result[0].id_type_program.toString();
+            const currentAreaID = result[0].id_academic_programs.toString();
+
+            //Asegurar que existan las opciones antes de asignar
+            setTimeout(() => {
+                $("#type-program").val(currentTypeProgramID);
+                $("#course").val(currentAreaID);
+            }, 200);
         },
         error: function(result) {
-            console.log(result);
-        } 
+            console.error("Error en la solicitud:", result);
+        }
     });
 }
+
+
+
 
 
 
@@ -1116,13 +1134,42 @@ function showStudentDetails(id_student) {
 }
 
 
+function typeProgram(fk_type_program) {
 
+    $(".loader").fadeOut("slow");
+    $.ajax({
+        url: "../../controller/alumnos/controller_alumnos.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        data: { action: 23 },
+        success: function (result) {
+            var addType = "<option value='null' selected disabled>Seleccione un tipo de programa</option>";
+            $.each(result, function (index, val) {
+               
+            addType += "<option value='" + val.id_type_program + "' data-name='" + val.name + "'>" + val.name + "</option>";
+            });
+            $("#type-program").html(addType);
+
+            if(fk_type_program){
+                $('#type-program').val(fk_type_program);
+            }
+
+          
+        },
+        error: function (result) {
+            console.log(result);
+        }
+    });
+}
 
 
 
 
 $(document).ready(function() {
     checkInstitution(); // para inicializar el campo si ya hay un valor seleccionado
+    typeProgram();
+
 });
 
 

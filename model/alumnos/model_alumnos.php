@@ -66,7 +66,7 @@ class alumnos
         $con=new DBconnection();
         $con->openDB();
 
-        $ar = $con->query("SELECT id_academic_programs, name FROM academic_programs WHERE status = 1 AND type = ".$program.";");
+        $ar = $con->query("SELECT id_academic_programs, name FROM academic_programs WHERE status = 1 AND fk_type_program = ".$program.";");
 
         $data = array();
 
@@ -700,31 +700,38 @@ public function generatePDF($id_student, $full_name, $control_number, $date_regi
 
 //Funciones para actualizar alumnos
 public function coursesAds($id_student){
-        $con=new DBconnection();
-        $con->openDB();
+    $con = new DBconnection();
+    $con->openDB();
 
-        $dataCourseAd = $con->query("SELECT 
-                                        academic_programs.id_academic_programs AS id_academic_programs, 
-                                        academic_programs.name,
-                                        academic_programs.type_program
-                                            FROM students
-                                            INNER JOIN academic_programs ON students.fk_academic_programs = academic_programs.id_academic_programs
-                                            WHERE id_student = ". $id_student);
+    $dataCourseAd = $con->query("
+        SELECT 
+            ap.id_academic_programs AS id_academic_programs, 
+            ap.name AS name,
+            tp.id_type_program AS id_type_program,
+            tp.name AS type_program_name
+        FROM students s
+        INNER JOIN academic_programs ap ON s.fk_academic_programs = ap.id_academic_programs
+        INNER JOIN type_program tp ON ap.fk_type_program = tp.id_type_program
+        WHERE s.id_student = $id_student
+    ");
 
-        $data = array();
+    $data = array();
 
-        while($row = pg_fetch_array($dataCourseAd)){
-            $dat = array(
-                "id_academic_programs" =>$row["id_academic_programs"],
-                "name" =>$row["name"],
-                "type_program" =>$row["type_program"]
-            );
-            $data[] = $dat;
-        }
-        $con->closeDB();
-        
-        return $data;
+    while($row = pg_fetch_array($dataCourseAd)){
+        $dat = array(
+            "id_academic_programs" => $row["id_academic_programs"],
+            "name" => $row["name"],
+            "id_type_program" => $row["id_type_program"],
+            "type_program_name" => $row["type_program_name"]
+        );
+        $data[] = $dat;
     }
+
+    $con->closeDB();
+    return $data;
+}
+
+
 
 
    public function getStudent($id_student){
@@ -965,6 +972,26 @@ public function getExecutionFlow($id_user, $id_student, $fk_process_catalog) {
 
 
 
+
+
+        public function typeProgram(){
+        $con=new DBconnection();
+        $con->openDB();
+
+        $ar = $con->query("SELECT id_type_program, name FROM  type_program WHERE status=1");
+
+        $data = array();
+
+        while($row = pg_fetch_array($ar)){
+            $dat = array(
+                "id_type_program"=>$row["id_type_program"],
+                "name"=>$row["name"]
+            );
+            $data[] = $dat;
+        }
+        $con->closeDB();
+        return $data;
+    }
 
 
 }

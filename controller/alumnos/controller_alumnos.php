@@ -180,6 +180,12 @@ class alumnosController
             echo json_encode($data);
         }
 	
+		public function typeProgram(){
+    		$this->alumnos= new alumnos();
+
+	      	$data = $this->alumnos->typeProgram();
+	      	echo json_encode($data);
+		}
 
 
 }
@@ -248,6 +254,8 @@ if (isset($_POST["action"])) {
 		$obj->getExecutionFlow();
 	} if ($_POST["action"] == 22) {
 		$obj->getProcessCatalog();
+	}if ($_POST["action"] == 23) {
+		$obj->typeProgram();
 	}
 	
 }
