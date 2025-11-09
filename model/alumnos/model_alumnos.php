@@ -503,26 +503,11 @@ public function generatePDF($id_student, $full_name, $control_number, $date_regi
     $con = new DBconnection();
     $con->openDB();
 
-    // Obtener el valor del curso del estudiante
-    $academicProgramQuery = $con->query("
-        SELECT c.type 
-        FROM students s 
-        JOIN academic_programs c ON s.fk_academic_programs = c.id_academic_programs 
-        WHERE s.id_student = '$id_student'
-    ");
-    $academicProgramRow = pg_fetch_array($academicProgramQuery);
-
-    if (!$academicProgramRow) {
-        $con->closeDB();
-        return array('error' => 'No se encontró el programa académico del estudiante.');
-    }
-
-    $type = $academicProgramRow['type'];
-
     $pdfinfo = $con->query("
             SELECT 
                 CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
                 p.name AS academic_program,
+                tp.description AS type_program_name,
                 ar.name AS area_name,
                 ar.key AS key,
                 pc.name AS process_name,
@@ -534,6 +519,7 @@ public function generatePDF($id_student, $full_name, $control_number, $date_regi
             JOIN user_area ua ON ta.fk_area = ua.id_user_area
             JOIN areas ar ON ua.fk_area = ar.id_area
             JOIN academic_programs p ON s.fk_academic_programs = p.id_academic_programs
+            JOIN type_program tp ON p.fk_type_program = tp.id_type_program
             JOIN process_catalog pc ON s.fk_process_catalog = pc.id_process_catalog
             WHERE s.id_student = '$id_student'
             ORDER BY ta.id_trace_student_area ASC;
@@ -549,7 +535,8 @@ public function generatePDF($id_student, $full_name, $control_number, $date_regi
             "firma" => $row["firma"],
             "date" => $row["date"],
             "academic_program" => $row["academic_program"],
-            "process_name" => $row["process_name"]
+            "process_name" => $row["process_name"],
+            "type_program_name" => $row["type_program_name"]
         );
         $pdfData[] = $dat;
     }
@@ -595,13 +582,7 @@ public function generatePDF($id_student, $full_name, $control_number, $date_regi
 
     $studentData = $pdfData[0];
 
-    $programNames = [
-        1 => 'Maestría',
-        2 => 'Doctorado',
-        3 => 'Externo de Licenciatura',
-        4 => 'Externo de Bachillerato'
-    ];
-    $programName = isset($programNames[$type]) ? strtoupper($programNames[$type]) : 'PROGRAMA DESCONOCIDO';
+    $programName = $studentData["type_program_name"];
     $area_program = $studentData["academic_program"];
     $process_name = $studentData["process_name"];
 
