@@ -812,34 +812,46 @@ public function coursesAds($id_student){
 
 
 //Se utiliza para obtener los procesos de catalogo para mostrarlos en el select de registro de alumnos
-public function getProcessCatalog() {
-        $con = new DBconnection(); 
-        $con->openDB();
+public function getProcessCatalog($course_id) {
+    $con = new DBconnection(); 
+    $con->openDB();
 
-        $dataTitle = $con->query("SELECT
-                                        id_process_catalog,
-                                        name,
-                                        description
-                                    FROM
-                                        process_catalog
-                                    WHERE
-                                        status = 1
-                                    ORDER BY id_process_catalog ASC;");
+    // Consulta con relación muchos a muchos
+    $query = "
+        SELECT
+            pc.id_process_catalog,
+            pc.name AS process_name,
+            pc.description,
+            ap.name AS program_name
+        FROM
+            process_catalog pc
+        INNER JOIN program_process_relation ppr
+            ON pc.id_process_catalog = ppr.fk_process_catalog
+        INNER JOIN academic_programs ap
+            ON ap.id_academic_programs = ppr.fk_academic_program
+        WHERE
+            ap.id_academic_programs = $course_id
+            AND pc.status = 1
+        ORDER BY pc.id_process_catalog ASC;
+    ";
 
-        $data = array();
+    $dataTitle = $con->query($query);
+    $data = array();
 
-        while($row = pg_fetch_array($dataTitle)){
-            $dat = array(
-                "id_process_catalog" => $row["id_process_catalog"],
-                "name" => $row["name"],
-                "description" => $row["description"]
-            );
-            $data[] = $dat;
-        }
-        $con->closeDB();
-        
-        return $data;
+    while ($row = pg_fetch_array($dataTitle)) {
+        $dat = array(
+            "id_process_catalog" => $row["id_process_catalog"],
+            "process_name" => $row["process_name"],
+            "description" => $row["description"],
+            "program_name" => $row["program_name"]
+        );
+        $data[] = $dat;
     }
+
+    $con->closeDB();
+    return $data;
+}
+
 
 
     // Funcion que obtniene todos los flujos de ejecucion y los agrupa para realizan la validacion de si se cumplen o no

@@ -176,7 +176,7 @@ class alumnosController
 
 	public function getProcessCatalog(){
             $this->alumnos = new alumnos();
-            $data = $this->alumnos->getProcessCatalog();
+            $data = $this->alumnos->getProcessCatalog($_POST["course_id"]);
             echo json_encode($data);
         }
 	

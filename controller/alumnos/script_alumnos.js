@@ -662,37 +662,55 @@ function updateInstitucion() {
 
 $("#type-program").on("change", updateInstitucion);
 
+
 function processCatalog(fk_process = null) {
     $(".loader").fadeOut("slow");
+
+    // Obtener el curso seleccionado
+    var selectCourse = document.getElementById("course");
+    var selectedOption = selectCourse.options[selectCourse.selectedIndex];
+    var course_id = selectedOption.value;
+
+    // Enviar el id del curso al backend
     $.ajax({
         url: "../../controller/alumnos/controller_alumnos.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
-        data: { action: 22 },
+        data: { 
+            action: 22,
+            course_id: course_id // <-- importante: pasamos el id del curso
+        },
         success: function (result) {
             let options = "";
 
             if (!fk_process) {
-                // Si es registro nuevo, opción por defecto seleccionada
                 options += `<option value="null" selected disabled>Seleccione un Proceso</option>`;
             } else {
-                // Si es edición, solo mostramos la opción por defecto sin selected
                 options += `<option value="null" disabled>Seleccione un Proceso</option>`;
             }
 
-            $.each(result, function (index, val) {
-                let selected = (fk_process && fk_process == val.id_process_catalog) ? "selected" : "";
-                options += `<option value="${val.id_process_catalog}" ${selected}>${val.description}</option>`;
-            });
+            if (result.length > 0) {
+                $.each(result, function (index, val) {
+                    let selected = (fk_process && fk_process == val.id_process_catalog) ? "selected" : "";
+                    options += `<option value="${val.id_process_catalog}" ${selected}>${val.description}</option>`;
+                });
+            } else {
+                options += `<option value="null" disabled>No hay procesos disponibles</option>`;
+            }
 
             $("#process_catalog").html(options);
         },
         error: function (result) {
-            console.log(result);
+            console.log("Error al obtener procesos:", result);
         }
     });
 }
+
+
+$("#course").on("change", function() {
+    processCatalog(); // se ejecuta automáticamente al seleccionar un curso
+});
 
 
 
@@ -819,32 +837,7 @@ function saveStudent(){
     }
 
 
-
-
-// Obtener cursos para mostrar en el select de editar alumnos
-function getCourses(){
-    var program = $("#program").val();
-    
-    $.ajax({
-        url: "../../controller/alumnos/controller_alumnos.php",
-        cache: false,
-        dataType: 'JSON',
-        type: 'POST',
-        data: { action: 14, program: program },
-        success: function(result) {
-            //console.log(result);
-            var addArea = "<option value='null' selected disabled>Seleccione su área</option>";
-            $.each(result, function(index, val){
-                addArea += "<option value='"+ val.id_academic_programs +"'>"+ val.name +"</option>";
-            });            
-            $("#course").html(addArea);   
-                   
-        }
-    });
-    
-}
-
-
+//Programas académicos del alumno al editar
 function coursesAds() {
     let params = new URLSearchParams(location.search);
     let id_student = parseInt(params.get('dc'));
