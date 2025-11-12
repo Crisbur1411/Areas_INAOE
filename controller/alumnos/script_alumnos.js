@@ -28,7 +28,6 @@ $(function(){
     listStudentInProgress();
     listStudentFree();
     listStudentCancel();
-    processCatalog();
             
 });
 
@@ -663,25 +662,31 @@ function updateInstitucion() {
 $("#type-program").on("change", updateInstitucion);
 
 
-function processCatalog(fk_process = null) {
+function processCatalog(fk_process = null, preserve = false) {
     $(".loader").fadeOut("slow");
 
-    // Obtener el curso seleccionado
     var selectCourse = document.getElementById("course");
+    if (!selectCourse) return;
     var selectedOption = selectCourse.options[selectCourse.selectedIndex];
-    var course_id = selectedOption.value;
+    var course_id = selectedOption ? selectedOption.value : null;
 
-    // Enviar el id del curso al backend
+    if (!course_id || course_id === "null") return;
+
     $.ajax({
         url: "../../controller/alumnos/controller_alumnos.php",
         cache: false,
-        dataType: 'JSON',
-        type: 'POST',
-        data: { 
+        dataType: "JSON",
+        type: "POST",
+        data: {
             action: 22,
-            course_id: course_id // <-- importante: pasamos el id del curso
+            course_id: course_id
         },
         success: function (result) {
+            if (preserve && $("#process_catalog option").length > 1) {
+                console.log("⏩ Saltando actualización de process_catalog (ya cargado)");
+                return;
+            }
+
             let options = "";
 
             if (!fk_process) {
@@ -708,10 +713,11 @@ function processCatalog(fk_process = null) {
 }
 
 
-$("#course").on("change", function() {
-    processCatalog(); // se ejecuta automáticamente al seleccionar un curso
+// Evento de cambio para el curso (solo se activa cuando el usuario lo cambia manualmente)
+$("#course").on("change", function(e, triggeredByScript) {
+    if (triggeredByScript) return;
+    processCatalog();
 });
-
 
 
 // Fucncion para registrar un nuevo alumno
@@ -840,41 +846,54 @@ function saveStudent(){
 //Programas académicos del alumno al editar
 function coursesAds() {
     let params = new URLSearchParams(location.search);
-    let id_student = parseInt(params.get('dc'));
+    let id_student = parseInt(params.get("dc"));
 
     $.ajax({
         url: "../../controller/alumnos/controller_alumnos.php",
         cache: false,
-        dataType: 'JSON',
-        type: 'POST',
+        dataType: "JSON",
+        type: "POST",
         data: { action: 16, id_student: id_student },
-        success: function(result) {
+        success: function (result) {
             if (!result || result.length === 0) {
                 console.warn("No se encontraron programas para el alumno.");
                 return;
             }
 
-            // Llenar select de cursos (área de adscripción)
             let addCourse = "";
-            $.each(result, function(index, val) {
+            $.each(result, function (index, val) {
                 addCourse += `<option value="${val.id_academic_programs}">${val.name}</option>`;
             });
             $("#course").html(addCourse);
 
-            //Primero carga todos los tipos de programa
             typeProgram(result[0].id_type_program);
-
-            //Selecciona el área actual
             const currentAreaID = result[0].id_academic_programs.toString();
+
+            $("#course").off("change");
+
+            //seleccionar curso
+            $("#course").val(currentAreaID);
+
+            //cargar procesos disponibles pero NO borrar selección posterior
+            processCatalog(null, true);
+
+            //después de medio segundo, cargar el estudiante
             setTimeout(() => {
-                $("#course").val(currentAreaID);
-            }, 200);
+                getStudent();
+            }, 100);
+
+            // Restaurar listener
+            $("#course").on("change", function (e, triggeredByScript) {
+                if (triggeredByScript) return;
+                processCatalog();
+            });
         },
-        error: function(result) {
+        error: function (result) {
             console.error("Error en la solicitud:", result);
         }
     });
 }
+
 
 
 
@@ -907,7 +926,7 @@ function getStudent() {
                 $('#control-number').val(val.control_number);
                 $('#institucion').val(val.institucion);
                 $('#date_conclusion').val(val.date_conclusion);
-                processCatalog(val.fk_process_catalog);
+                $("#process_catalog").val(val.fk_process_catalog);
             });
         },
         error: function (result) {
