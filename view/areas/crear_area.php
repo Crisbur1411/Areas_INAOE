@@ -166,12 +166,12 @@ if (strlen($nombreUsuario) > 16) {
                         <input type="text" class="form-control" id="nombreNuevaArea" name="nombreNuevaArea" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();" required>
                     </div>
                     <div class="col-sm-4">
-                        <label for="identificador">Identificador Área</label>
-                        <input type="text" class="form-control" id="identificador" name="identificador" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();"  required>
-                    </div>
-                    <div class="col-sm-4">
                         <label for="descripcionArea">Descripción</label>
                         <textarea class="form-control" id="descripcionArea" name="descripcionArea" style="text-transform:uppercase;"  onkeyup="javascript:this.value=this.value.toUpperCase();"  rows="1" required></textarea>
+                    </div>
+                    <div class="col-sm-4">
+                        <label for="identificador">Identificador Área</label>
+                        <input type="text" class="form-control" id="identificador" name="identificador" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();"  required>
                     </div>
                 </div>
                 <br>

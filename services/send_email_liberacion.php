@@ -71,12 +71,15 @@ $currentTime = date("Y-m-d H:i:s");
 
 // Armar mensaje al estudiante
 $mensajeCorreo  = "Estimado(a) $nombreEstudiante,\n\n";
-$mensajeCorreo .= "El trámite dentro del Sistema de No Adeudo ha concluido. Por favor, continúa con los trámites siguientes en la oficina de la Dirección de Formación Académica.\n\n";
-$mensajeCorreo .= "Nombre de Proceso: $procesoEstudiante\n\n";
+$mensajeCorreo .= "Te informamos que tu trámite dentro del Sistema de Liberación de Adeudos Académicos ha concluido exitosamente.\n\n";
+$mensajeCorreo .= "Nombre del proceso: $procesoEstudiante\n\n";
+$mensajeCorreo .= "Por favor, continúa con los trámites correspondientes en la Dirección de Formación Académica, según las indicaciones establecidas para tu proceso.\n\n";
+$mensajeCorreo .= "Quedamos a tu disposición para cualquier duda o aclaración.\n\n";
 $mensajeCorreo .= "Fecha de aviso: $currentTime\n\n";
-$mensajeCorreo .= "Atentamente,\n";
-$mensajeCorreo .= "Sistema de No Adeudo Académico\n";
-$mensajeCorreo .= "Dirección de Formación Académica – INAOE";
+$mensajeCorreo .= "Saludos cordiales,\n";
+$mensajeCorreo .= "Dirección de Formación Académica\n";
+$mensajeCorreo .= "Instituto Nacional de Astrofísica, Óptica y Electrónica (INAOE)";
+
 
 // Enviar correo al estudiante
 if (enviarCorreoLiberacion($correoEstudiante, $asunto, $mensajeCorreo, $usuario, $contrasena, $servidorCorreo)) {

@@ -509,7 +509,7 @@ function saveUser() {
                 console.log(result);
                 bootbox.confirm({
                     title: "<h4>Error al registrar usuario</h4>",
-                    message: "<h5>Ocurrio un error al hacer el registro del usuario.</h5>",
+                    message: "<h5>Ocurrio un error al hacer el registro del usuario, verifique que el correo no este registrado.</h5>",
                     buttons: {
                         cancel: {
                             label: 'Cancelar',

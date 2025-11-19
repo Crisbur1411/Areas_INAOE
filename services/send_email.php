@@ -95,6 +95,7 @@ foreach ($stages as $stage) {
             $mensajeCorreo .= "Nombre de la persona estudiante: $nombreEstudiante\n";
             $mensajeCorreo .= "Correo electrónico: $correoEstudiante\n";
             $mensajeCorreo .= "Fecha de aviso: $currentTime\n\n";
+            $mensajeCorreo .= "Importante: Cuentas con un periodo máximo de 5 días a partir de este aviso para realizar la liberación correspondiente, por lo que se solicita llevarla a cabo lo antes posible.\n\n";
             $mensajeCorreo .= "Puedes acceder al sistema en el siguiente enlace:\n";
             $mensajeCorreo .= "$enlaceSistema\n\n";
             $mensajeCorreo .= "Atentamente,\n";
