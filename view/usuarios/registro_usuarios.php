@@ -154,70 +154,100 @@ if (strlen($nombreUsuario) > 16) {
     </nav>
 
 
-	<div class="container mt-5">
-		<div id="new" style="text-align: center;"><br><br>
-			<div style="text-align: center; border-bottom: 3px solid #cecece; margin-bottom: 30px;">
-				<h3>Registro de un nuevo usuario</h3>				
-			</div>	
-			<br>
-			<div class="form-group">
-				<div class="row">
-						<div class="col-sm-4">
-							<label for="name"><span class="text-danger">* </span>Nombre</label>
-							<input type="text" class="form-control"  id="name" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">
-						</div>
-						<div class="col-sm-4">
-							<label for="surname"><span class="text-danger">* </span>Primer Apellido</label>
-							<input type="text" class="form-control" id="surname" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">
-						</div>
-						<div class="col-sm-4">
-							<label for="second-surname"><span class="text-danger">* </span>Segundo Apellido</label>
-							<input type="text" class="form-control" id="second_surname" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">
-						</div>					
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="row">
-						<div class="col-sm-8">
-							<label for="email"><span class="text-danger">* </span>Correo electrónico</label>
-							<input type="text" class="form-control" id="email">
-						</div>	
-						<div class="col-sm-4">
-							<label for="password"><span class="text-danger">* </span>Contraseña</label>
-							<input type="text" class="form-control" id="password">
-						</div>	
-						<div class="col-sm-4">
-							<label for="type-users"><span class="text-danger">* </span>Tipo de usuario</label>
-							<select name="type-users" id="type-users" class="form-control" >
-								<option value="null" selected disabled>Seleccione un tipo</option>
-							</select>
-						</div>
-						<div class="col-sm-4">
-							<label for="category"><span class="text-danger">* </span>Categoria</label>
-							<select name="category" id="category" class="form-control">
-								<option value="null" selected disabled>Seleccione una categoría</option>
-								<option value="PRINCIPAL">PRINCIPAL</option>
-								<option value="SECUNDARIO">SECUNDARIO</option>
-							</select>	
-						</div>
-						<div class="col-sm-4">
-							<label for="areas"><span class="text-danger">* </span>Área</label>
-							<select name="areas" id="areas" class="form-control">
-								<option value="null" selected disabled>Seleccione una área</option>
-							</select>
-						</div>															
-					</div>
-				</div>		
-				<div class="col-sm-12">
-					<label for="text"><span class="text-danger">* </span>El usuario y contraseña lo prodra modificar la persona correspondiente una vez que inicie sesión. </label>
-				</div>
-				<br><br>	
-				<div class="form-group" align="center">
-					<button class="btn btnCancel btn-lg active" type="button" onClick="history.go(-1);" >Cancelar</button>
-					<button class="btn btnConfirm btn-lg active" type="button" id="save-exam" onclick="saveUser();">Guardar</button>
-				</div>				
-			</div>	
-		</div>		
+	<div class="container mt-5"> 
+    <div id="new" class="text-center">
+        <br><br>
+
+        <div style="text-align: center; border-bottom: 3px solid #cecece; margin-bottom: 30px;">
+            <h3>Registro de un nuevo usuario</h3>
+        </div>
+
+        <form autocomplete="off">
+            <!-- DATOS PERSONALES -->
+            <div class="form-group">
+                <div class="row">
+
+                    <div class="col-sm-4">
+                        <label for="name"><span class="text-danger">*</span> Nombre</label>
+                        <input type="text" class="form-control text-upper" id="name" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">
+                    </div>
+
+                    <div class="col-sm-4">
+                        <label for="surname"><span class="text-danger">*</span> Primer Apellido</label>
+                        <input type="text" class="form-control text-upper" id="surname" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">
+                    </div>
+
+                    <div class="col-sm-4">
+                        <label for="second_surname"><span class="text-danger">*</span> Segundo Apellido</label>
+                        <input type="text" class="form-control text-upper" id="second_surname" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();">
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- DATOS DEL USUARIO -->
+            <div class="form-group">
+                <div class="row">
+
+                    <div class="col-sm-8">
+                        <label for="email"><span class="text-danger">*</span> Correo electrónico</label>
+                        <input type="text" class="form-control" id="email" autocomplete="new-email">
+                    </div>
+
+                    <div class="col-sm-4">
+                        <label for="password"><span class="text-danger">*</span> Contraseña</label>
+                        <input type="password" class="form-control" id="password" autocomplete="new-password">
+                    </div>
+
+                    <div class="col-sm-4">
+                        <label for="type-users"><span class="text-danger">*</span> Tipo de usuario</label>
+                        <select id="type-users" class="form-control">
+                            <option value="null" disabled selected>Seleccione un tipo</option>
+                        </select>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <label for="category"><span class="text-danger">*</span> Categoría</label>
+                        <select id="category" class="form-control">
+                            <option value="null" disabled selected>Seleccione una categoría</option>
+                            <option value="PRINCIPAL">PRINCIPAL</option>
+                            <option value="SECUNDARIO">SECUNDARIO</option>
+                        </select>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <label for="areas"><span class="text-danger">*</span> Área</label>
+                        <select id="areas" class="form-control">
+                            <option value="null" disabled selected>Seleccione un área</option>
+                        </select>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- NOTA -->
+            <div class="col-sm-12 mt-2 mb-3">
+                <small class="text-danger">
+                    * El usuario y contraseña podrán ser modificados por la persona cuando inicie sesión.
+                </small>
+            </div>
+
+            <!-- BOTONES -->
+            <div class="form-group text-center">
+                <button class="btn btnCancel btn-lg active" type="button" onclick="history.go(-1);">
+                    Cancelar
+                </button>
+
+                <button class="btn btnConfirm btn-lg active" type="button" id="save-exam" onclick="saveUser();">
+                    Guardar
+                </button>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+		
 	</div>
 
 	<br><br>
