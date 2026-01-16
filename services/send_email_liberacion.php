@@ -27,6 +27,7 @@ if (empty($studentData)) {
 $student = $studentData[0];
 $nombreEstudiante = $student['full_name'];
 $correoEstudiante = $student['email'];
+$procesoEstudiante = $student['process_name'];
 
 
 
@@ -60,7 +61,7 @@ function enviarCorreoLiberacion($correoDestino, $asunto, $mensaje, $usuario, $co
 }
 
 // Parámetros de conexión al servidor de correo
-$asunto = "Aviso conclución en el trámite de liberación de No Adeudo";
+$asunto = "Conclusión de proceso – Sistema de Liberación de Adeudos Institucionales";
 $usuario = "m.valencia";
 $contrasena = "25v4l3ncia.Mig";
 $servidorCorreo = "ccc.inaoep.mx";
@@ -69,10 +70,16 @@ $servidorCorreo = "ccc.inaoep.mx";
 $currentTime = date("Y-m-d H:i:s");
 
 // Armar mensaje al estudiante
-$mensajeCorreo = "Estimado/a $nombreEstudiante,\n\n";
-$mensajeCorreo .= "Te informamos que tu trámite de liberación ha concluido, por lo cual puedes acudir a la oficina de la Dirección de Formación Académica para solicitar tu constancia de liberación.\n\n";
+$mensajeCorreo  = "Estimado(a) $nombreEstudiante,\n\n";
+$mensajeCorreo .= "Te informamos que tu trámite dentro del Sistema de Liberación de Adeudos Académicos ha concluido exitosamente.\n\n";
+$mensajeCorreo .= "Nombre del proceso: $procesoEstudiante\n\n";
+$mensajeCorreo .= "Por favor, continúa con los trámites correspondientes en la Dirección de Formación Académica, según las indicaciones establecidas para tu proceso.\n\n";
+$mensajeCorreo .= "Quedamos a tu disposición para cualquier duda o aclaración.\n\n";
 $mensajeCorreo .= "Fecha de aviso: $currentTime\n\n";
-$mensajeCorreo .= "Atentamente,\nSistema de No Adeudo Institucional\nDirección de Formación Académica – INAOE";
+$mensajeCorreo .= "Saludos cordiales,\n";
+$mensajeCorreo .= "Dirección de Formación Académica\n";
+$mensajeCorreo .= "Instituto Nacional de Astrofísica, Óptica y Electrónica (INAOE)";
+
 
 // Enviar correo al estudiante
 if (enviarCorreoLiberacion($correoEstudiante, $asunto, $mensajeCorreo, $usuario, $contrasena, $servidorCorreo)) {

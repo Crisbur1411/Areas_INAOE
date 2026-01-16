@@ -27,6 +27,21 @@ $(function(){
     listUser();        
 });
 
+
+
+function validatePasswordRules(password) {
+    const minLength = /.{8,}/;
+    const upper = /[A-Z]/;
+    const lower = /[a-z]/;
+    const number = /[0-9]/;
+
+    return minLength.test(password) &&
+           upper.test(password) &&
+           lower.test(password) &&
+           number.test(password);
+}
+
+
 function listUser() {
   $.ajax({
         url: "../../controller/usuarios/controller_usuarios.php",
@@ -112,22 +127,40 @@ function saveChanges(id_user) {
     var currentPassword = $('#currentPassword').val();
     var newPassword = $('#newPassword').val();
     var confirmPassword = $('#confirmPassword').val();
-   
+
+    // Validar coincidencia
     if (newPassword !== confirmPassword) {
         alert('Las contraseñas nuevas no coinciden.');
         return;
     }
+
+    // Validar reglas de la contraseña
+    if (!validatePasswordRules(newPassword)) {
+        alert('La contraseña debe tener:\n\n' +
+            '- Mínimo 8 caracteres\n' +
+            '- Al menos una letra mayúscula\n' +
+            '- Al menos una letra minúscula\n' +
+            '- Al menos un número');
+        return;
+    }
+
+    // Si pasa validación → enviar petición
     $.ajax({
         url: '../../controller/usuarios/controller_usuarios.php',
         method: 'POST',
         dataType: "JSON",
-        data: { action: 3, id_user: id_user, currentPassword: currentPassword, newPassword: newPassword },
+        data: { 
+            action: 3, 
+            id_user: id_user, 
+            currentPassword: currentPassword, 
+            newPassword: newPassword 
+        },
         success: function(response) {
             if (response.success) { 
-                alert('actualizado con éxito');
-                $('#modalEdit').modal('hide'); 
+                alert('Actualizado con éxito');
+                $('#modalEdit').modal('hide');
             } else {
-                alert('Error al actualizar la contraseña.');
+                alert(response.msg ?? 'Error al actualizar la contraseña.');
             }
         },
         error: function(xhr, status, error) {
@@ -280,15 +313,13 @@ function changePassword() {
     var formHtml = `
         <form id="newAreaForm">
             <div class="form-group">
-                <label for="nombreArea">Nueva Contraseña:</label>
-                <input type="password" class="form-control" id="newPassword" name="newPassword" required>
+                <label>Nueva Contraseña:</label>
+                <input type="password" class="form-control" id="newPassword" required>
             </div>
             <div class="form-group">
-                <label for="detalles">Confirmar Nueva Contraseña</label>
-                <input type="password" class="form-control" id="confirmNewPassword" name="confirmNewPassword" required>
+                <label>Confirmar Nueva Contraseña</label>
+                <input type="password" class="form-control" id="confirmNewPassword" required>
             </div>
-            <div class="form-group">
-      
         </form>
     `;
 
@@ -305,21 +336,42 @@ function changePassword() {
                 label: 'Guardar',
                 className: 'btnConfirm',
                 callback: function () {
+
                     var newPassword = $('#newPassword').val().trim();
                     var confirmNewPassword = $('#confirmNewPassword').val().trim();
+
+                    // Validar que coincidan
+                    if (newPassword !== confirmNewPassword) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Las contraseñas no coinciden.'
+                        });
+                        return false;
+                    }
+
+                    // Validar reglas de contraseña
+                    if (!validatePasswordRules(newPassword)) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Contraseña inválida',
+                            html: `
+                                La contraseña debe cumplir con:
+                                <br><br>
+                                • Mínimo <b>8 caracteres</b><br>
+                                • Al menos <b>una letra mayúscula</b><br>
+                                • Al menos <b>una letra minúscula</b><br>
+                                • Al menos <b>un número</b>
+                            `
+                        });
+                        return false;
+                    }
+
+                    // Si pasa todo, enviamos la solicitud
                     var formData = new FormData();
                     formData.append('action', 7);
                     formData.append('id_usuario', userID);
                     formData.append('new_passsword', newPassword);
-
-                    if (!(newPassword == confirmNewPassword)) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: 'Todos los campos son obligatorios. Por favor, complete todos los campos.'
-                        });
-                        return false;
-                    }
 
                     $.ajax({
                         url: "../../controller/usuarios/controller_usuarios.php",
@@ -330,22 +382,21 @@ function changePassword() {
                         contentType: false,
                         data: formData,
                         success: function (result) {
-                            console.log(result);
                             if (result.status === 200) {
                                 Swal.fire({
                                     icon: 'success',
                                     title: 'Éxito',
-                                    text: 'La solicitud se ha completado correctamente'
+                                    text: 'Contraseña actualizada correctamente'
                                 });
                             } else {
                                 Swal.fire({
                                     icon: 'error',
                                     title: 'Error',
-                                    text: 'Ocurrió un error al realizar la solicitud'
+                                    text: 'Ocurrió un error al actualizar la contraseña'
                                 });
                             }
                         },
-                        error: function (result) {
+                        error: function () {
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error',
@@ -358,8 +409,6 @@ function changePassword() {
             }
         }
     });
-
-
 }
 
 
@@ -467,6 +516,12 @@ function saveUser() {
         $("#password").focus();
         return 0;
     }
+
+    if (!validatePasswordRules(password)) {
+        alert("La contraseña debe tener:\n\n• Al menos 8 caracteres\n• Una letra mayúscula\n• Una letra minúscula\n• Un número");
+        $("#password").focus();
+        return;
+    }
     
     if (type_user == null) {
         alert("Tiene que elegir el tipo de usuario")
@@ -509,7 +564,7 @@ function saveUser() {
                 console.log(result);
                 bootbox.confirm({
                     title: "<h4>Error al registrar usuario</h4>",
-                    message: "<h5>Ocurrio un error al hacer el registro del usuario.</h5>",
+                    message: "<h5>Ocurrio un error al hacer el registro del usuario, verifique que el correo no este registrado.</h5>",
                     buttons: {
                         cancel: {
                             label: 'Cancelar',
@@ -681,8 +736,7 @@ function saveUserEdit() {
     Swal.fire({
         icon: 'error',
         title: 'Error al actualizar usuario',
-        html: `<b>Estado:</b> ${textStatus}<br><b>Error:</b> ${errorThrown}`,
-        footer: 'Revisa consola para más detalles',
+        html: `<b>Verifique que el correo sea válido o que no exista el mismo correo registrado con otro usuario</b>`,
         timer: 10000,
         timerProgressBar: true,
     });

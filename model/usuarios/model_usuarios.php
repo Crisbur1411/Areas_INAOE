@@ -148,14 +148,22 @@ class usuarios
         $con = new DBconnection();
         $con->openDB();
 
+        //Convertir a MD5 la contraseña actual que escribió el usuario
+        $currentPasswordMd5 = md5($currentPassword);
+
         $dataPassword = $con->query("SELECT password FROM users WHERE id_user = $id_user");
         $row = pg_fetch_array($dataPassword);
         $storedPassword = $row["password"];
 
-        if ($storedPassword !== $currentPassword) {
-            return false;
+        //Comparar MD5(actual) con lo almacenado en BD
+        if ($storedPassword !== $currentPasswordMd5) {
+            return false;  // contraseña actual incorrecta
         }
-        $updateQuery = "UPDATE users SET password = '$newPassword' WHERE id_user = $id_user";
+
+        //Convertir a MD5 la nueva contraseña antes de guardarla
+        $newPasswordMd5 = md5($newPassword);
+
+        $updateQuery = "UPDATE users SET password = '$newPasswordMd5' WHERE id_user = $id_user";
         $updateResult = $con->query($updateQuery);
 
         $con->closeDB();
@@ -163,25 +171,33 @@ class usuarios
         return $updateResult;
     }
 
+
     public function updatePasswordWithoutCheck($id_user, $newPassword)
     {
         $con = new DBconnection();
         $con->openDB();
 
         try {
-            $updateQuery = "UPDATE users SET password = '$newPassword' WHERE id_user = $id_user";
+
+            //Convertir nueva contraseña a MD5 antes de guardarla
+            $newPasswordMd5 = md5($newPassword);
+
+            $updateQuery = "UPDATE users SET password = '$newPasswordMd5' WHERE id_user = $id_user";
             $updateResult = $con->query($updateQuery);
 
             $con->closeDB();
 
             return array('status' => 200, 'error' => null);
+
         } catch (Exception $e) {
+
             $errorMessage = $e->getMessage();
             $con->closeDB();
 
             return array('status' => 500, 'error' => $errorMessage);
         }
     }
+
 
    public function deleteUser($id_user)
 {
@@ -253,14 +269,28 @@ public function getAreas(){
         $con=new DBconnection();
         $con->openDB();
 
-        $userData = $con->query("INSERT INTO users (username, password, name, surname, second_surname,fk_type, date_register, user_category) 
-        VALUES ('".$email."','".$password."', '".$name."','".$surname."', '".$secondsurname."',".$type_user.",NOW(), '".$category."') 
-        RETURNING id_user");
+        //Convertir la contraseña a MD5 antes de guardarla
+        $passwordMd5 = md5($password);
 
-        
+        $userData = $con->query("
+            INSERT INTO users 
+            (username, password, name, surname, second_surname, fk_type, date_register, user_category)
+            VALUES (
+                '".$email."',
+                '".$passwordMd5."', 
+                '".$name."',
+                '".$surname."',
+                '".$secondsurname."',
+                ".$type_user.",
+                NOW(),
+                '".$category."'
+            ) 
+            RETURNING id_user
+        ");
+
         $validateUserData = pg_fetch_row($userData);
 
-        if ( $validateUserData > 0)
+        if ($validateUserData > 0)
         {            
             $con->closeDB();
             return $validateUserData[0];
@@ -271,7 +301,6 @@ public function getAreas(){
             return "error";
         }
     }
-
 
 
     
@@ -310,30 +339,38 @@ public function getAreas(){
 
 
 }
-    public function changePassword($id_user,$password)
+public function changePassword($id_user, $password)
 {
     $con = new DBconnection();
     $con->openDB();
 
-    try{
+    try {
 
-    $updateUser = $con->query("UPDATE users SET  password = '".$password."' WHERE id_user = ".$id_user);
+        //Convertir nueva contraseña a MD5
+        $passwordMd5 = md5($password);
 
-    if ($updateUser) {
-        $con->closeDB();
-        return array("status" => 200, "message" => "Contraseña Usuario actualizado correctamente");
-    } else {
-        $con->closeDB();
-        return array("status" => 500, "message" => "Fallo al actualizar contraseña usuario");
-    }
-    }catch (Exception $e) {
+        $updateUser = $con->query("
+            UPDATE users 
+            SET password = '".$passwordMd5."' 
+            WHERE id_user = ".$id_user
+        );
+
+        if ($updateUser) {
+            $con->closeDB();
+            return array("status" => 200, "message" => "Contraseña del usuario actualizada correctamente");
+        } else {
+            $con->closeDB();
+            return array("status" => 500, "message" => "Fallo al actualizar contraseña del usuario");
+        }
+
+    } catch (Exception $e) {
+
         $con->closeDB();
         http_response_code(500);
-        return array("status" => 500, "message" => "Error al actulizar contraseña el usuario: " . $e->getMessage());
+        return array("status" => 500, "message" => "Error al actualizar contraseña del usuario: " . $e->getMessage());
     }
-
-
 }
+
 
 
 

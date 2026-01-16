@@ -10,6 +10,13 @@ if (!isset($_SESSION['username'])) {
     header("Location: ../../index.php");
     exit();
 }
+
+// Validacion de caracteres en el nombre de usuario
+$nombreUsuario = $_SESSION['name'];
+if (strlen($nombreUsuario) > 16) {
+    $nombreUsuario = substr($nombreUsuario, 0, 16) . "...";
+}
+
 ?>
 <!DOCTYPE html> 
 <html lang="en">
@@ -76,7 +83,7 @@ if (!isset($_SESSION['username'])) {
                         <li><a class="dropdown-item" id="navbarDropdown1" href="../usuarios/cuenta.php">
                                 <span class="ctrl-control h5 text-align-right" id="username" style="font-size: 13px;">
                                     <i class="fas fa-user"></i>
-                                    <?php echo $_SESSION['name']; ?>
+                                    <?php echo $nombreUsuario; ?>
                                     <i class="fa-solid fa-caret-down"></i>
                                 </span>
                                 </a>
@@ -133,9 +140,9 @@ if (!isset($_SESSION['username'])) {
                     <li><p class="text_inaoe">INAOE</p></li>
                 </div>
                
-            <div class="seccionesEstatus">
-                <li><a>Liberación de área</a></li>
-            </div>
+                <div class="seccionesEstatus">
+                    <li><a>Liberación de área</a></li>
+                </div>
             </div>
         </div>
     </nav>
@@ -194,6 +201,7 @@ if (!isset($_SESSION['username'])) {
                             <th scope="col" style="text-align:center"># REGISTRO</th>
 							<th scope="col" style="text-align:center">MATRÍCULA</th>
                             <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>   
+                            <th scope="col" style="text-align:center">PROCESO</th>   
                         </tr>
                     </thead>
                     <tbody class="bg-white" id="table-students-free"></tbody>
@@ -212,7 +220,8 @@ if (!isset($_SESSION['username'])) {
                         <tr>
                             <th scope="col" style="text-align:center"># REGISTRO</th>
 							<th scope="col" style="text-align:center">MATRÍCULA</th>
-                            <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>                            
+                            <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>
+                            <th scope="col" style="text-align:center">PROCESO</th>   
                             <th scope="col" style="text-align:center">FECHA DE CANCELACIÓN</th>
                         </tr>
                     </thead>

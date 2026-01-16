@@ -7,6 +7,14 @@ if (!isset($_SESSION['username'])) {
     header("Location: ../../index.php");
     exit();
 }
+
+// Validacion de caracteres en el nombre de usuario
+$nombreUsuario = $_SESSION['name'];
+if (strlen($nombreUsuario) > 16) {
+    $nombreUsuario = substr($nombreUsuario, 0, 16) . "...";
+}
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -81,7 +89,7 @@ if (!isset($_SESSION['username'])) {
                 <li><a class="dropdown-item" id="navbarDropdown1" href="../usuarios/cuenta.php">
                                 <span class="ctrl-control h5 text-align-right" id="username" style="font-size: 13px;">
                                     <i class="fas fa-user"></i>
-                                    <?php echo $_SESSION['name']; ?>
+                                    <?php echo $nombreUsuario; ?>
                                     <i class="fa-solid fa-caret-down"></i>
                                 </span>
                                 </a>
@@ -158,12 +166,12 @@ if (!isset($_SESSION['username'])) {
                         <input type="text" class="form-control" id="nombreNuevaArea" name="nombreNuevaArea" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();" required>
                     </div>
                     <div class="col-sm-4">
-                        <label for="identificador">Identificador Área</label>
-                        <input type="text" class="form-control" id="identificador" name="identificador" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();"  required>
-                    </div>
-                    <div class="col-sm-4">
                         <label for="descripcionArea">Descripción</label>
                         <textarea class="form-control" id="descripcionArea" name="descripcionArea" style="text-transform:uppercase;"  onkeyup="javascript:this.value=this.value.toUpperCase();"  rows="1" required></textarea>
+                    </div>
+                    <div class="col-sm-4">
+                        <label for="identificador">Identificador Área</label>
+                        <input type="text" class="form-control" id="identificador" name="identificador" style="text-transform:uppercase;" onkeyup="javascript:this.value=this.value.toUpperCase();"  required>
                     </div>
                 </div>
                 <br>

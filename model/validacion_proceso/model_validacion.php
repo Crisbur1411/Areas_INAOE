@@ -64,7 +64,7 @@ public function listStudentInProgress($email)
 
 
 
-    public function showRegisterAreas($id_student, $fk_process_catalog)
+public function showRegisterAreas($id_student, $fk_process_catalog)
 {
     $con = new DBconnection();
     $con->openDB();
@@ -76,13 +76,18 @@ public function listStudentInProgress($email)
             CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
             COALESCE(a.name, '-') AS namearea,
             COALESCE(to_char(tsa.date, 'YYYY-MM-DD HH24:MI:SS'), '-') AS formatted_date,
-            COALESCE(tsa.description, 'Sin autorizar') AS description,
-            COALESCE(s.status, 0) AS status
+            COALESCE(tsa.description, 'Sin Autorizar') AS description,
+            COALESCE(s.status, 0) AS status,
+            COALESCE(pc.description, '-') AS process_name,
+            ps.execution_flow,
+            COALESCE(u.name || ' ' || u.surname || ' ' || u.second_surname, '-') AS liberado_por
         FROM (
-            -- 🔑 Subconsulta: áreas que pertenecen a un catálogo específico
+            -- Lista completa de áreas que pueden liberar para este proceso
             SELECT DISTINCT 
-                a.id_area, 
-                a.name
+                a.id_area,
+                a.name,
+                ua.id_user_area,
+                ps.execution_flow
             FROM process_stages ps
             INNER JOIN process_catalog pc 
                 ON pc.id_process_catalog = ps.fk_process_catalog
@@ -93,37 +98,51 @@ public function listStudentInProgress($email)
             INNER JOIN areas a 
                 ON a.id_area = ua.fk_area
             WHERE ps.status = 1
-              AND pc.id_process_catalog = $fk_process_catalog
-              AND a.status = 1
-        ) a
+            AND ps.fk_process_catalog = $fk_process_catalog
+            AND a.status = 1
+        ) ps
         LEFT JOIN trace_student_areas tsa 
-            ON tsa.fk_area = a.id_area 
-           AND tsa.fk_student = $id_student
+            ON tsa.fk_student = $id_student
+            AND tsa.fk_area IN (
+                SELECT ua.id_user_area 
+                FROM user_area ua
+                WHERE ua.fk_area = ps.id_area
+            )
         LEFT JOIN students s 
-            ON s.id_student = tsa.fk_student
-        ORDER BY a.id_area, tsa.date
+            ON s.id_student = $id_student
+        LEFT JOIN process_catalog pc
+            ON pc.id_process_catalog = $fk_process_catalog
+        LEFT JOIN areas a
+            ON a.id_area = ps.id_area
+        LEFT JOIN user_area ua
+            ON ua.id_user_area = tsa.fk_area
+        LEFT JOIN users u
+            ON u.id_user = ua.fk_user
+        ORDER BY ps.execution_flow ASC;
     ";
 
     $dataR = $con->query($sql);
 
     $data = array();
-
     while ($row = pg_fetch_array($dataR)) {
-        $dat = array(
+        $data[] = array(
             "id_trace_student_area" => $row["id_trace_student_area"],
             "id_student"            => $row["id_student"],
             "full_name"             => $row["full_name"],
             "namearea"              => $row["namearea"],
             "formatted_date"        => $row["formatted_date"],
             "description"           => $row["description"],
-            "status"                => $row["status"]
+            "status"                => $row["status"],
+            "process_name"          => $row["process_name"],
+            "execution_flow"        => $row["execution_flow"],
+            "liberado_por"          => $row["liberado_por"]
         );
-        $data[] = $dat;
     }
-    $con->closeDB();
 
+    $con->closeDB();
     return $data;
 }
+
 
 
 

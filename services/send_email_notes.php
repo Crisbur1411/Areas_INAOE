@@ -28,6 +28,7 @@ $student = $studentData[0];
 $nombreEstudiante = $student['full_name'];
 $correoEstudiante = $student['email'];
 
+// Obtener nota del estudiante
 $studentNotes = $emailModel->getNotes($id_student);
 if (empty($studentNotes)) {
     echo json_encode(['status' => 'error', 'message' => 'No se encontraron notas para el estudiante']);
@@ -38,8 +39,24 @@ $notesStudent = $studentNotes[0];
 $nombreArea = $notesStudent['area_name'];
 $descriptionNote = $notesStudent['note_description'];
 
+// ------------------------------------------------------
+// EXTRAER RESPONSABLE Y MOTIVO DESDE $descriptionNote
+// ------------------------------------------------------
+$nombreResponsable = '';
+$motivo = '';
 
+// Ejemplo esperado: "Nota por el usuario: ADRIANA TECUAPETLA MOYOTL por el motivo: Nos debe una chela!"
+if (preg_match('/Nota por el usuario:\s*(.*?)\s*por el motivo:\s*(.*)/i', $descriptionNote, $matches)) {
+    $nombreResponsable = trim($matches[1]);
+    $motivo = trim($matches[2]);
+} else {
+    // Si el formato no coincide, se asigna toda la nota como motivo
+    $motivo = trim($descriptionNote);
+}
+
+// ------------------------------------------------------
 // Cargar PHPMailer
+// ------------------------------------------------------
 require 'PHPMailer/src/Exception.php';
 require 'PHPMailer/src/PHPMailer.php';
 require 'PHPMailer/src/SMTP.php';
@@ -68,7 +85,7 @@ function enviarCorreoNotes($correoDestino, $asunto, $mensaje, $usuario, $contras
 }
 
 // Parámetros de conexión al servidor de correo
-$asunto = "Aviso de Nota en liberación de No Adeudo";
+$asunto = "Aviso de registro en el Sistema de No Adeudo Académico";
 $usuario = "m.valencia";
 $contrasena = "25v4l3ncia.Mig";
 $servidorCorreo = "ccc.inaoep.mx";
@@ -76,13 +93,18 @@ $servidorCorreo = "ccc.inaoep.mx";
 // Fecha
 $currentTime = date("Y-m-d H:i:s");
 
-// Armar mensaje al estudiante
-$mensajeCorreo = "Estimado/a $nombreEstudiante,\n\n";
-$mensajeCorreo .= "Te informamos que el área de $nombreArea ha registrado una nota en el sistema de No Adeudo.\n\n";
-$mensajeCorreo .= "$descriptionNote\n\n";
+// Mensaje de correo con formato institucional
+$mensajeCorreo  = "Estimado(a) Estudiante,\n\n";
+$mensajeCorreo .= "Te informamos que el área de $nombreArea ha registrado una nota en el Sistema de No Adeudo Académico.\n\n";
+$mensajeCorreo .= "Detalle del registro:\n";
+$mensajeCorreo .= "Área: $nombreArea\n\n";
+$mensajeCorreo .= "Nota registrada por: $nombreResponsable\n\n";
+$mensajeCorreo .= "Motivo: $motivo\n\n";
 $mensajeCorreo .= "Fecha de aviso: $currentTime\n\n";
-$mensajeCorreo .= "Para cualquier aclaración o duda, acude con tu responsable de área o a Dirección de Formación Académica.\n\n";
-$mensajeCorreo .= "Atentamente,\nSistema de No Adeudo Institucional\nDirección de Formación Académica – INAOE";
+$mensajeCorreo .= "Para cualquier aclaración o duda, puedes acudir con la persona responsable de tu área o con la Dirección de Formación Académica.\n\n";
+$mensajeCorreo .= "Atentamente,\n";
+$mensajeCorreo .= "Sistema de No Adeudo Académico\n";
+$mensajeCorreo .= "Dirección de Formación Académica – INAOE";
 
 // Enviar correo al estudiante
 if (enviarCorreoNotes($correoEstudiante, $asunto, $mensajeCorreo, $usuario, $contrasena, $servidorCorreo)) {

@@ -7,6 +7,14 @@ if (!isset($_SESSION['username'])) {
     header("Location: ../../index.php");
     exit();
 }
+
+// Validacion de caracteres en el nombre de usuario
+$nombreUsuario = $_SESSION['name'];
+if (strlen($nombreUsuario) > 16) {
+    $nombreUsuario = substr($nombreUsuario, 0, 16) . "...";
+}
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -102,7 +110,7 @@ if (!isset($_SESSION['username'])) {
                         <li><a class="dropdown-item" id="navbarDropdown1" href="../usuarios/cuenta.php">
                                 <span class="ctrl-control h5 text-align-right" id="username" style="font-size: 13px;">
                                     <i class="fas fa-user"></i>
-                                    <?php echo $_SESSION['name']; ?>
+                                    <?php echo $nombreUsuario; ?>
                                     <i class="fa-solid fa-caret-down"></i>
                                 </span>
                                 </a>
@@ -202,16 +210,11 @@ if (!isset($_SESSION['username'])) {
 				</div>	
 				<div class="form-group">
 					<div class="row">						
-						<div class="col-sm-4">
-							<label for="program-type"><span class="text-danger">* </span>Tipo de programa</label>
-							<select name="program" id="program" class="form-control" onchange="getCourses(); checkInstitution();">
-								<option value='null' selected disabled>Seleccione una opción</option>
-								<option value="1">MAESTRÍA</option>
-								<option value="2">DOCTORADO</option>
-								<option value="3">EXTERNO LICENCIATURA</option>
-								<option value="4">EXTERNO BACHILLERATO</option>
+                        <div class="col-sm-4">
+							<label for="type-program"><span class="text-danger">* </span>Tipo de programa</label>
+							<select name="type-program" id="type-program" class="form-control" >
+								<option value="null" selected disabled>Seleccione un tipo de programa</option>
 							</select>
-
 						</div>	
 						<div class="col-sm-8">
 							<label for="courses"><span class="text-danger">* </span>Área de Adscripción</label>
@@ -266,10 +269,6 @@ if (!isset($_SESSION['username'])) {
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/js/all.min.js" integrity="sha512-6PM0qYu5KExuNcKt5bURAoT6KCThUmHRewN3zUFNaoI6Di7XJPTMoT6K0nsagZKk2OB4L7E3q1uQKHNHd4stIQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 	<script src="../../controller/signin/script_login.js"></script>	
 	<script src="../../controller/alumnos/script_alumnos.js"></script>
-	<script>
-		getStudent();
-		coursesAds();
-		
-	</script>
+
 </body>
 </html>

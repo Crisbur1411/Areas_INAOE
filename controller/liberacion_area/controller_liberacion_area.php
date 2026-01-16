@@ -77,6 +77,14 @@
     }
 }
 
+
+		public function getAreaNameBySession(){
+    		$this->liberacionArea= new liberacionArea();
+
+	      	$data = $this->liberacionArea->getAreaNameBySession();
+	      	echo json_encode($data);
+		}
+
     }
 
     $obj = new liberacionAreaController();
@@ -100,6 +108,8 @@
 			$obj->getDetailsStudent();
 		} if ($_POST["action"]==9){
 			$obj->studentNoteEdit();
+		} if ($_POST["action"]==10){
+			$obj->getAreaNameBySession();
 		}
 	}
  ?>

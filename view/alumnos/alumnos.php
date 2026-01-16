@@ -9,6 +9,12 @@ if (!isset($_SESSION['username'])) {
     exit();
 }
 
+// Validacion de caracteres en el nombre de usuario
+$nombreUsuario = $_SESSION['name'];
+if (strlen($nombreUsuario) > 16) {
+    $nombreUsuario = substr($nombreUsuario, 0, 16) . "...";
+}
+
 ?>
 <!DOCTYPE html> 
 <html lang="en">
@@ -84,7 +90,7 @@ if (!isset($_SESSION['username'])) {
                         <li><a class="dropdown-item" id="navbarDropdown1" href="../usuarios/cuenta.php">
                                 <span class="ctrl-control h5 text-align-right" id="username" style="font-size: 13px;">
                                     <i class="fas fa-user"></i>
-                                    <?php echo $_SESSION['name']; ?>
+                                    <?php echo $nombreUsuario; ?>
                                     <i class="fa-solid fa-caret-down"></i>
                                 </span>
                                 </a>
@@ -189,7 +195,7 @@ if (!isset($_SESSION['username'])) {
                             <th scope="col" style="text-align:center"># REGISTRO</th>
 							<th scope="col" style="text-align:center">MATRÍCULA</th>
                             <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>
-                            <th scope="col" style="text-align:center">CURSO</th>
+                            <th scope="col" style="text-align:center">PROCESO</th>
                             <th scope="col" style="text-align:center">FECHA DE REGISTRO</th>
                             <th scope="col" style="text-align:center">ACTUALIZAR ALUMNO</th>
                             <th scope="col" style="text-align:center">ELIMINAR ALUMNO</th>
@@ -235,7 +241,8 @@ if (!isset($_SESSION['username'])) {
                         <tr>
                             <th scope="col" style="text-align:center"># REGISTRO</th>
 							<th scope="col" style="text-align:center">MATRÍCULA</th>
-                            <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>                            
+                            <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th> 
+                            <th scope="col" style="text-align:center">PROCESO</th>                            
                             <th scope="col" style="text-align:center">FECHA DE LIBERACIÓN</th>
                             <th scope="col" style="text-align:center">FOLIO DE LIBERACIÓN</th>
                             <th scope="col" style="text-align:center">IMPRIMIR CONSTANCIA</th>
@@ -257,7 +264,8 @@ if (!isset($_SESSION['username'])) {
                         <tr>
                             <th scope="col" style="text-align:center"># REGISTRO</th>
 							<th scope="col" style="text-align:center">MATRÍCULA</th>
-                            <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>                            
+                            <th scope="col" style="text-align:center">NOMBRE DEL ALUMNO</th>   
+                            <th scope="col" style="text-align:center">PROCESO</th>                                                     
                             <th scope="col" style="text-align:center">FECHA DE CANCELACIÓN</th>
                         </tr>
                     </thead>
@@ -276,7 +284,54 @@ if (!isset($_SESSION['username'])) {
 </div>
 
 
+<!-- Modal de detalles de estudiantes -->
+<div class="modal fade" id="modalStudentDetails" tabindex="-1" role="dialog" aria-labelledby="modalStudentDetailsTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="background: #691C32; color: white;">
+        <h5 class="modal-title">Detalles del Alumno</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar" style="color: white;">
+            <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
 
+      <div class="modal-body">
+        <table class="table table-bordered">
+          <tbody>
+            <tr>
+              <th class="text-center" >Nombre Completo</th>
+              <td id="student-fullname" class="text-center"></td>
+            </tr>
+            <tr>
+              <th class="text-center">Número de Control</th>
+              <td id="student-control-number" class="text-center"></td>
+            </tr>
+            <tr>
+              <th class="text-center">Correo</th>
+              <td id="student-email" class="text-center"></td>
+            </tr>
+            <tr>
+              <th class="text-center">Institución</th>
+              <td id="student-institucion" class="text-center"></td>
+            </tr>
+            <tr>
+              <th class="text-center">Fecha de Conclusión</th>
+              <td id="student-fecha-conclusion" class="text-center"></td>
+            </tr>
+            <tr>
+              <th class="text-center">Programa Académico</th>
+              <td id="student-programa-academico" class="text-center"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <br><br>
 
@@ -344,6 +399,7 @@ if (!isset($_SESSION['username'])) {
             <table class="table table-striped table-bordered">
                 <thead style="background: #691C32; color: white;">
                     <tr>
+                        <th scope="col" style="text-align:center">#</th>
                         <th scope="col" style="text-align:center">ÁREA</th>
                         <th scope="col" style="text-align:center">FECHA DE LIBERACIÓN</th>
                         <th scope="col" style="text-align:center">DESCRIPCIÓN</th>
@@ -362,52 +418,5 @@ if (!isset($_SESSION['username'])) {
 </div>
 
 
-<!-- Modal de detalles de estudiantes -->
-<div class="modal fade" id="modalStudentDetails" tabindex="-1" role="dialog" aria-labelledby="modalStudentDetailsTitle" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="dialog">
-    <div class="modal-content">
-      <div class="modal-header" style="background: #691C32; color: white;">
-        <h5 class="modal-title">Detalles del Alumno</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar" style="color: white;">
-            <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
 
-      <div class="modal-body">
-        <table class="table table-bordered">
-          <tbody>
-            <tr>
-              <th class="text-center" >Nombre Completo</th>
-              <td id="student-fullname" class="text-center"></td>
-            </tr>
-            <tr>
-              <th class="text-center">Número de Control</th>
-              <td id="student-control-number" class="text-center"></td>
-            </tr>
-            <tr>
-              <th class="text-center">Correo</th>
-              <td id="student-email" class="text-center"></td>
-            </tr>
-            <tr>
-              <th class="text-center">Institución</th>
-              <td id="student-institucion" class="text-center"></td>
-            </tr>
-            <tr>
-              <th class="text-center">Fecha de Conclusión</th>
-              <td id="student-fecha-conclusion" class="text-center"></td>
-            </tr>
-            <tr>
-              <th class="text-center">Programa Académico</th>
-              <td id="student-programa-academico" class="text-center"></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
-      </div>
-    </div>
-  </div>
-</div>
 

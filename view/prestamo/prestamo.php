@@ -6,6 +6,13 @@ if (!isset($_SESSION['email'])) {
     header("Location: ../../view/login_prestamo/login_prestamo.php");
     exit();
 }
+
+// Validacion de caracteres en el nombre de usuario
+$nombreUsuario = $_SESSION['name'];
+if (strlen($nombreUsuario) > 16) {
+    $nombreUsuario = substr($nombreUsuario, 0, 16) . "...";
+}
+
 ?>
 <!DOCTYPE html> 
 <html lang="en">
@@ -72,7 +79,7 @@ if (!isset($_SESSION['email'])) {
                             <li><a class="dropdown-item" id="navbarDropdown1" href="#">
                                 <span class="ctrl-control h5 text-align-right" id="username" style="font-size: 13px;">
                                     <i class="fas fa-user"></i>
-                                    <?php echo $_SESSION['name']; ?>
+                                    <?php echo $nombreUsuario; ?>
                                     <i class="fa-solid fa-caret-down"></i>
                                 </span>
                                 </a>

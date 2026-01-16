@@ -10,6 +10,14 @@ if (!isset($_SESSION['username'])) {
     header("Location: ../../index.php");
     exit();
 }
+
+// Validacion de caracteres en el nombre de usuario
+$nombreUsuario = $_SESSION['name'];
+if (strlen($nombreUsuario) > 16) {
+    $nombreUsuario = substr($nombreUsuario, 0, 16) . "...";
+}
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -28,7 +36,17 @@ if (!isset($_SESSION['username'])) {
         integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
-
+<style>
+    .big-text-select label {
+        font-size: 18px;
+        font-weight: bold;
+    }
+    .big-text-select select {
+        font-size: 18px;
+        height: 40px;
+        width: 100%;
+    }
+</style>
 <body>
 
     <nav class="navbar navbar-expand-lg navbar-light bg-nav">
@@ -90,7 +108,7 @@ if (!isset($_SESSION['username'])) {
                         <li><a class="dropdown-item" id="navbarDropdown1" href="../usuarios/cuenta.php">
                                 <span class="ctrl-control h5 text-align-right" id="username" style="font-size: 13px;">
                                     <i class="fas fa-user"></i>
-                                    <?php echo $_SESSION['name']; ?>
+                                    <?php echo $nombreUsuario; ?>
                                     <i class="fa-solid fa-caret-down"></i>
                                 </span>
                             </a>
@@ -158,12 +176,12 @@ if (!isset($_SESSION['username'])) {
     </nav>
 
     <br><br>
+<!-- Contenedor con márgenes laterales -->
+<div style="margin-left: 50px; margin-right: 50px;">
     <div id="info" class="d-none" style="text-align: center;">
-        <span style="color: black; font-weight: bold; font-size: 16px; align:left;">GESTIÓN DE PROCESOS</span><br>
-
         <!-- Filtro de Procesos -->
-        <div class="form-group mt-3 mb-3 text-left" style="width: 300px;">
-            <label for="process_catalog_filter" style="font-weight: bold;">Filtrar por Proceso:</label>
+       <div class="form-group mt-3 mb-3 text-left big-text-select" style="width: 100%;">
+            <label for="process_catalog_filter">Filtrar Por Proceso:</label>
             <select id="process_catalog_filter" class="form-control"></select>
         </div>
 
@@ -171,7 +189,7 @@ if (!isset($_SESSION['username'])) {
         <div class="card mt-3">
             <div class="card-header text-white" style="background-color: #691C32;">
                 <h5>Configuración y Parametrización de Procesos</h5>
-                <h5 id="processSelectedTitle"></h5>
+                <h6 id="processSelectedTitle"></h6>
             </div>
             <div class="card-body" id="steps-container">
                 <!--Los Pasos generados dinámicamente se colocarán aquí -->
@@ -181,34 +199,28 @@ if (!isset($_SESSION['username'])) {
             </div>
         </div>
 
-<div class="table-responsive">
-  <table class="table table-bordered table-hover align-middle">
-    <thead style="background-color: #691C32; color: #fff;">
-      <tr>
-        <th scope="col"># Paso</th>
-        <th scope="col">Descripción</th>
-        <th scope="col">Responsable</th>
-        <th scope="col"># Ejecución</th>
-        <th scope="col" class="text-center">Acciones</th>
-      </tr>
-    </thead>
-    <tbody id="steps-body">
-      <!-- Aquí JS agregará las filas -->
-    </tbody>
-  </table>
-</div>
-
-
-
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover align-middle">
+                <thead style="background-color: #691C32; color: #fff;">
+                    <tr>
+                        <th scope="col"># Paso</th>
+                        <th scope="col">Descripción</th>
+                        <th scope="col">Responsable</th>
+                        <th scope="col"># Ejecución</th>
+                        <th scope="col" class="text-center">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="steps-body">
+                    <!-- Aquí JS agregará las filas -->
+                </tbody>
+            </table>
+        </div>
     </div>
 
-
-
-    <div class="modal fade" id="processDetailsModal" tabindex="-1" role="dialog" aria-labelledby="processDetailsTitle"
-        aria-hidden="true">
+    <!-- Modal Detalles del Proceso -->
+    <div class="modal fade" id="processDetailsModal" tabindex="-1" role="dialog" aria-labelledby="processDetailsTitle" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
-
                 <!-- Header -->
                 <div class="modal-header" style="background: #691C32; color: white;">
                     <h5 class="modal-title w-100 text-center">Detalles del Proceso</h5>
@@ -216,7 +228,6 @@ if (!isset($_SESSION['username'])) {
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-
                 <!-- Body -->
                 <div class="modal-body">
                     <table class="table table-bordered">
@@ -256,11 +267,12 @@ if (!isset($_SESSION['username'])) {
                     <div class="modal-footer">
                         <button type="button" class="btn btn-primary" data-dismiss="modal">Aceptar</button>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
+</div> <!-- Fin contenedor con márgenes -->
+
 
 
 

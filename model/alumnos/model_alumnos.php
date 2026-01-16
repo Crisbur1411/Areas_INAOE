@@ -18,25 +18,28 @@ class alumnos
         $con = new DBconnection();
         $con->openDB();
 
-            $dataTitle = $con->query("SELECT students.id_student, 
-                                 CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
-                                 students.control_number, 
-                                 DATE(students.date_register) AS date, 
-                                 academic_programs.name AS namecourse,
-                                 students.fk_process_catalog, 
-                                 students.status
-                          FROM
-                              students
-                          INNER JOIN academic_programs 
-                              ON students.fk_academic_programs = academic_programs.id_academic_programs   
-                          WHERE
-                              students.status = 1
-                              AND NOT EXISTS (
-                                  SELECT 1
-                                  FROM trace_student_areas
-                                  WHERE trace_student_areas.fk_student = students.id_student
-                              )
-                          ORDER BY students.id_student;");
+            $dataTitle = $con->query("SELECT 
+                                                students.id_student, 
+                                                CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
+                                                students.control_number, 
+                                                DATE(students.date_register) AS date, 
+                                                academic_programs.name AS namecourse,
+                                                students.fk_process_catalog, 
+                                                pc.description AS process_description,
+                                                students.status
+                                            FROM students
+                                            INNER JOIN academic_programs 
+                                                ON students.fk_academic_programs = academic_programs.id_academic_programs
+                                            INNER JOIN process_catalog pc
+                                                ON students.fk_process_catalog = pc.id_process_catalog
+                                            WHERE students.status = 1
+                                            AND NOT EXISTS (
+                                                SELECT 1
+                                                FROM trace_student_areas
+                                                WHERE trace_student_areas.fk_student = students.id_student
+                                            )
+                                            ORDER BY students.id_student;
+                                            ");
 
 
         $data = array();
@@ -49,7 +52,8 @@ class alumnos
                 "date" => $row["date"],
                 "namecourse" => $row["namecourse"],
                 "fk_process_catalog" => $row["fk_process_catalog"],
-                "status" => $row["status"]
+                "status" => $row["status"],
+                "process_description" => $row["process_description"]
             );
             $data[] = $dat;
         }
@@ -62,7 +66,7 @@ class alumnos
         $con=new DBconnection();
         $con->openDB();
 
-        $ar = $con->query("SELECT id_academic_programs, name FROM academic_programs WHERE status = 1 AND type = ".$program.";");
+        $ar = $con->query("SELECT id_academic_programs, name FROM academic_programs WHERE status = 1 AND fk_type_program = ".$program.";");
 
         $data = array();
 
@@ -125,14 +129,13 @@ class alumnos
     $con->openDB();
     $descrip = 'Tramite iniciado por: ' . $user;
 
-    // Fecha actual desde PHP para el hash
+    // Fecha actual desde PHP
     $date = date('Y-m-d H:i:s');
 
-    // Hash md5(id_estudiante|user|fecha)
-    $hash_release = md5($id_student . '|' . $user . '|' . $date);
 
-    $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, status, hash_release) 
-                                VALUES (" . $id_student . ", '" . $descrip . "', '" . $date . "', 2, '" . $hash_release . "') 
+
+    $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, status) 
+                                VALUES (" . $id_student . ", '" . $descrip . "', '" . $date . "', 2) 
                                 RETURNING fk_student ");
 
     $validateUpdateTurn = pg_fetch_row($updateTurn);
@@ -218,53 +221,68 @@ class alumnos
         return $data;
     }
 
-    public function showRegisterAreas($id_student, $fk_process_catalog)
+public function showRegisterAreas($id_student, $fk_process_catalog)
 {
     $con = new DBconnection();
     $con->openDB();
 
     $sql = "
         SELECT 
-    tsa.id_trace_student_area,
-    s.id_student,
-    CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
-    COALESCE(a.name, '-') AS namearea,
-    COALESCE(to_char(tsa.date, 'YYYY-MM-DD HH24:MI:SS'), '-') AS formatted_date,
-    COALESCE(tsa.description, 'Sin autorizar') AS description,
-    COALESCE(s.status, 0) AS status,
-    a.process_name
-FROM (
-    SELECT DISTINCT 
-        a.id_area, 
-        a.name,
-        pc.description AS process_name
-    FROM process_stages ps
-    INNER JOIN process_catalog pc 
-        ON pc.id_process_catalog = ps.fk_process_catalog
-    INNER JOIN users u 
-        ON u.id_user = ps.fk_process_manager
-    INNER JOIN user_area ua 
-        ON ua.fk_user = u.id_user
-    INNER JOIN areas a 
-        ON a.id_area = ua.fk_area
-    WHERE ps.status = 1
-      AND pc.id_process_catalog = $fk_process_catalog
-      AND a.status = 1
-) a
-LEFT JOIN trace_student_areas tsa 
-    ON tsa.fk_area = a.id_area 
-   AND tsa.fk_student = $id_student
-LEFT JOIN students s 
-    ON s.id_student = tsa.fk_student
-ORDER BY a.id_area, tsa.date";
-
+            tsa.id_trace_student_area,
+            s.id_student,
+            CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
+            COALESCE(a.name, '-') AS namearea,
+            COALESCE(to_char(tsa.date, 'YYYY-MM-DD HH24:MI:SS'), '-') AS formatted_date,
+            COALESCE(tsa.description, 'Sin Autorizar') AS description,
+            COALESCE(s.status, 0) AS status,
+            COALESCE(pc.description, '-') AS process_name,
+            ps.execution_flow,
+            COALESCE(u.name || ' ' || u.surname || ' ' || u.second_surname, '-') AS liberado_por
+        FROM (
+            -- Lista completa de áreas que pueden liberar para este proceso
+            SELECT DISTINCT 
+                a.id_area,
+                a.name,
+                ua.id_user_area,
+                ps.execution_flow
+            FROM process_stages ps
+            INNER JOIN process_catalog pc 
+                ON pc.id_process_catalog = ps.fk_process_catalog
+            INNER JOIN users u 
+                ON u.id_user = ps.fk_process_manager
+            INNER JOIN user_area ua 
+                ON ua.fk_user = u.id_user
+            INNER JOIN areas a 
+                ON a.id_area = ua.fk_area
+            WHERE ps.status = 1
+            AND ps.fk_process_catalog = $fk_process_catalog
+            AND a.status = 1
+        ) ps
+        LEFT JOIN trace_student_areas tsa 
+            ON tsa.fk_student = $id_student
+            AND tsa.fk_area IN (
+                SELECT ua.id_user_area 
+                FROM user_area ua
+                WHERE ua.fk_area = ps.id_area
+            )
+        LEFT JOIN students s 
+            ON s.id_student = $id_student
+        LEFT JOIN process_catalog pc
+            ON pc.id_process_catalog = $fk_process_catalog
+        LEFT JOIN areas a
+            ON a.id_area = ps.id_area
+        LEFT JOIN user_area ua
+            ON ua.id_user_area = tsa.fk_area
+        LEFT JOIN users u
+            ON u.id_user = ua.fk_user
+        ORDER BY ps.execution_flow ASC;
+    ";
 
     $dataR = $con->query($sql);
 
     $data = array();
-
     while ($row = pg_fetch_array($dataR)) {
-        $dat = array(
+        $data[] = array(
             "id_trace_student_area" => $row["id_trace_student_area"],
             "id_student"            => $row["id_student"],
             "full_name"             => $row["full_name"],
@@ -272,14 +290,17 @@ ORDER BY a.id_area, tsa.date";
             "formatted_date"        => $row["formatted_date"],
             "description"           => $row["description"],
             "status"                => $row["status"],
-            "process_name"          => $row["process_name"]
+            "process_name"          => $row["process_name"],
+            "execution_flow"        => $row["execution_flow"],
+            "liberado_por"          => $row["liberado_por"]
         );
-        $data[] = $dat;
     }
-    $con->closeDB();
 
+    $con->closeDB();
     return $data;
 }
+
+
 
 
 public function freeStudent($id_student, $user)
@@ -288,14 +309,12 @@ public function freeStudent($id_student, $user)
     $con->openDB();
     $descrip = 'Trámite finalizado por ' . $user;
 
-    // Fecha actual desde PHP para el hash
+    // Fecha actual desde PHP
     $date = date('Y-m-d H:i:s');
 
-    // Hash md5(id_student|user|fecha)
-    $hash_release = md5($id_student . '|' . $user . '|' . $date);
 
-    $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, status, hash_release) 
-                                VALUES (" . $id_student . ", '" . $descrip . "', '" . $date . "', 3, '" . $hash_release . "') 
+    $updateTurn = $con->query("INSERT INTO trace_student_areas (fk_student, description, date, status) 
+                                VALUES (" . $id_student . ", '" . $descrip . "', '" . $date . "', 3) 
                                 RETURNING id_trace_student_area ");
 
     $validateUpdateTurn = pg_fetch_row($updateTurn);
@@ -333,28 +352,33 @@ public function freeStudent($id_student, $user)
         $con = new DBconnection();
         $con->openDB();
 
-        $dataR = $con->query("SELECT students.id_student, 
-                                    CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
-                                    students.control_number, 
-                                    COUNT(trace_student_areas.fk_area) AS areas_count,  
-                                    DATE(trace_student_areas.date) AS date,
-									 students.date_register,
-									 students.folio,
-                                    students.status
-                                    FROM 
-                                        students
-                                    LEFT JOIN 
-                                        trace_student_areas ON trace_student_areas.fk_student = students.id_student
-                                    WHERE 
-                                        students.status = 3 AND trace_student_areas.status= 3
+        $dataR = $con->query("SELECT 
+                                        students.id_student, 
+                                        CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
+                                        students.control_number, 
+                                        COUNT(trace_student_areas.fk_area) AS areas_count,  
+                                        DATE(trace_student_areas.date) AS date,
+                                        students.date_register,
+                                        students.folio,
+                                        students.status,
+                                        pc.description AS process_description
+                                    FROM students
+                                    LEFT JOIN trace_student_areas 
+                                        ON trace_student_areas.fk_student = students.id_student
+                                    INNER JOIN process_catalog pc
+                                        ON students.fk_process_catalog = pc.id_process_catalog
+                                    WHERE students.status = 3 
+                                    AND trace_student_areas.status = 3
                                     GROUP BY 
                                         students.id_student, 
                                         CONCAT(students.name, ' ', students.surname, ' ', students.second_surname),
                                         students.control_number,
                                         DATE(trace_student_areas.date),
-                                        students.status
-                                    ORDER BY 
-                                        students.id_student;
+                                        students.date_register,
+                                        students.folio,
+                                        students.status,
+                                        pc.description
+                                    ORDER BY students.id_student;
                                     ");
 
         $data = array();
@@ -367,7 +391,8 @@ public function freeStudent($id_student, $user)
                 "date" => $row["date"],
                 "status" => $row["status"],
                 "folio" => $row["folio"],
-                "date_register" => $row["date_register"]
+                "date_register" => $row["date_register"],
+                "process_description" => $row["process_description"]
             );
             $data[] = $dat;
         }
@@ -427,26 +452,29 @@ public function freeStudent($id_student, $user)
         $con = new DBconnection();
         $con->openDB();
 
-        $dataR = $con->query("SELECT students.id_student, 
-                                    CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
-                                    students.control_number, 
-                                    COUNT(trace_student_areas.fk_area) AS areas_count,  
-                                    DATE(trace_student_areas.date) AS date,
-                                    students.status
-                                    FROM 
-                                        students
-                                    LEFT JOIN 
-                                        trace_student_areas ON trace_student_areas.fk_student = students.id_student
-                                    WHERE 
-                                        students.status = 4 AND trace_student_areas.status= 4
+        $dataR = $con->query("SELECT 
+                                        students.id_student, 
+                                        CONCAT(students.name, ' ', students.surname, ' ', students.second_surname) AS full_name,
+                                        students.control_number, 
+                                        COUNT(trace_student_areas.fk_area) AS areas_count,  
+                                        DATE(trace_student_areas.date) AS date,
+                                        students.status,
+                                        pc.description AS process_description
+                                    FROM students
+                                    LEFT JOIN trace_student_areas 
+                                        ON trace_student_areas.fk_student = students.id_student
+                                    INNER JOIN process_catalog pc
+                                        ON students.fk_process_catalog = pc.id_process_catalog
+                                    WHERE students.status = 4 
+                                    AND trace_student_areas.status = 4
                                     GROUP BY 
                                         students.id_student, 
                                         CONCAT(students.name, ' ', students.surname, ' ', students.second_surname),
                                         students.control_number,
                                         DATE(trace_student_areas.date),
-                                        students.status
-                                    ORDER BY 
-                                        students.id_student;
+                                        students.status,
+                                        pc.description
+                                    ORDER BY students.id_student;
                                     ");
 
         $data = array();
@@ -457,7 +485,8 @@ public function freeStudent($id_student, $user)
                 "full_name" => $row["full_name"],
                 "control_number" => $row["control_number"],
                 "date" => $row["date"],
-                "status" => $row["status"]
+                "status" => $row["status"],
+                "process_description" => $row["process_description"]
             );
             $data[] = $dat;
         }
@@ -469,38 +498,34 @@ public function freeStudent($id_student, $user)
 
     //desarrollaod por bryam el 09/04/2024 trae todo los datos que lleva el pdf
 
-    public function generatePDF($id_student, $full_name, $control_number, $date_register)
+public function generatePDF($id_student, $full_name, $control_number, $date_register)
 {
     $con = new DBconnection();
     $con->openDB();
 
-    // Obtener el valor del curso del estudiante
-    $academicProgramQuery = $con->query("SELECT c.type FROM students s JOIN academic_programs c ON s.fk_academic_programs = c.id_academic_programs WHERE s.id_student = '$id_student'");
-    $academicProgramRow = pg_fetch_array($academicProgramQuery);
-
-    if (!$academicProgramRow) {
-        $con->closeDB();
-        return array('error' => 'No se encontró el programa académico del estudiante.');
-    }
-
-    $type = $academicProgramRow['type'];
-
-    $pdfinfo = $con->query("SELECT CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
-													 p.name AS academic_program,
-                                                    a.name AS area_name,
-                                                    a.key AS key, 
-                                                    ta.description AS libera,
-													 ta.hash_release AS firma,	
-                                                    DATE(ta.date) AS date
-                                            FROM students s
-                                            JOIN trace_student_areas ta ON s.id_student = ta.fk_student
-                                            JOIN areas a ON ta.fk_area = a.id_area
-											 JOIN academic_programs p ON s.fk_academic_programs = p.id_academic_programs
-                                            WHERE s.id_student = '$id_student'
-                                            ORDER BY ta.id_trace_student_area ASC;");
+    $pdfinfo = $con->query("
+            SELECT 
+                CONCAT(s.name, ' ', s.surname, ' ', s.second_surname) AS full_name,
+                p.name AS academic_program,
+                tp.description AS type_program_name,
+                ar.name AS area_name,
+                ar.key AS key,
+                pc.name AS process_name,
+                ta.description AS libera,
+                ta.hash_release AS firma,
+                DATE(ta.date) AS date
+            FROM students s
+            JOIN trace_student_areas ta ON s.id_student = ta.fk_student
+            JOIN user_area ua ON ta.fk_area = ua.id_user_area
+            JOIN areas ar ON ua.fk_area = ar.id_area
+            JOIN academic_programs p ON s.fk_academic_programs = p.id_academic_programs
+            JOIN type_program tp ON p.fk_type_program = tp.id_type_program
+            JOIN process_catalog pc ON s.fk_process_catalog = pc.id_process_catalog
+            WHERE s.id_student = '$id_student'
+            ORDER BY ta.id_trace_student_area ASC;
+    ");
 
     $pdfData = array();
-
     while ($row = pg_fetch_array($pdfinfo)) {
         $dat = array(
             "full_name" => $row["full_name"],
@@ -509,36 +534,35 @@ public function freeStudent($id_student, $user)
             "libera" => $row["libera"],
             "firma" => $row["firma"],
             "date" => $row["date"],
-            "academic_program" => $row["academic_program"]
+            "academic_program" => $row["academic_program"],
+            "process_name" => $row["process_name"],
+            "type_program_name" => $row["type_program_name"]
         );
         $pdfData[] = $dat;
     }
 
     $con->closeDB();
 
-    // Validar si hay datos para generar PDF
     if (count($pdfData) === 0) {
         return array('error' => 'No se encontraron registros de áreas para este estudiante.');
     }
 
-    // Generar el folio, de este modo si el id del estudiane y el nombre es el mismo, el folio siempre será el mismo
+    // Generar folio
     $folioSeed = $id_student . '-' . $full_name . '-' . $control_number . '-' . $date_register;
-    $folioHash = strtoupper(substr(md5($folioSeed), 0, 16)); // puedes cambiar 8 por la longitud que gustes
+    $folioHash = strtoupper(substr(md5($folioSeed), 0, 16));
     $folio = 'DFA-' . $folioHash;
 
-    //Se inserta el folio al estudiante en la base de datos
+    // Guardar folio en DB
     $con = new DBconnection();
     $con->openDB();
     $con->query("UPDATE students SET folio = '$folio' WHERE id_student = '$id_student'");
     $con->closeDB();
 
-
+    // Configurar PDF
     $pdf = new TCPDF('P', PDF_UNIT, 'A4', true, 'UTF-8', false);
     $pdf->SetCreator('DFA');
     $pdf->SetAuthor('YO');
     $pdf->SetTitle('Student Certificate');
-    $pdf->SetSubject('Certificate for Student');
-    $pdf->SetKeywords('Certificate, Student, TCPDF');
     $pdf->SetMargins(10, 7, 10);
     $pdf->SetFooterMargin(10);
     $pdf->setPrintHeader(false);
@@ -546,82 +570,103 @@ public function freeStudent($id_student, $user)
     $pdf->AddPage();
     $pdf->Image('../../res/temp/logo_inaoe.jpeg', 10, 17, 30, 30, 'JPG', '', '', false, 300);
 
-
-
-    //Se genera el pdf y se inserta en la hoja
     $style = array(
-    'border' => 0,
-    'vpadding' => 'auto',
-    'hpadding' => 'auto',
-    'fgcolor' => array(0,0,0),
-    'bgcolor' => false, 
-    'module_width' => 1,
-    'module_height' => 1
-);
-
+        'border' => 0,
+        'vpadding' => 'auto',
+        'hpadding' => 'auto',
+        'fgcolor' => array(0,0,0),
+        'bgcolor' => false, 
+        'module_width' => 1,
+        'module_height' => 1
+    );
 
     $studentData = $pdfData[0];
 
-    $programNames = [
-    1 => 'Maestría',
-    2 => 'Doctorado',
-    3 => 'Externo de Licenciatura',
-    4 => 'Externo de Bachillerato'
-    ];
-
-    $programName = isset($programNames[$type]) ? strtoupper($programNames[$type]) : 'PROGRAMA DESCONOCIDO';
+    $programName = $studentData["type_program_name"];
     $area_program = $studentData["academic_program"];
+    $process_name = $studentData["process_name"];
 
+    // Incluir la frase antes del texto del proceso
+    $texto_completo = 'CONSTANCIA DE NO ADEUDO: ' . $process_name;
 
+    // Dividir en palabras
+    $words = explode(' ', $texto_completo);
+
+    // Agrupar cada 5 palabras y unir con salto de línea
+    $chunks = array_chunk($words, 7);
+    $process_name_formatted = '';
+    foreach ($chunks as $chunk) {
+        $process_name_formatted .= implode(' ', $chunk) . '<br>';
+    }
+    // Construir HTML
     $html = '
-        <center>
-        <br></br>
-        <p style="text-align: right;"><strong>Constancia de no adeudo al INAOE<br>ALUMNOS GRADUADOS</strong></p>
-        <br></br>
-        <div>
-        <br></br>
-        <p style="text-align:left;"><strong>Folio: ' . $folio . '</strong></p>
-        <p>Por este medio los abajo firmantes hacemos constar que el(la) estudiante: <strong>' . strtoupper($studentData["full_name"]) . '</strong> del Programa de: ' . $programName . ', en el área de ' . $area_program . ', <strong>NO TIENE NINGÚN ADEUDO</strong> en los departamentos o laboratorios a nuestro cargo.</p>
-        </div>
-        <br></br>
-        <table border="0.3" style="width: 100%;">
-            <thead>
-                <tr style="text-align: center;">
-                    <td>Área</td>
-                    <td>Firmante</td>
-                    <td>Fecha de Liberación</td>
-                    <td>Sello de Área</td>
-                </tr>
-            </thead>
-            <tbody>';
+    <center>
+    <br>
+    <p style="text-align: right; font-size:11pt;">
+        <strong>DIRECCIÓN DE FORMACIÓN ACADÉMICA<br>DEPARTAMENTO DE SERVICIOS ESCOLARES<br>' . strtoupper(trim($process_name_formatted)) . '</strong>
+    </p>
+    <div>
+        <p style="text-align:left; font-size:12pt;">
+<strong>Folio: ' . $folio . '</strong>
+        </p>
+        <p style="text-align:justify; font-size:12pt; line-height:1.6;">Por este medio los abajo firmantes hacemos constar que el(la) estudiante: 
+            <strong>' . strtoupper($studentData["full_name"]) . '</strong> 
+            del Programa de: ' . $programName . ', en el área de ' . $area_program . ', 
+            <strong>NO TIENE NINGÚN ADEUDO</strong> en los departamentos o laboratorios a nuestro cargo.
+        </p>
+    </div>
+    <table cellspacing="5" cellpadding="0" border="0" style="width:100%;">';
 
+    $counter = 0;
     foreach ($pdfData as $area) {
-        $imageName = $area["key"] . ".png";
-        $html .= '<tr>
-                    <td height="60">' . $area["area_name"] . '</td>
-                    <td>' . $area["libera"] . '</td>
-                    <td>' . $area["date"] . '</td>
-                    <td>' . $area["firma"] . '</td>
-                  </tr>';
+        if ($counter % 2 == 0) {
+            $html .= '<tr style="page-break-inside: avoid;">';
+        }
+
+        $html .= '
+        <td style="
+    border:1px solid #000; 
+    border-radius:6px; 
+    width:50%; 
+    text-align:center; 
+    vertical-align:top; 
+    padding:8px;
+    height: auto;
+">
+            <div style="font-size:14pt; font-weight:bold; margin-bottom:0;">' . $area["area_name"] . '</div>
+            <p style="margin:2px 0 0 0;"><strong>Firmante:</strong> ' . trim(str_replace('Autorizado por: ', '', $area["libera"])) . '</p>
+            <p style="margin:2px 0 0 0;"><strong>Fecha:</strong> ' . $area["date"] . '</p>
+            <p style="margin:2px 0 0 0;"><strong>Firma:</strong> ' . $area["firma"] . '</p>
+        </td>';
+
+        if ($counter % 2 == 1) {
+            $html .= '</tr>';
+        }
+        $counter++;
     }
 
-    $html .= '</tbody>
-        </table>
-        </center>
-        <div style="text-align: center;">
-            <p>Formato acreditado por la DFA, Santa María Tonantzintla a Fecha: ' . date("d-m-Y") . '</p>
-        </div>';
+    if ($counter % 2 != 0) {
+        $html .= '<td style="border:1px solid #000; border-radius:6px; width:50%; page-break-inside: avoid;"></td></tr>';
+    }
 
+    $html .= '</table>
+    </center>
+    <div style="text-align: left; font-size:11pt; margin-top:20px;">
+        <p>Formato acreditado por la DFA, Santa María Tonantzintla a Fecha: ' . date("d-m-Y") . '</p>
+    </div>';
+
+    // Escribir HTML en PDF
     $pdf->SetFont('helvetica', '', 12);
     $pdf->writeHTML($html, true, false, true, false, '');
-    //$urlToEncode = 'http://adria.inaoep.mx:11038/liberacion_maina_funcional/view/consulta_folio/consulta_folio.php?folio=' . $folio;
-    $urlToEncode = 'http://localhost/liberacion-maina/view/consulta_folio/consulta_folio.php?folio=' . $folio;
 
+    // Código QR
+    $urlToEncode = 'http://adria.inaoep.mx:11038/liberacion_maina_funcional/view/consulta_folio/consulta_folio.php?folio=' . $folio;
     $pdf->write2DBarcode($urlToEncode, 'QRCODE,H', 170, 240, 30, 30, $style, 'N');
-    $pdf->SetFont('helvetica', '', 10); // Fuente para el texto
-    $pdf->SetXY(170, 239 + 30 + 2); // Posición: misma X, Y + alto del QR + margen
-    $pdf->Cell(30, 5, 'QR de verificación', 0, 0, 'C'); // Texto alineado centrado debajo del QR
+    $pdf->SetFont('helvetica', '', 10);
+    $pdf->SetXY(170, 239 + 30 + 2);
+    $pdf->Cell(30, 5, 'QR de verificación', 0, 0, 'C');
 
+    // Guardar PDF
     $pdfContent = $pdf->Output('student_certificate.pdf', 'S');
     $pdfPath = '../../res/temp/' . $folio . '.pdf';
     file_put_contents($pdfPath, $pdfContent);
@@ -633,33 +678,41 @@ public function freeStudent($id_student, $user)
 
 
 
+
 //Funciones para actualizar alumnos
 public function coursesAds($id_student){
-        $con=new DBconnection();
-        $con->openDB();
+    $con = new DBconnection();
+    $con->openDB();
 
-        $dataCourseAd = $con->query("SELECT 
-                                        academic_programs.id_academic_programs AS id_academic_programs, 
-                                        academic_programs.name,
-                                        academic_programs.type_program
-                                            FROM students
-                                            INNER JOIN academic_programs ON students.fk_academic_programs = academic_programs.id_academic_programs
-                                            WHERE id_student = ". $id_student);
+    $dataCourseAd = $con->query("
+        SELECT 
+            ap.id_academic_programs AS id_academic_programs, 
+            ap.name AS name,
+            tp.id_type_program AS id_type_program,
+            tp.name AS type_program_name
+        FROM students s
+        INNER JOIN academic_programs ap ON s.fk_academic_programs = ap.id_academic_programs
+        INNER JOIN type_program tp ON ap.fk_type_program = tp.id_type_program
+        WHERE s.id_student = $id_student
+    ");
 
-        $data = array();
+    $data = array();
 
-        while($row = pg_fetch_array($dataCourseAd)){
-            $dat = array(
-                "id_academic_programs" =>$row["id_academic_programs"],
-                "name" =>$row["name"],
-                "type_program" =>$row["type_program"]
-            );
-            $data[] = $dat;
-        }
-        $con->closeDB();
-        
-        return $data;
+    while($row = pg_fetch_array($dataCourseAd)){
+        $dat = array(
+            "id_academic_programs" => $row["id_academic_programs"],
+            "name" => $row["name"],
+            "id_type_program" => $row["id_type_program"],
+            "type_program_name" => $row["type_program_name"]
+        );
+        $data[] = $dat;
     }
+
+    $con->closeDB();
+    return $data;
+}
+
+
 
 
    public function getStudent($id_student){
@@ -759,34 +812,46 @@ public function coursesAds($id_student){
 
 
 //Se utiliza para obtener los procesos de catalogo para mostrarlos en el select de registro de alumnos
-public function getProcessCatalog() {
-        $con = new DBconnection(); 
-        $con->openDB();
+public function getProcessCatalog($course_id) {
+    $con = new DBconnection(); 
+    $con->openDB();
 
-        $dataTitle = $con->query("SELECT
-                                        id_process_catalog,
-                                        name,
-                                        description
-                                    FROM
-                                        process_catalog
-                                    WHERE
-                                        status = 1
-                                    ORDER BY id_process_catalog ASC;");
+    // Consulta con relación muchos a muchos
+    $query = "
+        SELECT
+            pc.id_process_catalog,
+            pc.name AS process_name,
+            pc.description,
+            ap.name AS program_name
+        FROM
+            process_catalog pc
+        INNER JOIN program_process_relation ppr
+            ON pc.id_process_catalog = ppr.fk_process_catalog
+        INNER JOIN academic_programs ap
+            ON ap.id_academic_programs = ppr.fk_academic_program
+        WHERE
+            ap.id_academic_programs = $course_id
+            AND pc.status = 1
+        ORDER BY pc.id_process_catalog ASC;
+    ";
 
-        $data = array();
+    $dataTitle = $con->query($query);
+    $data = array();
 
-        while($row = pg_fetch_array($dataTitle)){
-            $dat = array(
-                "id_process_catalog" => $row["id_process_catalog"],
-                "name" => $row["name"],
-                "description" => $row["description"]
-            );
-            $data[] = $dat;
-        }
-        $con->closeDB();
-        
-        return $data;
+    while ($row = pg_fetch_array($dataTitle)) {
+        $dat = array(
+            "id_process_catalog" => $row["id_process_catalog"],
+            "process_name" => $row["process_name"],
+            "description" => $row["description"],
+            "program_name" => $row["program_name"]
+        );
+        $data[] = $dat;
     }
+
+    $con->closeDB();
+    return $data;
+}
+
 
 
     // Funcion que obtniene todos los flujos de ejecucion y los agrupa para realizan la validacion de si se cumplen o no
@@ -846,23 +911,21 @@ public function getProcessCatalog() {
 }
 
 
-// Funcion para obtener el flujo de ejecucion al que pertenece cada accion que se esta realizando
-    public function getExecutionFlow($id_user, $id_student, $fk_process_catalog) {
+public function getExecutionFlow($id_user, $id_student, $fk_process_catalog) {
     $con = new DBconnection();
     $con->openDB();
 
     session_start();
     $fk_area  = $_SESSION["id_area"];
 
-    // Paso 1: Obtener todos los process_stages asignados al usuario
+    // Paso 1: Obtener todos los process_stages de la área para ese catálogo
     $query = "SELECT ps.id_process_stages, ps.execution_flow
               FROM process_stages ps
-              INNER JOIN users u ON ps.fk_process_manager = u.id_user
-              INNER JOIN user_area ua ON u.id_user = ua.fk_user
+              INNER JOIN user_area ua ON ps.fk_process_manager = ua.fk_user
               INNER JOIN areas a ON ua.fk_area = a.id_area
               WHERE ps.status = 1 
-              AND ps.fk_process_manager = $id_user 
-              AND a.id_area = $fk_area AND ps.fk_process_catalog = $fk_process_catalog
+              AND a.id_area = $fk_area
+              AND ps.fk_process_catalog = $fk_process_catalog
               ORDER BY ps.execution_flow ASC";
 
     $result = $con->query($query);
@@ -901,6 +964,27 @@ public function getProcessCatalog() {
 
 
 
+
+
+
+        public function typeProgram(){
+        $con=new DBconnection();
+        $con->openDB();
+
+        $ar = $con->query("SELECT id_type_program, name FROM  type_program WHERE status=1");
+
+        $data = array();
+
+        while($row = pg_fetch_array($ar)){
+            $dat = array(
+                "id_type_program"=>$row["id_type_program"],
+                "name"=>$row["name"]
+            );
+            $data[] = $dat;
+        }
+        $con->closeDB();
+        return $data;
+    }
 
 
 }

@@ -28,7 +28,6 @@ $(function(){
     listStudentInProgress();
     listStudentFree();
     listStudentCancel();
-    processCatalog();
             
 });
 
@@ -53,7 +52,7 @@ function listStudent() {
                     + "<th style='text-align:center'>"+val.id_student+"</th>"
                     + "<th style='text-align:center'>"+val.control_number+"</a></th>"
                     + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
-                    + "<th style='text-align:center'>"+val.namecourse+"</th>"
+                    + "<th style='text-align:center'>"+val.process_description+"</th>"
                     + "<th style='text-align:center'>"+val.date+"</th>"
                     + "<th style='text-align:center'><button type='button' class='btn btn-secondary btn-sm' id='btn-edit' title='Click para editar' onclick='editStudent("+val.id_student+")'>"+'<i class="fas fa-edit"></i>'+"</button></th>"
                     + "<th style='text-align:center'><button type='button' class='btn btn-danger btn-sm' id='btn-details' id-student='"+val.id_student+"' title='Click para eliminar' onclick='deleteStudent("+val.id_student+")'>"+'<i class="fas fa-trash"></i>'+"</button></th>"
@@ -109,6 +108,7 @@ function deleteStudent(id_student) {
 function newStudent() {
     location.href = "../alumnos/registro_alumnos.php";
 }
+
 
 function turnSingAreas(id_student, fk_process_catalog) {
     $u = document.getElementById("user");
@@ -266,7 +266,8 @@ function showRegisterAreas(id_student, fk_process_catalog) {
                     name_student = val.full_name;  
                     process_name = val.process_name;  
                 }      
-                table += "<tr>"       
+                table += "<tr>"
+                    + "<th style='text-align:center'>"+val.execution_flow+"</th>"       
                     + "<th style='text-align:center'>"+val.namearea+"</th>"
                     + "<th style='text-align:center'>"+val.formatted_date+"</th>"
                     + "<th style='text-align:center'>"+val.description+"</th>"
@@ -404,7 +405,8 @@ function listStudentFree() {
                         + "<th style='text-align:center'>" + val.id_student + "</th>"
                         + "<th style='text-align:center'>" + val.control_number + "</th>"
                         + "<th style='text-align:center'><a href='#' data-toggle='modal' onClick='showStudentDetails(" + val.id_student + ");'>" + val.full_name + "</a></th>"
-                        + "<th style='text-align:center'><a href='#' data-toggle='modal' onClick='showRegisterAreas(" + val.id_student + ");'>" + val.date + "</a></th>"
+                        + "<th style='text-align:center'>" + val.process_description + "</th>"
+                        + "<th style='text-align:center'>" + val.date + "</a></th>"
                         + "<th style='text-align:center'>" + folioText + "</th>"
                         + "<th style='text-align:center'>"
                         + "<button type='button' class='btn btn-primary btn-sm' title='Click para imprimir la constancia' "
@@ -513,7 +515,8 @@ function listStudentCancel() {
                     + "<th style='text-align:center'>"+val.id_student+"</th>"
                     + "<th style='text-align:center'>"+val.control_number+"</a></th>"
                     + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showStudentDetails("+val.id_student+");'>"+val.full_name+"</a></th>" 
-                    + "<th style='text-align:center'><a href='#'  data-toggle='modal' onClick='showRegisterAreas("+val.id_student+");'>"+val.date+"</a></th>"
+                    + "<th style='text-align:center'>"+val.process_description+"</a></th>"
+                    + "<th style='text-align:center'>"+val.date+"</a></th>"
                     + "</tr>";
                 }
             });
@@ -587,71 +590,135 @@ function printPDF(id_student, full_name,control_number, date_register) {
 
 
 
-//Obtener cursos para mostrar en el select de registro de alumnos
+// Obtener cursos para mostrar en el select de registro de alumnos
 function courses(){    
     $(".loader").fadeOut("slow");
-    var program = $("#program").val();
+
+    //Obtener el id del tipo de programa seleccionado
+    var selectType = document.getElementById("type-program");
+    var selectedOption = selectType.options[selectType.selectedIndex];
+
+
+    var program = selectedOption.value;
+
+    //Enviar el id del tipo de programa al backend
     $.ajax({
         url: "../../controller/alumnos/controller_alumnos.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
-        data: { action: 14, program: program },
+        data: { 
+            action: 14, 
+            program: program
+        },
         success: function(result) {
             var addCourse = "<option value='null' selected disabled>Seleccione su área</option>";
             $.each(result, function(index, val){
                 addCourse += "<option value='"+ val.id_academic_programs +"'>"+ val.name +"</option>";
             });            
             $("#course").html(addCourse);             
-        }, error: function(result) {
-            //console.log(result);
+        }, 
+        error: function(result) {
+            console.log("Error al obtener cursos:", result);
         }
     });
 }
 
-//Funciona para actualizar el campo institución en el registro de alumnos
-function updateInstitucion() {
-  var program = $("#program").val();
-  var institucionInput = $("#institucion");
+$("#type-program").on("change", function() {
+    courses(); // se ejecuta automáticamente al seleccionar un tipo de programa
+});
 
-  if (program == "1" || program == "2") {
-    institucionInput.val("INAOE");
-    institucionInput.prop("readonly", true);
-  } else if (program == "3" || program == "4") {
-    institucionInput.val("");
-    institucionInput.prop("readonly", false);
-  } else {
-    institucionInput.val("");
-    institucionInput.prop("readonly", false);
-  }
+
+// Función para actualizar el campo "Institución" según el tipo de programa seleccionado
+function updateInstitucion() {
+    $(".loader").fadeOut("slow");
+
+    // Obtener el id del tipo de programa seleccionado
+    var selectType = document.getElementById("type-program");
+    var selectedOption = selectType.options[selectType.selectedIndex];
+
+    // Si no hay selección, salir
+    if (!selectedOption || selectedOption.value === "null") {
+        $("#institucion").val("").prop("readonly", false);
+        return;
+    }
+
+    var program = selectedOption.value; // id_type_program
+    var institucionInput = $("#institucion");
+
+    // Aplicar lógica según el tipo de programa
+    if (program === "1" || program === "2" || program === "5") {
+        institucionInput.val("INAOE");
+        institucionInput.prop("readonly", true);
+    } else if (program === "3" || program === "4") {
+        institucionInput.val("");
+        institucionInput.prop("readonly", false);
+    } else {
+        institucionInput.val("");
+        institucionInput.prop("readonly", false);
+    }
 }
 
-// Carga los procesos y selecciona el proceso si fk_process existe
-function processCatalog(fk_process = null) {
+$("#type-program").on("change", updateInstitucion);
+
+
+function processCatalog(fk_process = null, preserve = false) {
     $(".loader").fadeOut("slow");
+
+    var selectCourse = document.getElementById("course");
+    if (!selectCourse) return;
+    var selectedOption = selectCourse.options[selectCourse.selectedIndex];
+    var course_id = selectedOption ? selectedOption.value : null;
+
+    if (!course_id || course_id === "null") return;
+
     $.ajax({
         url: "../../controller/alumnos/controller_alumnos.php",
         cache: false,
-        dataType: 'JSON',
-        type: 'POST',
-        data: { action: 22 },
+        dataType: "JSON",
+        type: "POST",
+        data: {
+            action: 22,
+            course_id: course_id
+        },
         success: function (result) {
-            var options = `<option value="null" selected disabled>Seleccione un Proceso</option>`;
-            $.each(result, function (index, val) {
-                options += `<option value="${val.id_process_catalog}">${val.description}</option>`;
-            });
-            $("#process_catalog").html(options);
-
-            // Seleccionar el valor después de cargar opciones
-            if (fk_process) {
-                $("#process_catalog").val(fk_process);
+            if (preserve && $("#process_catalog option").length > 1) {
+                console.log("⏩ Saltando actualización de process_catalog (ya cargado)");
+                return;
             }
+
+            let options = "";
+
+            if (!fk_process) {
+                options += `<option value="null" selected disabled>Seleccione un Proceso</option>`;
+            } else {
+                options += `<option value="null" disabled>Seleccione un Proceso</option>`;
+            }
+
+            if (result.length > 0) {
+                $.each(result, function (index, val) {
+                    let selected = (fk_process && fk_process == val.id_process_catalog) ? "selected" : "";
+                    options += `<option value="${val.id_process_catalog}" ${selected}>${val.description}</option>`;
+                });
+            } else {
+                options += `<option value="null" disabled>No hay procesos disponibles</option>`;
+            }
+
+            $("#process_catalog").html(options);
         },
         error: function (result) {
-            console.log(result);
+            console.log("Error al obtener procesos:", result);
         }
     });
 }
+
+
+// Evento de cambio para el curso (solo se activa cuando el usuario lo cambia manualmente)
+$("#course").on("change", function(e, triggeredByScript) {
+    if (triggeredByScript) return;
+    processCatalog();
+});
+
 
 // Fucncion para registrar un nuevo alumno
 function saveStudent(){
@@ -704,7 +771,7 @@ function saveStudent(){
         return 0;
     }
 
-    if (institucion==null){
+    if (institucion.length==0){
         alert("Tiene que ingresar la institución")
         $("#institucion").focus();
         return 0;
@@ -776,96 +843,61 @@ function saveStudent(){
     }
 
 
+//Programas académicos del alumno al editar
+function coursesAds() {
+    let params = new URLSearchParams(location.search);
+    let id_student = parseInt(params.get("dc"));
 
-
-// Obtener cursos para mostrar en el select de editar alumnos
-function getCourses(){
-    var program = $("#program").val();
-    
     $.ajax({
         url: "../../controller/alumnos/controller_alumnos.php",
         cache: false,
-        dataType: 'JSON',
-        type: 'POST',
-        data: { action: 14, program: program },
-        success: function(result) {
-            //console.log(result);
-            var addArea = "<option value='null' selected disabled>Seleccione su área</option>";
-            $.each(result, function(index, val){
-                addArea += "<option value='"+ val.id_academic_programs +"'>"+ val.name +"</option>";
-            });            
-            $("#course").html(addArea);   
-                   
+        dataType: "JSON",
+        type: "POST",
+        data: { action: 16, id_student: id_student },
+        success: function (result) {
+            if (!result || result.length === 0) {
+                console.warn("No se encontraron programas para el alumno.");
+                return;
+            }
+
+            let addCourse = "";
+            $.each(result, function (index, val) {
+                addCourse += `<option value="${val.id_academic_programs}">${val.name}</option>`;
+            });
+            $("#course").html(addCourse);
+
+            typeProgram(result[0].id_type_program);
+            const currentAreaID = result[0].id_academic_programs.toString();
+
+            $("#course").off("change");
+
+            //seleccionar curso
+            $("#course").val(currentAreaID);
+
+            //cargar procesos disponibles pero NO borrar selección posterior
+            processCatalog(null, true);
+
+            //después de medio segundo, cargar el estudiante
+            setTimeout(() => {
+                getStudent();
+            }, 100);
+
+            // Restaurar listener
+            $("#course").on("change", function (e, triggeredByScript) {
+                if (triggeredByScript) return;
+                processCatalog();
+            });
+        },
+        error: function (result) {
+            console.error("Error en la solicitud:", result);
         }
     });
-    
 }
 
 
-//Agregar cursos al select de editar alumnos
-function coursesAds(){
-    let params = new URLSearchParams(location.search);
-    let id_student = parseInt(params.get('dc'));
 
-    $.ajax({
-        url: "../../controller/alumnos/controller_alumnos.php",
-        cache: false,
-        dataType: 'JSON',
-        type: 'POST',
-        data: { action: 16, id_student: id_student },
-        success: function(result) {
-            var addArea = "";
 
-            $.each(result, function(index, val){
-                addArea += "<option value='"+ val.id_academic_programs +"'>"+ val.name +"</option>";
-            });
 
-            // Llenar el select de cursos
-            $("#course").html(addArea); 
-
-            // Crear opciones del select de programas
-            var programs = `
-                <option value="1">MAESTRÍA</option>
-                <option value="2">DOCTORADO</option>
-                <option value="3">EXTERNO LICENCIATURA</option>
-                <option value="4">EXTERNO BACHILLERATO</option>
-            `;
-            $("#program").html(programs);
-
-            // Mostrar en consola el valor de type_program del primer curso
-            if(result.length > 0){
-                const typeProgram = result[0].type_program;
-                console.log("Valor de type_program obtenido:", typeProgram); 
-
-                let programValue;
-
-                switch(typeProgram.toLowerCase()){
-                    case 'maestría':
-                        programValue = 1;
-                        break;
-                    case 'doctorado':
-                        programValue = 2;
-                        break;
-                    case 'externo licenciatura':
-                        programValue = 3;
-                        break;
-                    case 'externo bachillerato':
-                        programValue = 4;
-                        break;
-                    default:
-                        programValue = 0;
-                }
-
-                if(programValue !== 0){
-                    $("#program").val(programValue);
-                }
-            }
-        },
-        error: function(result) {
-            console.log(result);
-        } 
-    });
-}
 
 
 
@@ -873,33 +905,36 @@ function coursesAds(){
 function getStudent() {
     $(".loader").fadeOut("slow");
     let params = new URLSearchParams(location.search);
-    id_student = parseInt(params.get('dc'));
-   
+    let id_student = parseInt(params.get('dc'));
+
+    if (!id_student || isNaN(id_student)) return;
+
     $.ajax({
         url: "../../controller/alumnos/controller_alumnos.php",
         cache: false,
         dataType: 'JSON',
         type: 'POST',
-        data: { action: 17, id_student:id_student },
-        success: function(result) {
-                console.log(result); // <-- aquí  
-            
-            $.each(result, function(index, val){                
+        data: { action: 17, id_student: id_student },
+        success: function (result) {
+            console.log(result);
+
+            $.each(result, function (index, val) {
                 $('#name').val(val.name);
-                $('#surname').val(val.surname); 
+                $('#surname').val(val.surname);
                 $('#second-surname').val(val.second_surname);
                 $('#email').val(val.email);
                 $('#control-number').val(val.control_number);
                 $('#institucion').val(val.institucion);
                 $('#date_conclusion').val(val.date_conclusion);
-                $('#process_catalog').val(val.proceso_description);
-                processCatalog(val.fk_process_catalog); // Cargar el catálogo de procesos y seleccionar el actual
-            });   
-        }, error: function ( result) {
+                $("#process_catalog").val(val.fk_process_catalog);
+            });
+        },
+        error: function (result) {
             console.log(result);
-        } 
-    }); 
+        }
+    });
 }
+
 
 
 
@@ -975,7 +1010,7 @@ function updateStudent(){
         $("#course").focus();
         return 0;
     }
-    if (institucion==null){
+    if (institucion.length==0){
         alert("Tiene que agregar la institución")
         $("#institucion").focus();
         return 0;
@@ -1102,13 +1137,51 @@ function showStudentDetails(id_student) {
 }
 
 
+function typeProgram(fk_type_program) {
+
+    $(".loader").fadeOut("slow");
+    $.ajax({
+        url: "../../controller/alumnos/controller_alumnos.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        data: { action: 23 },
+        success: function (result) {
+            var addType = "<option value='null' selected disabled>Seleccione un tipo de programa</option>";
+            $.each(result, function (index, val) {
+               
+            addType += "<option value='" + val.id_type_program + "' data-name='" + val.name + "'>" + val.name + "</option>";
+            });
+            $("#type-program").html(addType);
+
+            if(fk_type_program){
+                $('#type-program').val(fk_type_program);
+            }
+
+          
+        },
+        error: function (result) {
+            console.log(result);
+        }
+    });
+}
 
 
 
+$(document).ready(function () {
+    checkInstitution(); // inicializa el campo de institución
 
+    // Verificamos si es modo edición o registro
+    let params = new URLSearchParams(location.search);
+    let id_student = parseInt(params.get('dc'));
 
-$(document).ready(function() {
-    checkInstitution(); // para inicializar el campo si ya hay un valor seleccionado
+    if (!isNaN(id_student) && id_student > 0) {
+        //Modo edición → solo cargamos los datos del alumno
+        coursesAds();
+    } else {
+        //Modo registro → llenamos el select de tipo de programa vacío
+        typeProgram();
+    }
 });
 
 

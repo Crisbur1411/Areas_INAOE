@@ -26,6 +26,9 @@
 			$con=new DBconnection();
 			$con->openDB();			
 			
+			//Convertir la contraseña ingresada a MD5
+			$password = md5($password);
+
 			$user=$con->query("SELECT id_user, username, fk_type, permission, CONCAT (name || ' ' || surname || ' ' || second_surname) AS name , fk_area FROM users
 								LEFT JOIN user_area ON user_area.fk_user = users.id_user
 			 					WHERE users.username = '".$username."' AND users.password = '".$password."' AND users.status=1");		

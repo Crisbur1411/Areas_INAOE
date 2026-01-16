@@ -1,6 +1,9 @@
 <?php date_default_timezone_set("America/Mexico_City"); ?>
 
+<head>
+    	<link rel="stylesheet" href="../../assets/css/navLogin.css">
 
+</head>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -10,24 +13,19 @@
     <link rel="shortcut icon" href="src/favicon.png" type="image/x-icon">
     <link href="https://framework-gb.cdn.gob.mx/assets/styles/main.css" rel="stylesheet">
 </head>
-<nav class="navbar navbar-inverse sub-navbar navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#subenlaces">
-                <span class="sr-only">Interruptor de Navegación</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand">INAOE</a>
-        </div>
-        <div class="collapse navbar-collapse" id="subenlaces">
-            <ul class="nav navbar-nav navbar-right">
+	<nav class="navbarINAOE">
+        <div class="container-fluid">
+            <div class="contNav">
+                <div class="seccionesINAOE">
+                    <li><a>INAOE</a></li>
+                </div>
+               
+            <div class="seccionesEstatus">
                 <li><a href="../../index.php">Inicio</a></li>
-            </ul>
+            </div>
+            </div>
         </div>
-    </div>
-</nav> 
+    </nav>
 <body style="background-color: white;">
     <div class="container">
         <div class="col">

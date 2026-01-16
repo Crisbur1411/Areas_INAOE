@@ -69,18 +69,21 @@ function listPrograms() {
 
 
 function saveProgram() {
-    var name = $("#name").val().trim();
-    var cve = $("#cve").val().trim();
-    var select = document.getElementById("type_program");
-    var selectedOption = select.options[select.selectedIndex];
+        var name = $("#name").val().trim();
+        var cve = $("#cve").val().trim();
 
-    if (selectedOption.value == "") {
-        alert("Selecciona un tipo de programa");
-        return;
-    }
+        var select = document.getElementById("type-program");
+        var selectedOption = select.options[select.selectedIndex];
 
-    var type = selectedOption.value;
-    var type_program = selectedOption.getAttribute("data-name");
+        // Verificar selección válida
+        if (selectedOption.value === "null" || !selectedOption.value) {
+            alert("Selecciona un tipo de programa");
+            return;
+        }
+
+        // Obtener ID y nombre
+        var type = selectedOption.value;
+        var type_program = selectedOption.getAttribute("data-name");
 
 
     
@@ -164,7 +167,7 @@ if(!programID){
                 var userData = result.data;
                 $('#name').val(userData.name);
                 $('#cve').val(userData.cve);
-                $('#type_program').val(userData.type);
+                typeProgram(userData.fk_type_program);
             } else {
                 Swal.fire({
                     icon: 'error',
@@ -199,11 +202,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function saveProgramEdit() {
 
-    var programID = sessionStorage.getItem('id_academic_programs');
-    var name = $("#name").val().trim();
-    var cve = $("#cve").val().trim();
-    var select = document.getElementById("type_program");
-    var selectedOption = select.options[select.selectedIndex];
+var programID = sessionStorage.getItem('id_academic_programs');
+var name = $("#name").val().trim();
+var cve = $("#cve").val().trim();
+
+var select = document.getElementById("type-program");
+var selectedOption = select.options[select.selectedIndex];
+
+if (!selectedOption || selectedOption.value === "null") {
+    alert("Selecciona un tipo de programa");
+    $("#type-program").focus();
+    return;
+}
+
+var type = selectedOption.value;
+var type_program = selectedOption.getAttribute("data-name");
 
     if (selectedOption.value == "") {
         alert("Selecciona un tipo de programa");
@@ -333,7 +346,34 @@ function deleteProgram(id_academic_programs) {
 }
 
 
+function typeProgram(fk_type_program) {
 
+    $(".loader").fadeOut("slow");
+    $.ajax({
+        url: "../../controller/programas_academicos/controller_programas_academicos.php",
+        cache: false,
+        dataType: 'JSON',
+        type: 'POST',
+        data: { action: 6 },
+        success: function (result) {
+            var addType = "<option value='null' selected disabled>Seleccione un tipo de programa</option>";
+            $.each(result, function (index, val) {
+               
+            addType += "<option value='" + val.id_type_program + "' data-name='" + val.name + "'>" + val.name + "</option>";
+            });
+            $("#type-program").html(addType);
+
+            if(fk_type_program){
+                $('#type-program').val(fk_type_program);
+            }
+
+          
+        },
+        error: function (result) {
+            console.log(result);
+        }
+    });
+}
 
 
 
@@ -346,6 +386,9 @@ function editProgram(id_academic_programs){
 
 
 
+$(document).ready(function () {
+    typeProgram();
+});
 
 
 
